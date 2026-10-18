@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  orphionmc-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: orphionmc_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DOMAIN=orphionmc.net
+    env_file:
+      - ./server/.env
+    volumes:
+      # Persist SQLite databases and automated backups outside the container
+      - ./server/OrphionMC_forum.db:/app/server/OrphionMC_forum.db
+      - ./server/sessions.db:/app/server/sessions.db
+      - ./server/backups:/app/server/backups

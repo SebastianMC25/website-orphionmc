@@ -5,10 +5,15 @@ const { requireStaff } = require('./middleware');
 const main = express.Router();
 const webRoot = path.resolve(__dirname, '../../');
 
+const staticOptions = {
+    maxAge: process.env.NODE_ENV === 'production' ? '7d' : '1h',
+    etag: true
+};
+
 // Static files for main site
-main.use('/css', express.static(path.join(webRoot, 'css')));
-main.use('/js', express.static(path.join(webRoot, 'js')));
-main.use('/assets', express.static(path.join(webRoot, 'assets')));
+main.use('/css', express.static(path.join(webRoot, 'css'), staticOptions));
+main.use('/js', express.static(path.join(webRoot, 'js'), staticOptions));
+main.use('/assets', express.static(path.join(webRoot, 'assets'), staticOptions));
 // Landing uses the mp4 too
 main.use('/', (req, res, next) => {
     console.log(`[MainRouter] Routing request for: ${req.path}`);

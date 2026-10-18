@@ -1,3 +1,7 @@
+-- ==========================================
+-- OrphionMC Database Schema
+-- ==========================================
+
 -- Users Table
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -13,6 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
     discord_username TEXT,
     discord_avatar TEXT,
     avatar_url TEXT,
+    is_banned INTEGER DEFAULT 0,
     last_login DATETIME,
     last_ip TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -33,7 +38,7 @@ CREATE TABLE IF NOT EXISTS threads (
     category_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
     title TEXT NOT NULL,
-    content TEXT, -- Optional if we want to store first post content here for preview, or just rely on posts table
+    content TEXT, -- Optional preview or first post content
     prefix TEXT, -- [Mago], [Guerrero], etc.
     status TEXT DEFAULT 'open', -- 'open', 'closed', 'solved', 'accepted', 'rejected'
     is_pinned INTEGER DEFAULT 0,
@@ -96,6 +101,33 @@ CREATE TABLE IF NOT EXISTS notifications (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+-- Audit Logs (Staff Actions)
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    staff_id INTEGER NOT NULL,
+    action TEXT NOT NULL,
+    target_id INTEGER,
+    target_type TEXT,
+    details TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (staff_id) REFERENCES users(id)
+);
+
+-- ==========================================
+-- High Performance Indexes
+-- ==========================================
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_mc_uuid ON users(minecraft_uuid);
+CREATE INDEX IF NOT EXISTS idx_users_discord ON users(discord_id);
+CREATE INDEX IF NOT EXISTS idx_threads_category ON threads(category_id);
+CREATE INDEX IF NOT EXISTS idx_threads_user ON threads(user_id);
+CREATE INDEX IF NOT EXISTS idx_threads_created ON threads(created_at);
+CREATE INDEX IF NOT EXISTS idx_posts_thread ON posts(thread_id);
+CREATE INDEX IF NOT EXISTS idx_posts_user ON posts(user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_user_unread ON notifications(user_id, is_read);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_staff ON audit_logs(staff_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs(created_at);
 
 -- Initial Categories with Types
 INSERT OR IGNORE INTO categories (name, description, view_order, type) VALUES 

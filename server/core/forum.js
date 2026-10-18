@@ -4,13 +4,18 @@ const path = require('path');
 const forum = express.Router();
 const webRoot = path.resolve(__dirname, '../../');
 
+const staticOptions = {
+    maxAge: process.env.NODE_ENV === 'production' ? '7d' : '1h',
+    etag: true
+};
+
 // Static files for forum (css, js, assets)
 // We need to serve the root assets because index.css/js are shared
-forum.use('/css', express.static(path.join(webRoot, 'css')));
-forum.use('/js', express.static(path.join(webRoot, 'js')));
-forum.use('/assets', express.static(path.join(webRoot, 'assets')));
+forum.use('/css', express.static(path.join(webRoot, 'css'), staticOptions));
+forum.use('/js', express.static(path.join(webRoot, 'js'), staticOptions));
+forum.use('/assets', express.static(path.join(webRoot, 'assets'), staticOptions));
 // Serve other root assets (videos, manifest, etc.)
-forum.use('/', express.static(webRoot, { index: false }));
+forum.use('/', express.static(webRoot, { index: false, maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0 }));
 
 // Forum routes
 forum.get('/', (req, res) => res.sendFile(path.join(webRoot, 'forum.html')));

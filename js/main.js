@@ -238,16 +238,16 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener('scroll', updateActiveNav);
 });
 
-// PWA Service Worker Registration - DISABLED temporarily due to missing assets
-// Uncomment when all assets are available and properly configured
-/*
-if ('serviceWorker' in navigator) {
+// PWA Service Worker Registration
+if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(reg => {
-            console.log('SW registered:', reg);
-        }).catch(err => {
-            console.log('SW registration failed:', err);
-        });
+        navigator.serviceWorker.register('/sw.js')
+            .then(reg => {
+                console.log('[PWA] Service Worker activo:', reg.scope);
+            })
+            .catch(err => {
+                console.warn('[PWA] Service Worker omitido:', err.message);
+            });
     });
 }
-*/
+

@@ -32,7 +32,21 @@ async function build() {
     await fs.ensureDir(DIST_DIR);
 
     // 2. Copy static assets (images, videos, etc.)
-    const allFiles = glob.sync('**/*', { nodir: true });
+    const allFiles = glob.sync('**/*', {
+        nodir: true,
+        ignore: [
+            'node_modules/**',
+            'server/**',
+            'dist/**',
+            '.git/**',
+            '.github/**',
+            '.vscode/**',
+            'server/backups/**',
+            'sessions.db',
+            '*.db',
+            '*.db-*'
+        ]
+    });
 
     for (const file of allFiles) {
         if (EXCLUDES.some(exclude => file.startsWith(exclude))) continue;

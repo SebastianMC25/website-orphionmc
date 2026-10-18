@@ -169,10 +169,13 @@ app.use((err, req, res, next) => {
     next(err);
 });
 
-// Default 404 handler
+// Default 404 handler (Themed HTML for browsers, JSON for API/AJAX)
 app.use((req, res) => {
     console.warn(`[404] Not Found: ${req.hostname}${req.path}`);
-    res.status(404).send('Subdominio o ruta no encontrada.');
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('json')) || req.hostname.startsWith('api.') || req.path.startsWith('/api')) {
+        return res.status(404).json({ error: "Ruta o subdominio no encontrado", path: req.path });
+    }
+    res.status(404).sendFile(path.join(__dirname, '../404.html'));
 });
 
 // Start Server
@@ -185,6 +188,19 @@ const server = app.listen(PORT, () => {
     console.log(`API Engine: http://api.${DOMAIN}:${PORT}`);
     console.log(`-------------------------------------------`);
 });
+
+// Programación de Respaldo Atómico Diario (Cada 24 horas, no bloqueante)
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+setInterval(() => {
+    try {
+        const { runBackup } = require('./backup');
+        if (typeof runBackup === 'function') {
+            runBackup().catch((e) => console.error('[Backup Error]:', e.message));
+        }
+    } catch (err) {
+        console.error('[Backup Scheduler] Error:', err.message);
+    }
+}, ONE_DAY_MS).unref();
 
 // Graceful Shutdown Handler (Production/PM2/Docker)
 function gracefulShutdown(signal) {

@@ -15,20 +15,19 @@ document.addEventListener('DOMContentLoaded', () => {
             renderCategories(categories);
         } catch (error) {
             console.error('Error fetching forum data:', error);
-            // Optionally show error to user, or just leave static content as fallback
-            // container.innerHTML = '<p style="text-align:center; color: #ff5555;">Error al cargar el foro. Asegúrate de que el servidor (Backend) esté corriendo.</p>';
+            container.innerHTML = `
+                <div style="text-align: center; padding: 3rem 1rem; color: #d4af37; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; margin: 2rem 0;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; color: #f5c542; margin-bottom: 1rem; display: block;"></i>
+                    <h3 style="font-family: 'Cinzel', serif; font-size: 1.3rem; margin-bottom: 0.5rem;">No se pudieron cargar las categorías</h3>
+                    <p style="color: #aaa; font-size: 0.95rem;">Comprueba tu conexión o inténtalo nuevamente en unos instantes.</p>
+                </div>
+            `;
         }
     }
 
     function renderCategories(categories) {
         container.innerHTML = ''; // Clear static/skeleton content
-
-        // Group categories by "Group" if we had groups, but for now flat list or strictly mapped 
-        // Logic: The current HTML has "Category Groups". 
-        // Our SQL schema has flat categories.
-        // We will wrap them all in one "General" group or try to map them.
-        // For simplicity towards user request: Let's create one group for now or split them if we add a 'group_name' to DB.
-        // Updated plan: Ensure DB has data grouping or just render them flat like mapped.
+        const escape = window.escapeHTML || ((s) => s ? String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '');
 
         // Let's create a generic "Principales" group wrapper for all db categories
         const groupDiv = document.createElement('div');
@@ -44,18 +43,22 @@ document.addEventListener('DOMContentLoaded', () => {
         let itemsHtml = '';
 
         categories.forEach(cat => {
+            const cleanId = encodeURIComponent(cat.id);
+            const cleanName = escape(cat.name);
+            const cleanDesc = escape(cat.description || 'Sin descripción');
+            const threadCount = typeof cat.thread_count === 'number' ? cat.thread_count : 0;
+
             itemsHtml += `
                 <div class="forum-item">
                     <div class="forum-icon"><i class="fa fa-scroll"></i></div>
                     <div class="forum-info">
-                        <h3><a href="view_category.html?id=${cat.id}">${cat.name}</a></h3>
-                        <p>${cat.description || 'Sin descripción'}</p>
+                        <h3><a href="view_category.html?id=${cleanId}">${cleanName}</a></h3>
+                        <p>${cleanDesc}</p>
                     </div>
                     <div class="forum-stats">
-                        <span>${cat.thread_count}</span> Temas
+                        <span>${threadCount}</span> Temas
                     </div>
                     <div class="forum-last-post">
-                        <!-- Placeholder for last post logic -->
                         --
                     </div>
                 </div>

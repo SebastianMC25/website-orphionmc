@@ -4,7 +4,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    const serverIp = 'play.OrphionMC.net';
+    const serverIp = 'play.orphionmc.net';
     const apiUrl = `https://api.mcsrvstat.us/2/${serverIp}`;
     
     // Elements
@@ -16,11 +16,13 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            if (data.online) {
+            if (data && data.online) {
                 // Online
                 statusDot.style.backgroundColor = '#4CAF50';
                 statusDot.style.boxShadow = '0 0 10px #4CAF50';
-                playerCount.innerText = `${data.players.online} / ${data.players.max} Online`;
+                const onlineCount = data.players && typeof data.players.online === 'number' ? data.players.online : 0;
+                const maxCount = data.players && typeof data.players.max === 'number' ? data.players.max : 100;
+                playerCount.innerText = `${onlineCount} / ${maxCount} Online`;
                 playerCount.style.color = '#4CAF50';
             } else {
                 // Offline

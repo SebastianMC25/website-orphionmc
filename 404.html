@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Territorio Desconocido - OrphionMC</title>
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .error-page {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(30, 20, 0, 0.4) 0%, transparent 70%);
+        }
+
+        .error-container {
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(11, 11, 11, 0.95);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), 0 0 25px rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .error-icon {
+            font-size: 5rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5));
+        }
+
+        .error-code {
+            font-family: "MedievalSharp", cursive;
+            font-size: 2.2rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .error-message {
+            font-size: 1.1rem;
+            color: #ccc;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .error-btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-home {
+            background: var(--gold);
+            color: #000;
+            border: 1px solid var(--gold);
+        }
+
+        .btn-home:hover {
+            background: #000;
+            color: var(--gold);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-forum {
+            background: transparent;
+            color: #eee;
+            border: 1px solid #444;
+        }
+
+        .btn-forum:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 600px) {
+            .error-actions {
+                flex-direction: column;
+            }
+            .error-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-bg"></div>
+
+    <main class="error-page">
+        <div class="error-container">
+            <div class="error-icon">
+                <i class="fas fa-compass"></i>
+            </div>
+            <div class="error-code">404 - TERRITORIO DESCONOCIDO</div>
+            <p class="error-message">
+                Te has aventurado más allá de los dominios explorados de OrphionMC. 
+                El pergamino o sendero que intentas alcanzar no existe o ha sido movido por los dioses.
+            </p>
+            <div class="error-actions">
+                <a href="index.html" class="error-btn btn-home">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+                <a href="forum.html" class="error-btn btn-forum">
+                    <i class="fas fa-comments"></i> Ir al Foro
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

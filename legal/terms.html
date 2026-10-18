@@ -3,49 +3,174 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Términos de Servicio - OrphionMC</title>
+    <link rel="canonical" href="https://orphionmc.net/legal/terms.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.7;
+            color: #d1d5db;
+            background-color: #0b0c10;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12), transparent 60%),
+                radial-gradient(circle at 80% 50%, rgba(77, 238, 234, 0.05), transparent 50%);
+            min-height: 100vh;
+            padding: 40px 20px 80px;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            background: rgba(18, 20, 29, 0.85);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 12px;
+            padding: 48px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #d4af37;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .back-link:hover {
+            color: #f5c542;
+            transform: translateX(-3px);
         }
 
         h1 {
-            color: #1a1a1a;
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            color: #f5c542;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 15px rgba(245, 197, 66, 0.2);
+        }
+
+        .date {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            margin-bottom: 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 16px;
         }
 
         h2 {
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 30px;
+            font-family: 'Cinzel', serif;
+            color: #e5e7eb;
+            font-size: 1.3rem;
+            margin-top: 32px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: "✦";
+            color: #d4af37;
+            font-size: 0.9rem;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #cbd5e1;
+        }
+
+        ul {
+            margin: 12px 0 20px 24px;
+            color: #cbd5e1;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background: rgba(212, 175, 55, 0.08);
+            border-left: 3px solid #d4af37;
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 24px 0;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 24px 18px;
+            }
+
+            h1 {
+                font-size: 1.7rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <h1>Términos de Servicio</h1>
-    <p>Última actualización: 01 de enero de 2026</p>
+    <div class="container">
+        <a href="/" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Volver a OrphionMC
+        </a>
 
-    <h2>1. Propiedad Intelectual</h2>
-    <p>Todo el contenido presente en este sitio web, incluyendo pero no limitado a textos, gráficos, logotipos, iconos,
-        imágenes y software, es propiedad de OrphionMC o de sus proveedores de contenido y está protegido por las leyes
-        de propiedad intelectual internacionales.</p>
+        <h1>Términos de Servicio</h1>
+        <div class="date">Última actualización: 18 de octubre de 2026</div>
 
-    <h2>2. Uso del Sitio</h2>
-    <p>Se prohíbe terminantemente la copia, reproducción, distribución o modificación de cualquier parte de este sitio
-        web sin el consentimiento previo por escrito de los administradores de OrphionMC.</p>
+        <div class="highlight-box">
+            Al acceder a los servicios, sitio web y servidor de Minecraft de <strong>OrphionMC</strong>, aceptas cumplir con los siguientes términos y condiciones.
+        </div>
 
-    <h2>3. Protección de Datos</h2>
-    <p>El uso de este sitio se rige por nuestra Política de Privacidad. Al utilizar el sitio, usted acepta el
-        tratamiento de sus datos conforme a dicha política.</p>
+        <h2>1. Propiedad Intelectual y Derechos</h2>
+        <p>Todo el contenido creado por OrphionMC, incluyendo pero no limitado a logotipos, lore, mapas, sistemas de juego MMORPG, scripts y diseños gráficos, es propiedad exclusiva del equipo de OrphionMC y está protegido por normativas internacionales de derechos de autor.</p>
 
-    <h2>4. Limitación de Responsabilidad</h2>
-    <p>OrphionMC no se hace responsable de los daños directos, indirectos o incidentales que puedan derivarse del uso de
-        este sitio web o de la imposibilidad de uso del mismo.</p>
+        <h2>2. Normas de Conducta y Uso Aceptable</h2>
+        <p>Para mantener una comunidad justa y respetuosa, se prohíbe terminantemente:</p>
+        <ul>
+            <li>El uso de modificaciones no permitidas, hacks, autoclickers o exploits que otorguen ventajas desleales.</li>
+            <li>El acoso, discriminación, spam o suplantación de identidad de otros usuarios o miembros del Staff.</li>
+            <li>La venta o comercialización de cuentas, items o dinero ficticio por dinero real fuera de los canales oficiales.</li>
+        </ul>
+
+        <h2>3. Privacidad y Seguridad</h2>
+        <p>Tu privacidad es fundamental para nosotros. Los datos recolectados (como nombre de usuario, correo electrónico e IP de acceso) se emplean exclusivamente para la autenticación, seguridad de la cuenta y prevención de fraudes y ataques cibernéticos.</p>
+
+        <h2>4. Cuentas y Suspensión</h2>
+        <p>El Staff de OrphionMC se reserva el derecho de advertir, suspender temporal o permanentemente cualquier cuenta que viole las directrices de la comunidad o comprometa la seguridad de los servidores.</p>
+
+        <h2>5. Modificaciones de los Términos</h2>
+        <p>Nos reservamos el derecho de actualizar estos términos en cualquier momento para reflejar cambios en nuestras políticas o servicios. Te recomendamos revisar esta página periódicamente.</p>
+
+        <footer>
+            &copy; 2026 OrphionMC Network. Todos los derechos reservados. No afiliado con Mojang AB ni Microsoft.
+        </footer>
+    </div>
 </body>
 
 </html>

@@ -10,10 +10,15 @@ server/.env
 
 # SQLite databases & sessions
 *.db
+*.db-wal
+*.db-shm
+*.db-journal
 *.sqlite
 *.sqlite3
 server/*.db
 sessions.db
+server/backups/*
+!server/backups/.gitkeep
 
 # Logs
 npm-debug.log*
