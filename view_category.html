@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrphionMC - Foro</title>
+    <!-- Fonts & Icons -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=MedievalSharp&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/custom.css">
+    <style>
+        /* Reusing Forum Styles */
+        .forum-hero {
+            padding: 150px 20px 60px;
+            text-align: center;
+        }
+
+        .forum-hero h1 {
+            font-size: 3.5rem;
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .forum-hero p {
+            color: #ccc;
+            font-size: 1.2rem;
+        }
+
+        .forum-container {
+            max-width: 1200px;
+            margin: 0 auto 100px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 40px;
+        }
+
+        .category-group {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .category-header {
+            background: linear-gradient(to right, #2a2a2a, #1a1a1a);
+            padding: 15px 25px;
+            border-bottom: 2px solid var(--gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-header h2 {
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            color: var(--gold);
+        }
+
+        .forum-item {
+            padding: 20px 25px;
+            border-bottom: 1px solid #333;
+            display: grid;
+            grid-template-columns: 50px 1fr 100px 180px;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .forum-item:last-child {
+            border-bottom: none;
+        }
+
+        .forum-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .forum-icon {
+            font-size: 1.8rem;
+            color: #888;
+        }
+
+        .forum-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .forum-info h3 a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .forum-info h3 a:hover {
+            color: var(--gold);
+        }
+
+        .forum-info p {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .forum-stats {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .forum-stats span {
+            display: block;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .forum-last-post {
+            font-size: 0.85rem;
+            color: #aaa;
+            border-left: 1px solid #333;
+            padding-left: 15px;
+        }
+
+        .sidebar-widget {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(5px);
+        }
+
+        .widget-title {
+            font-size: 1rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+            text-transform: uppercase;
+        }
+
+        .btn-play {
+            background: var(--gold);
+            color: #000;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-play:hover {
+            background: #fff;
+        }
+
+        .tag-prefix {
+            background: #333;
+            color: var(--gold);
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        body {
+            background: #111;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        @media (max-width: 992px) {
+            .forum-container {
+                grid-template-columns: 1fr;
+            }
+
+            .forum-item {
+                grid-template-columns: 50px 1fr;
+                gap: 10px;
+            }
+
+            .forum-stats,
+            .forum-last-post {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="video-bg"></div>
+
+    <!-- NAVBAR (Simplified) -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <!-- Socials Left -->
+            <div class="navbar-socials">
+                <a href="https://discord.gg/orphionmc" target="_blank" rel="noopener" title="Discord"><i
+                        class="fa-brands fa-discord"></i></a>
+                <a href="https://www.youtube.com/channel/UCxnTxY8q4eg3RpkwvY2btPw" target="_blank" rel="noopener"
+                    title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@OrphionMC_network" target="_blank" rel="noopener" title="TikTok"><i
+                        class="fa-brands fa-tiktok"></i></a>
+            </div>
+
+            <div class="nav-center">
+                <ul class="nav-links">
+                    <li><a href="index.html"><i class="fa fa-house"></i> Inicio</a></li>
+                    <li><a href="forum.html" class="active"><i class="fa fa-comments"></i> Foro</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER -->
+    <header class="forum-hero gpu">
+        <h1 id="category-title">Cargando...</h1>
+        <p id="category-desc">...</p>
+        <br>
+        <a href="create_thread.html" class="btn-play" id="btn-create-thread"
+            style="display: none; width: fit-content; margin: 0 auto;"><i class="fa fa-pen"></i> NUEVO TEMA</a>
+    </header>
+
+    <div class="forum-container">
+        <div class="forum-categories" id="threads-container">
+            <p style="text-align: center; color: #888;">Cargando temas...</p>
+        </div>
+
+        <aside class="forum-sidebar">
+            <div class="sidebar-widget">
+                <div class="widget-title">Navegación</div>
+                <a href="forum.html"
+                    style="color: var(--gold); text-decoration: none; display:block; margin-bottom:10px;"><i
+                        class="fa fa-arrow-left"></i> Volver al Índice</a>
+            </div>
+
+            <div class="sidebar-widget" style="text-align: center;">
+                <div class="widget-title">Estadísticas</div>
+                <div style="font-size: 1.5rem; color: var(--gold); font-weight: bold;" id="stat-users">...</div>
+                <div style="font-size: 0.8rem; color: #888; margin-bottom: 15px;">Miembros Totales</div>
+                <div style="font-size: 1.5rem; color: var(--gold); font-weight: bold;" id="stat-msgs">...</div>
+                <div style="font-size: 0.8rem; color: #888;">Mensajes Totales</div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/stats.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const API_URL = 'http://localhost:3000/api';
+            const params = new URLSearchParams(window.location.search);
+            const catId = params.get('id');
+
+            if (!catId) return window.location.href = 'forum.html';
+
+            const container = document.getElementById('threads-container');
+            const titleEl = document.getElementById('category-title');
+            const descEl = document.getElementById('category-desc');
+            const createBtn = document.getElementById('btn-create-thread');
+
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                createBtn.style.display = 'block';
+                createBtn.href = `create_thread.html?catId=${catId}`;
+            }
+
+            try {
+                // Get Cat Info
+                const catRes = await fetch(`${API_URL}/categories`);
+                const categories = await catRes.json();
+                const currentCat = categories.find(c => c.id == catId);
+
+                if (currentCat) {
+                    titleEl.textContent = currentCat.name.toUpperCase();
+                    descEl.textContent = currentCat.description;
+                    document.title = `${currentCat.name} - OrphionMC`;
+
+                    const user = userStr ? JSON.parse(userStr) : null;
+                    if (currentCat.type === 'announcement') {
+                        if (!user || user.role !== 'admin') createBtn.style.display = 'none';
+                    }
+                }
+
+                // Get Threads
+                const res = await fetch(`${API_URL}/categories/${catId}/threads`);
+                const threads = await res.json();
+
+                if (threads.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; padding: 40px; color: #aaa;">No hay temas en esta categoría aún. ¡Sé el primero!</p>';
+                    return;
+                }
+
+                let html = '<div class="category-group"><div class="category-header"><h2>Temas</h2></div>';
+                threads.forEach(t => {
+                    html += `
+                        <div class="forum-item">
+                            <div class="forum-icon">
+                                ${t.is_pinned ? '<i class="fa fa-thumbtack" style="color:var(--gold)"></i>' : '<i class="fa fa-scroll"></i>'}
+                            </div>
+                            <div class="forum-info">
+                                <h3>
+                                    ${t.prefix ? `<span class="tag-prefix">${t.prefix}</span>` : ''} 
+                                    <a href="view_thread.html?id=${t.id}">${t.title}</a>
+                                </h3>
+                                <p>Por <span style="color: #fff">${t.author_name}</span> • ${new Date(t.created_at).toLocaleDateString()}</p>
+                            </div>
+                            <div class="forum-stats">
+                                <span>${t.reply_count || 0}</span> Respuestas<br>
+                                <span>${t.views || 0}</span> Vistas
+                            </div>
+                            <div class="forum-last-post">
+                                ${t.last_post_at ? 'Última actividad:<br>' + new Date(t.last_post_at).toLocaleDateString() : 'Sin respuestas'}
+                            </div>
+                        </div>`;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = '<p style="color:red">Error cargando temas.</p>';
+            }
+        });
+    </script>
+</body>
+
+</html>

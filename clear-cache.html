@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Service Worker - OrphionMC</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0d0d0d;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #d4af37;
+            color: #0d0d0d;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        button:hover {
+            background: #f0c14b;
+        }
+
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            min-height: 50px;
+        }
+
+        .success {
+            color: #8bc34a;
+        }
+
+        .error {
+            color: #f44336;
+        }
+
+        .info {
+            color: #2196F3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔧 Limpiar Caché de OrphionMC</h1>
+        <p>Esta página te ayudará a limpiar completamente el Service Worker antiguo y la caché del navegador.</p>
+
+        <button onclick="unregisterServiceWorker()">1. Desregistrar Service Worker</button>
+        <button onclick="clearCache()">2. Limpiar Caché</button>
+        <button onclick="clearAll()">3. Limpiar Todo</button>
+        <button onclick="goToSite()">4. Ir al Sitio</button>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const status = document.getElementById('status');
+
+        function log(message, type = 'info') {
+            const p = document.createElement('p');
+            p.className = type;
+            p.textContent = message;
+            status.appendChild(p);
+        }
+
+        async function unregisterServiceWorker() {
+            status.innerHTML = '';
+            log('🔍 Buscando Service Workers...', 'info');
+
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+
+                if (registrations.length === 0) {
+                    log('✅ No hay Service Workers registrados', 'success');
+                    return;
+                }
+
+                for (let registration of registrations) {
+                    await registration.unregister();
+                    log(`✅ Service Worker desregistrado: ${registration.scope}`, 'success');
+                }
+
+                log('✅ Todos los Service Workers han sido eliminados', 'success');
+            } else {
+                log('⚠️ Service Workers no soportados en este navegador', 'error');
+            }
+        }
+
+        async function clearCache() {
+            status.innerHTML = '';
+            log('🔍 Limpiando caché...', 'info');
+
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+
+                if (cacheNames.length === 0) {
+                    log('✅ No hay cachés para limpiar', 'success');
+                    return;
+                }
+
+                for (let cacheName of cacheNames) {
+                    await caches.delete(cacheName);
+                    log(`✅ Caché eliminada: ${cacheName}`, 'success');
+                }
+
+                log('✅ Todas las cachés han sido eliminadas', 'success');
+            } else {
+                log('⚠️ Cache API no soportada', 'error');
+            }
+        }
+
+        async function clearAll() {
+            status.innerHTML = '';
+            log('🧹 Limpiando todo...', 'info');
+            await unregisterServiceWorker();
+            await clearCache();
+            log('✅ Limpieza completa finalizada', 'success');
+            log('👉 Ahora haz clic en "Ir al Sitio" o presiona Ctrl+Shift+R', 'info');
+        }
+
+        function goToSite() {
+            window.location.href = '/index.html';
+        }
+
+        // Auto-ejecutar al cargar
+        window.addEventListener('load', () => {
+            log('👋 Página de limpieza cargada', 'info');
+            log('💡 Haz clic en "Limpiar Todo" para comenzar', 'info');
+        });
+    </script>
+</body>
+
+</html>

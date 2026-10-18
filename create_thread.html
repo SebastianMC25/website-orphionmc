@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Tema - OrphionMC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <style>
+        body {
+            background: #111;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 150px auto 50px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            border-radius: 12px;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            background: #222;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        textarea {
+            height: 200px;
+            resize: vertical;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--gold);
+            color: #000;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 1.1rem;
+        }
+
+        .btn-submit:hover {
+            background: #fff;
+        }
+
+        .error {
+            color: #ff5555;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="video-bg"></div>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <!-- Socials Left -->
+            <div class="navbar-socials">
+                <a href="https://discord.gg/orphionmc" target="_blank" rel="noopener" title="Discord"><i
+                        class="fa-brands fa-discord"></i></a>
+                <a href="https://www.youtube.com/channel/UCxnTxY8q4eg3RpkwvY2btPw" target="_blank" rel="noopener"
+                    title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@OrphionMC_network" target="_blank" rel="noopener" title="TikTok"><i
+                        class="fa-brands fa-tiktok"></i></a>
+            </div>
+
+            <div class="nav-center">
+                <ul class="nav-links">
+                    <li><a href="forum.html"><i class="fa fa-arrow-left"></i> Volver al Foro</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>CREAR NUEVO TEMA</h1>
+        <div class="error" id="error-box"></div>
+
+        <form id="create-thread-form">
+            <div class="form-group">
+                <label>Categoría</label>
+                <select id="category-select" disabled>
+                    <option>Cargando...</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="prefix-group" style="display:none;">
+                <label>Prefijo (Clase)</label>
+                <select id="prefix-select">
+                    <option value="">Ninguno</option>
+                    <option value="[Guerrero]">Guerrero</option>
+                    <option value="[Mago]">Mago</option>
+                    <option value="[Arquero]">Arquero</option>
+                    <option value="[Asesino]">Asesino</option>
+                    <option value="[Sacerdote]">Sacerdote</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Título</label>
+                <input type="text" id="title" placeholder="Escribe un título descriptivo..." required>
+            </div>
+
+            <div class="form-group">
+                <label>Contenido</label>
+                <textarea id="content" placeholder="Escribe tu mensaje aquí..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">PUBLICAR TEMA</button>
+        </form>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const API_URL = 'http://localhost:3000/api';
+            const params = new URLSearchParams(window.location.search);
+            const preCatId = params.get('catId');
+
+            const catSelect = document.getElementById('category-select');
+            const prefixGroup = document.getElementById('prefix-group');
+            const form = document.getElementById('create-thread-form');
+            const errorBox = document.getElementById('error-box');
+
+            // 1. Load Categories
+            try {
+                const res = await fetch(`${API_URL}/categories`);
+                const categories = await res.json();
+
+                catSelect.innerHTML = '';
+                categories.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.textContent = c.name;
+                    opt.dataset.type = c.type;
+                    if (c.id == preCatId) opt.selected = true;
+                    catSelect.appendChild(opt);
+                });
+                catSelect.disabled = false;
+
+                // Trigger change to check if prefix needed
+                checkPrefix();
+                catSelect.addEventListener('change', checkPrefix);
+
+            } catch (e) { console.error(e); }
+
+            function checkPrefix() {
+                const selected = catSelect.options[catSelect.selectedIndex];
+                if (selected && selected.dataset.type === 'guide') {
+                    prefixGroup.style.display = 'block';
+                } else {
+                    prefixGroup.style.display = 'none';
+                }
+            }
+
+            // 2. Submit Logic
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorBox.style.display = 'none';
+
+                const title = document.getElementById('title').value;
+                const content = document.getElementById('content').value;
+                const category_id = catSelect.value;
+                const prefix = document.getElementById('prefix-select').value;
+
+                try {
+                    const res = await fetch(`${API_URL}/threads`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ category_id, title, content, prefix }),
+                        credentials: 'include'
+                    });
+
+                    const data = await res.json();
+
+                    if (!res.ok) throw new Error(data.error || 'Error al crear tema');
+
+                    window.location.href = `view_thread.html?id=${data.id}`;
+
+                } catch (err) {
+                    errorBox.textContent = err.message;
+                    errorBox.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

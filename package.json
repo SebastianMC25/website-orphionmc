@@ -1,0 +1,17 @@
+{
+  "name": "orphionmc-web",
+  "version": "1.0.0",
+  "description": "OrphionMC - MMORPG Web Platform",
+  "main": "server/server.js",
+  "scripts": {
+    "build": "node build.js",
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "clean-css": "^5.3.3",
+    "fs-extra": "^11.3.3",
+    "glob": "^13.0.0",
+    "html-minifier": "^4.0.0",
+    "javascript-obfuscator": "^5.1.0"
+  }
+}

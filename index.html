@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrphionMC - El Mejor MMORPG de Minecraft | Mitología Griega</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d4af37">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="assets/images/icon-192.svg">
+    <meta name="description"
+        content="Únete a OrphionMC, el servidor MMORPG de Minecraft más ambicioso inspirado en la mitología griega. Explora el Olimpo, elige tu clase y forja tu propia leyenda.">
+    <meta name="keywords"
+        content="Minecraft, MMORPG, OrphionMC, Servidor Minecraft, RPG, Mitología Griega, Juegos Online, Minecraft Español">
+    <meta name="author" content="OrphionMC Team">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://OrphionMC.net/">
+    <meta property="og:title" content="OrphionMC - MMORPG Mitológico">
+    <meta property="og:description"
+        content="¿Estás listo para convertirte en un semidiós? Únete ahora al servidor MMORPG líder en español.">
+    <meta property="og:image" content="https://OrphionMC.net/assets/images/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://OrphionMC.net/">
+    <meta property="twitter:title" content="OrphionMC - MMORPG Mitológico">
+    <meta property="twitter:description"
+        content="¿Estás listo para convertirte en un semidiós? Únete ahora al servidor MMORPG líder en español.">
+    <meta property="twitter:image" content="https://OrphionMC.net/assets/images/og-image.jpg">
+
+    <!-- Performance Optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+
+    <!-- Fonts & Icons -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=MedievalSharp&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/custom.css">
+
+    <!-- Preload Hero Poster -->
+    <link rel="preload" as="image" href="assets/images/poster.png">
+</head>
+
+<body>
+
+    <!-- RPG SIDE NAV -->
+    <nav class="side-nav" aria-label="Navegación lateral">
+        <div class="side-nav-body">
+            <a href="#hero" class="side-nav-item active" aria-label="Inicio"><i class="fa fa-crown"></i></a>
+            <a href="#about" class="side-nav-item" aria-label="Sobre Nosotros"><i class="fa fa-shield-halved"></i></a>
+            <a href="#news" class="side-nav-item" aria-label="Noticias"><i class="fa fa-book-open"></i></a>
+            <a href="#updates" class="side-nav-item" aria-label="Actualizaciones"><i class="fa fa-scroll"></i></a>
+            <a href="#footer" class="side-nav-item" aria-label="Contacto"><i class="fa fa-cog"></i></a>
+        </div>
+    </nav>
+
+    <!-- MAIN NAVBAR -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <!-- Socials Left -->
+            <div class="navbar-socials">
+                <a href="https://discord.gg/orphionmc" target="_blank" rel="noopener" title="Discord"><i
+                        class="fa-brands fa-discord"></i></a>
+                <a href="https://www.youtube.com/channel/UCxnTxY8q4eg3RpkwvY2btPw" target="_blank" rel="noopener"
+                    title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@OrphionMC_network" target="_blank" rel="noopener" title="TikTok"><i
+                        class="fa-brands fa-tiktok"></i></a>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <div class="mobile-toggle" aria-label="Menú">
+                <i class="fa fa-bars"></i>
+            </div>
+
+            <!-- Links Center -->
+            <div class="nav-center">
+                <!-- Mobile Menu Header -->
+                <div class="mobile-menu-header">
+                    <span class="mobile-brand">OrphionMC</span>
+                </div>
+
+                <ul class="nav-links">
+                    <li><a href="#" class="active"><i class="fa fa-house"></i> Inicio</a></li>
+                    <li><a href="#news"><i class="fa fa-newspaper"></i> Noticias</a></li>
+                    <li><a href="#"><i class="fa fa-store"></i> Tienda</a></li>
+                    <li><a href="forum.html"><i class="fa fa-comments"></i> Foro</a></li>
+                    <li><a href="#"><i class="fa fa-map"></i> Mapa</a></li>
+                    <li class="mobile-cta"><a href="#hero" class="btn-play"><i class="fa fa-play"></i> JUGAR AHORA</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Mobile Menu Toggle (To be implemented fully if logic needed) -->
+            <!-- <div class="mobile-menu-btn"><i class="fa fa-bars"></i></div> -->
+            <!-- For now, CSS handles simple wrapping -->
+        </div>
+    </header>
+
+    <!-- HERO BACKGROUND -->
+    <div class="video-bg"></div>
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="hero">
+        <!-- TRI TRAVELERS BACKGROUND EFFECT (Effect #39) -->
+        <div class="tri-travelers-container" id="tri-travelers"></div>
+
+        <div class="hero-content">
+            <div class="hero-quotes">
+                <div class="quote">"Una odisea mitológica"</div>
+                <div class="quote">"Forja tu leyenda"</div>
+            </div>
+
+            <h1 class="hero-title">OrphionMC</h1>
+
+            <div class="hero-divider"></div>
+
+            <div class="hero-ip" title="Click para copiar">
+                <span class="ip-text">play.orphionmc.net</span> <i class="fa-regular fa-copy"></i>
+                <span class="divider" style="margin: 0 10px; color: #888;">|</span>
+                <span id="player-count" style="font-size: 1rem; color: var(--gold);">
+                    <span id="status-dot"
+                        style="display:inline-block; width:8px; height:8px; border-radius:50%; background:orange; margin-right:5px;"></span>
+                    CONECTANDO...
+                </span>
+            </div>
+
+            <div class="hero-btns">
+                <a href="#about" class="cta-button primary">COMIENZA TU AVENTURA</a>
+                <a href="forum.html" class="cta-button secondary">VISITAR EL FORO</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="section-bg-dark">
+        <div class="container about-container">
+            <div class="about-text">
+                <h2>SOBRE OrphionMC</h2>
+                <p>
+                    <span class="highlight">OrphionMC</span> es una experiencia RPG inmersiva inspirada en la <span
+                        class="highlight">mitología de la antigua Grecia</span>.
+                    Desarrollado para ofrecerte un mundo vasto y lleno de misterios, donde podrás explorar templos
+                    colosales,
+                    forjar alianzas con héroes legendarios y enfrentarte a criaturas surgidas del Inframundo.
+                </p>
+                <p>
+                    Elige tu camino entre nuestras clases legendarias: el sabio <span class="highlight">Mago</span>, el
+                    letal <span class="highlight">Asesino</span>,
+                    el firme <span class="highlight">Guerrero</span>, el certero <span class="highlight">Arquero</span>
+                    o el místico <span class="highlight">Shaman</span>.
+                    Cada uno con habilidades únicas diseñadas para dominar el campo de batalla.
+                </p>
+            </div>
+            <div class="video-preview">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="OrphionMC Trailer" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWS SECTION -->
+    <section id="news" class="section-bg-dark">
+        <div class="container news-container">
+            <div class="news-header">
+                <h2>NOTICIAS RECIENTES</h2>
+            </div>
+
+            <div class="news-grid">
+                <!-- News 1 -->
+                <article class="news-card">
+                    <div class="news-image" style="background-image: url('assets/images/news-launch.png');">
+                    </div>
+                    <div class="news-info">
+                        <span class="news-date">Lanzamiento Oficial</span>
+                        <h3>Lanzamiento de OrphionMC 1.0</h3>
+                        <p>Explora un mundo lleno de mitología y aventuras épicas. ¡La odisea del Olimpo ha comenzado!
+                        </p>
+                        <a href="forum.html" class="news-link">Leer más <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- News 2 -->
+                <article class="news-card">
+                    <div class="news-image" style="background-image: url('assets/images/news-labyrinth.png');">
+                    </div>
+                    <div class="news-info">
+                        <span class="news-date">Expansión</span>
+                        <h3>Nueva Mazmorra: El Laberinto</h3>
+                        <p>Adéntrate en las profundidades del Laberinto del Minotauro. Tesoros y peligros aguardan a los
+                            valientes.</p>
+                        <a href="forum.html" class="news-link">Leer más <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- News 3 -->
+                <article class="news-card">
+                    <div class="news-image" style="background-image: url('assets/images/news-skills.png');">
+                    </div>
+                    <div class="news-info">
+                        <span class="news-date">15 de Dic, 2023</span>
+                        <h3>Actualización de Habilidades</h3>
+                        <p>Hemos renovado por completo el sistema de habilidades. ¡Descubre nuevas formas de combatir!
+                        </p>
+                        <a href="#" class="news-link">Leer más <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- UPDATES SECTION -->
+    <section id="updates" class="section-bg-dark">
+        <div class="container updates-container">
+            <div class="updates-header">
+                <h2>ÚLTIMAS ACTUALIZACIONES</h2>
+            </div>
+
+            <div class="updates-list">
+                <div class="update-item">
+                    <span class="update-tag">NUEVO</span>
+                    <p>Añadido sistema de comercio entre jugadores.</p>
+                </div>
+                <div class="update-item">
+                    <span class="update-tag fix">FIX</span>
+                    <p>Corregido error visual en las armaduras de oro.</p>
+                </div>
+                <div class="update-item">
+                    <span class="update-tag balance">BALANCE</span>
+                    <p>Ajustado el daño de las dagas de asesino.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="footer" class="main-footer">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <h2>OrphionMC</h2>
+                <p>CRÓNICAS DEL CABALLERO</p>
+            </div>
+        </div>
+
+        <div class="footer-videos">
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Video 1" allowfullscreen
+                    loading="lazy"></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Video 2" allowfullscreen
+                    loading="lazy"></iframe>
+            </div>
+        </div>
+
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Navegación</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#news">Noticias</a></li>
+                    <li><a href="forum.html">Foro</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Creador</h4>
+                <p class="text-gold" style="font-weight: bold; font-size: 1.2rem;">SEBASTIAN</p>
+                <p>Diseño y Desarrollo</p>
+            </div>
+            <div class="footer-col">
+                <h4>Social</h4>
+                <div class="navbar-socials" style="justify-content: center;">
+                    <a href="https://discord.gg/orphionmc" target="_blank" rel="noopener" title="Discord"><i
+                            class="fa-brands fa-discord"></i></a>
+                    <a href="https://www.youtube.com/channel/UCxnTxY8q4eg3RpkwvY2btPw" target="_blank" rel="noopener"
+                        title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://www.tiktok.com/@OrphionMC_network" target="_blank" rel="noopener" title="TikTok"><i
+                            class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="copyright">&copy; 2024 OrphionMC RPG. Todos los derechos reservados.</div>
+            <div class="credits">Diseñado por <span class="text-gold">Sebastian</span></div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/auth.js" defer></script>
+    <script src="js/server-status.js"></script>
+</body>
+
+</html>
