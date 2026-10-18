@@ -253,7 +253,7 @@
     <script src="js/stats.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const API_URL = 'http://localhost:3000/api';
+            const API_URL = window.CONFIG.API_BASE;
             const params = new URLSearchParams(window.location.search);
             const catId = params.get('id');
 
@@ -267,7 +267,7 @@
             const userStr = localStorage.getItem('user');
             if (userStr) {
                 createBtn.style.display = 'block';
-                createBtn.href = `create_thread.html?catId=${catId}`;
+                createBtn.href = `create_thread.html?catId=${encodeURIComponent(catId)}`;
             }
 
             try {
@@ -288,7 +288,7 @@
                 }
 
                 // Get Threads
-                const res = await fetch(`${API_URL}/categories/${catId}/threads`);
+                const res = await fetch(`${API_URL}/categories/${encodeURIComponent(catId)}/threads`);
                 const threads = await res.json();
 
                 if (threads.length === 0) {
@@ -298,6 +298,11 @@
 
                 let html = '<div class="category-group"><div class="category-header"><h2>Temas</h2></div>';
                 threads.forEach(t => {
+                    const safeTitle = window.escapeHTML(t.title);
+                    const safePrefix = t.prefix ? window.escapeHTML(t.prefix) : '';
+                    const safeAuthor = window.escapeHTML(t.author_name);
+                    const safeId = encodeURIComponent(t.id);
+
                     html += `
                         <div class="forum-item">
                             <div class="forum-icon">
@@ -305,14 +310,14 @@
                             </div>
                             <div class="forum-info">
                                 <h3>
-                                    ${t.prefix ? `<span class="tag-prefix">${t.prefix}</span>` : ''} 
-                                    <a href="view_thread.html?id=${t.id}">${t.title}</a>
+                                    ${safePrefix ? `<span class="tag-prefix">${safePrefix}</span>` : ''} 
+                                    <a href="view_thread.html?id=${safeId}">${safeTitle}</a>
                                 </h3>
-                                <p>Por <span style="color: #fff">${t.author_name}</span> • ${new Date(t.created_at).toLocaleDateString()}</p>
+                                <p>Por <span style="color: #fff">${safeAuthor}</span> • ${new Date(t.created_at).toLocaleDateString()}</p>
                             </div>
                             <div class="forum-stats">
-                                <span>${t.reply_count || 0}</span> Respuestas<br>
-                                <span>${t.views || 0}</span> Vistas
+                                <span>${parseInt(t.reply_count, 10) || 0}</span> Respuestas<br>
+                                <span>${parseInt(t.views, 10) || 0}</span> Vistas
                             </div>
                             <div class="forum-last-post">
                                 ${t.last_post_at ? 'Última actividad:<br>' + new Date(t.last_post_at).toLocaleDateString() : 'Sin respuestas'}

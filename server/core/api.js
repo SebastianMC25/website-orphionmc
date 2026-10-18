@@ -21,20 +21,22 @@ const cache = {
 // CORS for API (Only allow subdomains)
 // In production, Cloudflare should also enforce Origin checks.
 const allowedOrigins = [
-    'https://OrphionMC.net',
-    'https://play.OrphionMC.net',
-    'https://foro.OrphionMC.net',
-    'http://play.OrphionMC.local:3000',
-    'http://foro.OrphionMC.local:3000',
+    'https://orphionmc.net',
+    'https://play.orphionmc.net',
+    'https://foro.orphionmc.net',
+    'https://api.orphionmc.net',
+    'http://orphionmc.local:3000',
+    'http://play.orphionmc.local:3000',
+    'http://foro.orphionmc.local:3000',
     'http://localhost:3000',
     'http://127.0.0.1:3000'
 ];
 
 api.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl) 
-        // ONLY if they are not from a browser. Browsers always send Origin on cross-site requests.
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin) return callback(null, true);
+        const lowerOrigin = origin.toLowerCase();
+        if (allowedOrigins.includes(lowerOrigin)) {
             callback(null, true);
         } else {
             console.warn(`[Security] Blocked CORS attempt from: ${origin}`);
@@ -43,7 +45,7 @@ api.use(cors({
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-API-Key']
 }));
 
 // General Rate Limiting (100 per 15 min)
@@ -139,7 +141,14 @@ api.get('/threads/recent', (req, res) => {
 
 api.post('/threads', requireAuth, postLimiter, (req, res) => {
     const { category_id, title, content, prefix } = req.body;
-    if (!category_id || !title || !content) return res.status(400).json({ error: "Faltan campos" });
+    if (!category_id || !title || !content) return res.status(400).json({ error: "Faltan campos requeridos" });
+
+    if (typeof title !== 'string' || title.trim().length < 3 || title.trim().length > 120) {
+        return res.status(400).json({ error: "El título debe tener entre 3 y 120 caracteres" });
+    }
+    if (typeof content !== 'string' || content.trim().length < 5 || content.trim().length > 10000) {
+        return res.status(400).json({ error: "El contenido debe tener entre 5 y 10,000 caracteres" });
+    }
 
     db.get('SELECT type FROM categories WHERE id = ?', [category_id], (err, row) => {
         if (err || !row) return res.status(404).json({ error: "Categoría no encontrada" });
@@ -147,7 +156,7 @@ api.post('/threads', requireAuth, postLimiter, (req, res) => {
             return res.status(403).json({ error: "Permiso denegado" });
         }
         db.run(`INSERT INTO threads (category_id, user_id, title, content, prefix) VALUES (?, ?, ?, ?, ?)`,
-            [category_id, req.session.userId, title, content, prefix || ''], function (err) {
+            [category_id, req.session.userId, title.trim(), content.trim(), (prefix && typeof prefix === 'string') ? prefix.substring(0, 20) : ''], function (err) {
                 if (err) return res.status(500).json({ error: err.message });
                 res.json({ id: this.lastID, message: "Tema creado" });
             });
@@ -175,7 +184,12 @@ api.get('/threads/:id', (req, res) => {
 });
 
 api.post('/threads/:id/posts', requireAuth, postLimiter, (req, res) => {
-    if (!req.body.content) return res.status(400).json({ error: "Mensaje vacío" });
+    if (!req.body.content || typeof req.body.content !== 'string' || req.body.content.trim().length === 0) {
+        return res.status(400).json({ error: "Mensaje vacío" });
+    }
+    if (req.body.content.trim().length > 5000) {
+        return res.status(400).json({ error: "El mensaje no puede exceder los 5,000 caracteres" });
+    }
 
     const userId = req.session.userId;
     const threadId = req.params.id;
@@ -191,7 +205,7 @@ api.post('/threads/:id/posts', requireAuth, postLimiter, (req, res) => {
 
         // 2. Insert Post
         db.run(`INSERT INTO posts (thread_id, user_id, content) VALUES (?, ?, ?)`,
-            [threadId, userId, req.body.content], function (err) {
+            [threadId, userId, req.body.content.trim()], function (err) {
                 if (err) return res.status(500).json({ error: err.message });
 
                 const postId = this.lastID;
@@ -268,10 +282,29 @@ api.get('/auth/init', (req, res) => {
 // Auth Routes
 api.post('/auth/register', authLimiter, antiBot.verify, async (req, res) => {
     const { username, password, email } = req.body;
+
+    // Strict input validation
+    if (!username || typeof username !== 'string' || !password || typeof password !== 'string') {
+        return res.status(400).json({ error: "Usuario y contraseña requeridos" });
+    }
+
+    const cleanUsername = username.trim();
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(cleanUsername)) {
+        return res.status(400).json({ error: "El usuario debe tener entre 3 y 20 caracteres alfanuméricos o guion bajo." });
+    }
+
+    if (password.length < 6 || password.length > 100) {
+        return res.status(400).json({ error: "La contraseña debe tener entre 6 y 100 caracteres." });
+    }
+
+    if (email && (typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))) {
+        return res.status(400).json({ error: "El correo electrónico no es válido." });
+    }
+
     try {
         const hash = await bcrypt.hash(password, 10);
         db.run(`INSERT INTO users (username, password_hash, email) VALUES (?, ?, ?)`,
-            [username, hash, email], function (err) {
+            [cleanUsername, hash, email ? email.trim() : null], function (err) {
                 if (err) {
                     if (err.message.includes('UNIQUE constraint failed: users.username')) {
                         return res.status(409).json({ error: "El nombre de usuario ya existe" });
@@ -285,11 +318,11 @@ api.post('/auth/register', authLimiter, antiBot.verify, async (req, res) => {
                 // Rotation on register too (best practice)
                 req.session.regenerate((err) => {
                     req.session.userId = this.lastID;
-                    req.session.username = username;
+                    req.session.username = cleanUsername;
                     req.session.role = 'user';
                     req.session.fingerprint = { ip: req.ip, ua: req.get('User-Agent') };
 
-                    res.json({ id: this.lastID, username, role: 'user' });
+                    res.json({ id: this.lastID, username: cleanUsername, role: 'user' });
                 });
             });
     } catch (e) { res.status(500).json({ error: "Error interno" }); }
@@ -347,8 +380,14 @@ api.post('/auth/login', authLimiter, antiBot.verify, (req, res) => {
 });
 
 api.post('/auth/logout', (req, res) => {
+    const domain = (process.env.DOMAIN && !process.env.DOMAIN.includes('local') && process.env.DOMAIN !== 'localhost')
+        ? `.${process.env.DOMAIN}`
+        : undefined;
+
     req.session.destroy((err) => {
-        res.clearCookie('connect.sid', { path: '/' });
+        const cookieOptions = { path: '/' };
+        if (domain) cookieOptions.domain = domain;
+        res.clearCookie('connect.sid', cookieOptions);
         res.json({ message: "Sesión cerrada correctamente" });
     });
 });
@@ -461,8 +500,17 @@ api.post('/minecraft/link/request', requireAuth, (req, res) => {
  * It verifies a link code given by a player in-game.
  */
 api.post('/minecraft/link/verify', (req, res) => {
+    const apiKey = req.header('x-api-key') || req.body.apiKey;
+    const configuredKey = process.env.MINECRAFT_API_KEY;
+
+    if (!configuredKey || apiKey !== configuredKey) {
+        return res.status(401).json({ error: "Acceso no autorizado: API Key inválida o no configurada." });
+    }
+
     const { code, uuid, ign } = req.body;
-    // In production, check for X-API-Key header here
+    if (!code || !uuid || !ign) {
+        return res.status(400).json({ error: "Faltan parámetros requeridos (code, uuid, ign)" });
+    }
 
     const now = new Date().toISOString();
     db.get("SELECT user_id FROM link_codes WHERE code = ? AND expires_at > ?", [code, now], (err, row) => {
@@ -509,28 +557,57 @@ api.get('/staff/users', requireAuth, requireStaff, (req, res) => {
     });
 });
 
-// Update User (Role/Ban)
+// Update User (Role/Ban) - Protected against Privilege Escalation
 api.put('/staff/users/:id', requireAuth, requireStaff, (req, res) => {
     const { role, is_banned } = req.body;
-    const targetId = req.params.id;
+    const targetId = parseInt(req.params.id, 10);
+    const callerId = req.session.userId;
+    const callerRole = req.session.role;
 
-    let updates = [];
-    let params = [];
+    if (isNaN(targetId)) return res.status(400).json({ error: "ID de usuario inválido" });
 
-    if (role) { updates.push("role = ?"); params.push(role); }
-    if (is_banned !== undefined) { updates.push("is_banned = ?"); params.push(is_banned ? 1 : 0); }
+    db.get("SELECT id, role, is_banned FROM users WHERE id = ?", [targetId], (err, targetUser) => {
+        if (err || !targetUser) return res.status(404).json({ error: "Usuario no encontrado" });
 
-    if (updates.length === 0) return res.status(400).json({ error: "Nada que actualizar" });
+        // Privilege Check: Only 'admin' can change roles or modify another admin/staff
+        if (role) {
+            if (callerRole !== 'admin') {
+                return res.status(403).json({ error: "Solo los administradores pueden cambiar rangos de usuarios." });
+            }
+            const allowedRoles = ['user', 'moderator', 'staff', 'admin'];
+            if (!allowedRoles.includes(role)) {
+                return res.status(400).json({ error: "Rango especificado no válido." });
+            }
+        }
 
-    params.push(targetId);
-    db.run(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`, params, function (err) {
-        if (err) return res.status(500).json({ error: err.message });
+        // Non-admins cannot ban or modify admins or moderators
+        if (callerRole !== 'admin' && ['admin', 'moderator', 'staff'].includes(targetUser.role)) {
+            return res.status(403).json({ error: "No tienes permisos para modificar a miembros del Staff." });
+        }
 
-        // Log the action
-        db.run("INSERT INTO audit_logs (staff_id, action, target_id, target_type, details) VALUES (?, ?, ?, ?, ?)",
-            [req.session.userId, 'update_user', targetId, 'user', JSON.stringify(req.body)]);
+        // Prevent self-demotion or banning oneself
+        if (callerId === targetId && is_banned) {
+            return res.status(400).json({ error: "No puedes banearte a ti mismo." });
+        }
 
-        res.json({ message: "Usuario actualizado" });
+        let updates = [];
+        let params = [];
+
+        if (role) { updates.push("role = ?"); params.push(role); }
+        if (is_banned !== undefined) { updates.push("is_banned = ?"); params.push(is_banned ? 1 : 0); }
+
+        if (updates.length === 0) return res.status(400).json({ error: "Nada que actualizar" });
+
+        params.push(targetId);
+        db.run(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`, params, function (err) {
+            if (err) return res.status(500).json({ error: err.message });
+
+            // Log the action
+            db.run("INSERT INTO audit_logs (staff_id, action, target_id, target_type, details) VALUES (?, ?, ?, ?, ?)",
+                [callerId, 'update_user', targetId, 'user', JSON.stringify(req.body)]);
+
+            res.json({ message: "Usuario actualizado" });
+        });
     });
 });
 

@@ -187,7 +187,7 @@
     <script src="js/stats.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const API_URL = 'http://localhost:3000/api';
+            const API_URL = window.CONFIG.API_BASE;
             const params = new URLSearchParams(window.location.search);
             const threadId = params.get('id');
             const container = document.getElementById('thread-view');
@@ -199,19 +199,25 @@
                 const data = await res.json();
 
                 if (!res.ok) {
-                    container.innerHTML = `<h1 style="text-align:center; margin-top:100px; color:red;">${data.error || 'Error'}</h1>`;
+                    container.innerHTML = `<h1 style="text-align:center; margin-top:100px; color:red;">${window.escapeHTML(data.error || 'Error')}</h1>`;
                     return;
                 }
 
                 const { thread, posts } = data;
                 document.title = `${thread.title} - OrphionMC`;
 
+                const safeTitle = window.escapeHTML(thread.title);
+                const safePrefix = thread.prefix ? window.escapeHTML(thread.prefix) : '';
+                const safeCatName = window.escapeHTML(thread.category_name);
+                const safeAuthor = window.escapeHTML(thread.author_name);
+                const safeRole = window.escapeHTML(thread.author_role);
+
                 let html = `
                     <header class="forum-hero gpu">
-                        <h1>${thread.prefix ? `<span class="tag-prefix" style="font-size: 0.5em; vertical-align:middle;">${thread.prefix}</span> ` : ''}${thread.title}</h1>
+                        <h1>${safePrefix ? `<span class="tag-prefix" style="font-size: 0.5em; vertical-align:middle;">${safePrefix}</span> ` : ''}${safeTitle}</h1>
                         <div class="meta">
-                            En <a href="view_category.html?id=${thread.category_id}" style="color:var(--gold);">${thread.category_name}</a> • 
-                            Iniciado por ${thread.author_name} • ${new Date(thread.created_at).toLocaleString()}
+                            En <a href="view_category.html?id=${encodeURIComponent(thread.category_id)}" style="color:var(--gold);">${safeCatName}</a> • 
+                            Iniciado por ${safeAuthor} • ${new Date(thread.created_at).toLocaleString()}
                         </div>
                     </header>
                     <div class="thread-container">
@@ -219,8 +225,8 @@
                         <div class="post">
                             <div class="post-user">
                                 <div class="post-avatar"></div>
-                                <span class="post-username">${thread.author_name}</span>
-                                <span class="post-role">${thread.author_role}</span>
+                                <span class="post-username">${safeAuthor}</span>
+                                <span class="post-role">${safeRole}</span>
                             </div>
                             <div class="post-content">
                                 ${formatContent(thread.content)}
@@ -235,12 +241,14 @@
                 `;
 
                 posts.forEach((p, index) => {
+                    const safePostUser = window.escapeHTML(p.username);
+                    const safePostRole = window.escapeHTML(p.role);
                     html += `
                         <div class="post">
                             <div class="post-user">
                                 <div class="post-avatar"></div>
-                                <span class="post-username">${p.username}</span>
-                                <span class="post-role">${p.role}</span>
+                                <span class="post-username">${safePostUser}</span>
+                                <span class="post-role">${safePostRole}</span>
                             </div>
                             <div class="post-content">
                                 ${formatContent(p.content)}

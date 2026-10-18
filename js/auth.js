@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
+            const email = document.getElementById('email')?.value || '';
             const password = document.getElementById('password').value;
             const confirm = document.getElementById('confirm-password').value;
 
@@ -88,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch(`${API_URL}/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password, website_field, antibot_token }),
+                    body: JSON.stringify({ username, email, password, website_field, antibot_token }),
                     credentials: 'include'
                 });
 
@@ -144,9 +145,10 @@ function updateNavbarAuth(user) {
             navUl.appendChild(liStaff);
         }
 
+        const safeUsername = window.escapeHTML ? window.escapeHTML(user.username) : user.username;
         const li = document.createElement('li');
         li.id = 'nav-user';
-        li.innerHTML = `<a href="#"><i class="fa fa-user"></i> ${user.username}${roleBadge}</a>`;
+        li.innerHTML = `<a href="profile.html"><i class="fa fa-user"></i> ${safeUsername}${roleBadge}</a>`;
 
         const liLogout = document.createElement('li');
         liLogout.id = 'nav-logout';

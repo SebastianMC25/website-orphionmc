@@ -149,7 +149,7 @@
     <script src="js/auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const API_URL = 'http://localhost:3000/api';
+            const API_URL = window.CONFIG.API_BASE;
             const params = new URLSearchParams(window.location.search);
             const preCatId = params.get('catId');
 

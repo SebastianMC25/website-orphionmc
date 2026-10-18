@@ -1,6 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const axios = require('axios');
+const bcrypt = require('bcrypt');
 const db = require('./db');
 
 const discordAuth = express.Router();
@@ -64,7 +65,7 @@ discordAuth.get('/auth/discord/callback', async (req, res) => {
         const { id: discord_id, username, avatar, email } = discordUser;
 
         // 4. Integrate with OrphionMC DB
-        db.get('SELECT * FROM users WHERE discord_id = ?', [discord_id], (err, user) => {
+        db.get('SELECT * FROM users WHERE discord_id = ?', [discord_id], async (err, user) => {
             if (err) return res.status(500).send('Error de base de datos');
 
             if (user) {
@@ -72,28 +73,33 @@ discordAuth.get('/auth/discord/callback', async (req, res) => {
                 db.run('UPDATE users SET discord_username = ?, discord_avatar = ?, last_login = CURRENT_TIMESTAMP, last_ip = ? WHERE id = ?',
                     [username, avatar, req.ip, user.id]);
 
-                req.session.userId = user.id;
-                req.session.username = user.username;
-                req.session.role = user.role;
-                req.session.fingerprint = { ip: req.ip, ua: req.get('User-Agent') };
-
-                return res.redirect('/');
+                req.session.regenerate((regErr) => {
+                    if (regErr) return res.status(500).send('Error al regenerar sesión');
+                    req.session.userId = user.id;
+                    req.session.username = user.username;
+                    req.session.role = user.role;
+                    req.session.fingerprint = { ip: req.ip, ua: req.get('User-Agent') };
+                    return res.redirect('/');
+                });
             } else {
                 // User doesn't exist, register automatically
-                // Best practice: Use Discord username, but check for collision
                 const defaultUsername = `${username}_${discord_id.substring(0, 4)}`;
-                const randomPassword = crypto.randomBytes(32).toString('hex'); // High entropy random pass
+                const randomPassword = crypto.randomBytes(32).toString('hex');
+                const passwordHash = await bcrypt.hash(randomPassword, 10);
 
                 db.run('INSERT INTO users (username, email, password_hash, discord_id, discord_username, discord_avatar, role) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    [defaultUsername, email, randomPassword, discord_id, username, avatar, 'user'], function (err) {
+                    [defaultUsername, email, passwordHash, discord_id, username, avatar, 'user'], function (err) {
                         if (err) return res.status(500).send('Error al crear usuario');
 
-                        req.session.userId = this.lastID;
-                        req.session.username = defaultUsername;
-                        req.session.role = 'user';
-                        req.session.fingerprint = { ip: req.ip, ua: req.get('User-Agent') };
-
-                        return res.redirect('/');
+                        const newUserId = this.lastID;
+                        req.session.regenerate((regErr) => {
+                            if (regErr) return res.status(500).send('Error al regenerar sesión');
+                            req.session.userId = newUserId;
+                            req.session.username = defaultUsername;
+                            req.session.role = 'user';
+                            req.session.fingerprint = { ip: req.ip, ua: req.get('User-Agent') };
+                            return res.redirect('/');
+                        });
                     });
             }
         });

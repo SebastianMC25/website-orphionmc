@@ -258,33 +258,50 @@
                 const data = await fetch(`${window.CONFIG.API_BASE}/users/${targetUserId}/${type}`).then(r => r.json());
 
                 if (type === 'posts') {
-                    list.innerHTML = data.map(t => `
-                        <div class="activity-card">
-                            <a href="thread.html?id=${t.id}" class="activity-title">${t.title}</a>
-                            <div class="activity-details">
-                                <span class="badge-status status-${t.status}">${t.status}</span>
-                                En <b>${t.category_name}</b> • ${new Date(t.created_at).toLocaleDateString()}
-                                ${t.staff_replies > 0 ? '<span class="staff-tag"><i class="fa fa-award"></i> Respondido por Staff</span>' : ''}
+                    list.innerHTML = data.map(t => {
+                        const safeTitle = window.escapeHTML(t.title);
+                        const safeCat = window.escapeHTML(t.category_name);
+                        const safeStatus = window.escapeHTML(t.status);
+                        const safeId = encodeURIComponent(t.id);
+                        return `
+                            <div class="activity-card">
+                                <a href="view_thread.html?id=${safeId}" class="activity-title">${safeTitle}</a>
+                                <div class="activity-details">
+                                    <span class="badge-status status-${safeStatus}">${safeStatus}</span>
+                                    En <b>${safeCat}</b> • ${new Date(t.created_at).toLocaleDateString()}
+                                    ${t.staff_replies > 0 ? '<span class="staff-tag"><i class="fa fa-award"></i> Respondido por Staff</span>' : ''}
+                                </div>
                             </div>
-                        </div>
-                    `).join('') || '<p>No ha creado temas aún.</p>';
+                        `;
+                    }).join('') || '<p>No ha creado temas aún.</p>';
                 } else if (type === 'replies') {
-                    list.innerHTML = data.map(p => `
-                        <div class="activity-card">
-                            <a href="thread.html?id=${p.thread_id}#post-${p.id}" class="activity-title">Re: ${p.thread_title}</a>
-                            <div class="activity-details">
-                                <p style="margin: 5px 0; color:#aaa; font-style:italic;">"${p.content.substring(0, 100)}..."</p>
-                                <span>${new Date(p.created_at).toLocaleString()}</span>
+                    list.innerHTML = data.map(p => {
+                        const safeThreadTitle = window.escapeHTML(p.thread_title);
+                        const safeSnippet = window.escapeHTML(p.content ? p.content.substring(0, 100) : '');
+                        const safeThreadId = encodeURIComponent(p.thread_id);
+                        const safePostId = encodeURIComponent(p.id);
+                        return `
+                            <div class="activity-card">
+                                <a href="view_thread.html?id=${safeThreadId}#post-${safePostId}" class="activity-title">Re: ${safeThreadTitle}</a>
+                                <div class="activity-details">
+                                    <p style="margin: 5px 0; color:#aaa; font-style:italic;">"${safeSnippet}..."</p>
+                                    <span>${new Date(p.created_at).toLocaleString()}</span>
+                                </div>
                             </div>
-                        </div>
-                    `).join('') || '<p>No ha realizado respuestas aún.</p>';
+                        `;
+                    }).join('') || '<p>No ha realizado respuestas aún.</p>';
                 } else if (type === 'notifications') {
                     const notifs = await fetch(`${window.CONFIG.API_BASE}/notifications`, { credentials: 'include' }).then(r => r.json());
                     list.innerHTML = notifs.map(n => {
-                        const d = JSON.parse(n.data);
+                        let msg = 'Nueva notificación';
+                        try {
+                            const d = JSON.parse(n.data);
+                            msg = d.message || msg;
+                        } catch(e) {}
+                        const safeMsg = window.escapeHTML(msg);
                         return `
                             <div class="activity-card ${n.is_read ? '' : 'unread'}" style="border-left: 4px solid ${n.is_read ? '#333' : 'var(--gold)'}">
-                                <div class="activity-title">${d.message || 'Nueva notificación'}</div>
+                                <div class="activity-title">${safeMsg}</div>
                                 <div class="activity-details">${new Date(n.created_at).toLocaleString()}</div>
                             </div>
                         `;

@@ -22,3 +22,14 @@ const CONFIG = {
 };
 
 window.CONFIG = CONFIG;
+
+// Universal HTML sanitizer to prevent XSS attacks across all views
+window.escapeHTML = function(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+};

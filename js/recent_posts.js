@@ -14,14 +14,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         listEl.innerHTML = threads.map(t => {
             const date = new Date(t.created_at);
             const timeAgo = formatTimeAgo(date);
-            const avatar = t.avatar_url || `https://mc-heads.net/avatar/${t.username}/40`;
+            const safeUsername = window.escapeHTML ? window.escapeHTML(t.username) : t.username;
+            const safeTitle = window.escapeHTML ? window.escapeHTML(t.title) : t.title;
+            const safeId = encodeURIComponent(t.id);
+            const avatar = t.avatar_url || `https://mc-heads.net/avatar/${encodeURIComponent(t.username)}/40`;
 
             return `
                 <div class="recent-thread">
                     <div class="avatar" style="background: #333 url('${avatar}') center/cover;"></div>
                     <div class="thread-info">
-                        <a href="view_thread.html?id=${t.id}">${t.title}</a>
-                        <div class="thread-meta">Por ${t.username} • ${timeAgo}</div>
+                        <a href="view_thread.html?id=${safeId}">${safeTitle}</a>
+                        <div class="thread-meta">Por ${safeUsername} • ${timeAgo}</div>
                     </div>
                 </div>
             `;

@@ -310,59 +310,84 @@
 
                 const logs = await apiCall('/staff/logs');
                 const list = document.getElementById('recent-activity-list');
-                list.innerHTML = logs.slice(0, 5).map(l => `
-                    <div class="log-entry">
-                        <span class="log-staff">${l.staff_name}</span> ejecutó <b>${l.action}</b> en ${l.target_type} #${l.target_id}
-                    </div>
-                `).join('') || 'Sin actividad reciente.';
+                list.innerHTML = logs.slice(0, 5).map(l => {
+                    const safeStaff = window.escapeHTML(l.staff_name);
+                    const safeAction = window.escapeHTML(l.action);
+                    const safeTarget = window.escapeHTML(l.target_type);
+                    const safeId = encodeURIComponent(l.target_id);
+                    return `
+                        <div class="log-entry">
+                            <span class="log-staff">${safeStaff}</span> ejecutó <b>${safeAction}</b> en ${safeTarget} #${safeId}
+                        </div>
+                    `;
+                }).join('') || 'Sin actividad reciente.';
             } catch (e) { alert(e.message); }
         }
 
         async function loadUsers() {
             const users = await apiCall('/staff/users');
             const tbody = document.getElementById('users-tbody');
-            tbody.innerHTML = users.map(u => `
-                <tr>
-                    <td>${u.username}</td>
-                    <td><span class="badge badge-${u.role}">${u.role.toUpperCase()}</span></td>
-                    <td>${u.minecraft_ign || '---'}</td>
-                    <td>${u.is_banned ? '<span class="badge badge-banned">SÍ</span>' : 'NO'}</td>
-                    <td>
-                        <button onclick="toggleBan(${u.id}, ${u.is_banned})" class="btn-sm ${u.is_banned ? '' : 'btn-ban'}">
-                            ${u.is_banned ? 'DESBAN' : 'BAN'}
-                        </button>
-                        <button onclick="changeRole(${u.id})" class="btn-sm">RANGO</button>
-                    </td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = users.map(u => {
+                const safeUsername = window.escapeHTML(u.username);
+                const safeRole = window.escapeHTML(u.role);
+                const safeIgn = u.minecraft_ign ? window.escapeHTML(u.minecraft_ign) : '---';
+                const safeId = parseInt(u.id, 10);
+                const isBanned = Boolean(u.is_banned);
+                return `
+                    <tr>
+                        <td>${safeUsername}</td>
+                        <td><span class="badge badge-${safeRole}">${safeRole.toUpperCase()}</span></td>
+                        <td>${safeIgn}</td>
+                        <td>${isBanned ? '<span class="badge badge-banned">SÍ</span>' : 'NO'}</td>
+                        <td>
+                            <button onclick="toggleBan(${safeId}, ${isBanned})" class="btn-sm ${isBanned ? '' : 'btn-ban'}">
+                                ${isBanned ? 'DESBAN' : 'BAN'}
+                            </button>
+                            <button onclick="changeRole(${safeId})" class="btn-sm">RANGO</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         async function loadModeration() {
             const threads = await apiCall('/staff/moderation/threads');
             const tbody = document.getElementById('mod-tbody');
-            tbody.innerHTML = threads.map(t => `
-                <tr>
-                    <td>${t.title}</td>
-                    <td><span class="badge">${t.status.toUpperCase()}</span></td>
-                    <td>${new Date(t.created_at).toLocaleDateString()}</td>
-                    <td>
-                        <button onclick="deleteThread(${t.id})" class="btn-sm btn-ban">ELIMINAR</button>
-                    </td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = threads.map(t => {
+                const safeTitle = window.escapeHTML(t.title);
+                const safeStatus = window.escapeHTML(t.status);
+                const safeId = parseInt(t.id, 10);
+                return `
+                    <tr>
+                        <td>${safeTitle}</td>
+                        <td><span class="badge">${safeStatus.toUpperCase()}</span></td>
+                        <td>${new Date(t.created_at).toLocaleDateString()}</td>
+                        <td>
+                            <button onclick="deleteThread(${safeId})" class="btn-sm btn-ban">ELIMINAR</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         async function loadLogs() {
             const logs = await apiCall('/staff/logs');
             const container = document.getElementById('logs-container');
-            container.innerHTML = logs.map(l => `
-                <div class="log-entry">
-                    <span class="log-date">${new Date(l.created_at).toLocaleString()}</span>
-                    <span class="log-staff">${l.staff_name}</span> -> 
-                    <b>${l.action}</b> (${l.target_type} #${l.target_id})
-                    <pre style="font-size:0.7rem; color:#888;">${l.details}</pre>
-                </div>
-            `).join('');
+            container.innerHTML = logs.map(l => {
+                const safeStaff = window.escapeHTML(l.staff_name);
+                const safeAction = window.escapeHTML(l.action);
+                const safeTarget = window.escapeHTML(l.target_type);
+                const safeId = encodeURIComponent(l.target_id);
+                const safeDetails = window.escapeHTML(l.details);
+                return `
+                    <div class="log-entry">
+                        <span class="log-date">${new Date(l.created_at).toLocaleString()}</span>
+                        <span class="log-staff">${safeStaff}</span> -> 
+                        <b>${safeAction}</b> (${safeTarget} #${safeId})
+                        <pre style="font-size:0.7rem; color:#888;">${safeDetails}</pre>
+                    </div>
+                `;
+            }).join('');
         }
 
         async function toggleBan(id, isCurrentlyBanned) {

@@ -10,15 +10,30 @@ const apiRouter = require('./core/api');
 const forumRouter = require('./core/forum');
 const mainRouter = require('./core/main');
 
+const crypto = require('crypto');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // trust proxy is REQUIRED when behind Cloudflare/Nginx to get real IP for rate limiting
 app.set('trust proxy', 1);
 
-// Helmet adds essential security headers - CSP DISABLED FOR DEBUGGING
+// Helmet adds essential security headers with Content Security Policy
 app.use(helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+            imgSrc: ["'self'", "data:", "https://mc-heads.net", "https://cdn.discordapp.com"],
+            connectSrc: ["'self'", "https://api.mcsrvstat.us", "https://*.orphionmc.net", "http://*.orphionmc.local:3000", "http://localhost:3000", "http://127.0.0.1:3000"],
+            mediaSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            baseUri: ["'self'"],
+            formAction: ["'self'"]
+        }
+    },
     crossOriginEmbedderPolicy: false,
     hsts: {
         maxAge: 31536000,
@@ -34,8 +49,6 @@ app.use((req, res, next) => {
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), interest-cohort=()');
-    // Prevent MIME sniffing
-    res.setHeader('X-Content-Type-Options', 'nosniff');
     next();
 });
 
@@ -58,9 +71,15 @@ const DOMAIN = process.env.DOMAIN || 'orphionmc.net';
 
 // Session Configuration (Shared across subdomains)
 const isProduction = process.env.NODE_ENV === 'production' || process.env.COOKIE_SECURE === 'true';
+const sessionSecret = process.env.SESSION_SECRET || (
+    isProduction 
+        ? (() => { console.warn('[Security Warning] Generando SESSION_SECRET aleatorio en memoria.'); return crypto.randomBytes(32).toString('hex'); })()
+        : 'OrphionMC_secret_key_subdomains'
+);
+
 const sessionConfig = {
     store: new SQLiteStore({ db: 'sessions.db', dir: './' }),
-    secret: process.env.SESSION_SECRET || 'OrphionMC_secret_key_subdomains',
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     cookie: {
