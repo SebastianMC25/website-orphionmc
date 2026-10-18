@@ -78,7 +78,7 @@ const sessionSecret = process.env.SESSION_SECRET || (
 );
 
 const sessionConfig = {
-    store: new SQLiteStore({ db: 'sessions.db', dir: './' }),
+    store: new SQLiteStore({ db: 'sessions.db', dir: path.resolve(__dirname) }),
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
@@ -176,7 +176,7 @@ app.use((req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`-------------------------------------------`);
     console.log(`OrphionMC Multitask Server Running`);
     console.log(`Port: ${PORT}`);
@@ -185,4 +185,27 @@ app.listen(PORT, () => {
     console.log(`API Engine: http://api.${DOMAIN}:${PORT}`);
     console.log(`-------------------------------------------`);
 });
+
+// Graceful Shutdown Handler (Production/PM2/Docker)
+function gracefulShutdown(signal) {
+    console.log(`\n[Server] Señal ${signal} recibida. Cerrando conexiones limpiamente...`);
+    server.close(() => {
+        console.log('[Server] Servidor HTTP detenido.');
+        const db = require('./core/db');
+        db.close((err) => {
+            if (err) console.error('[Database] Error cerrando conexión SQLite:', err.message);
+            else console.log('[Database] Base de datos cerrada correctamente.');
+            process.exit(0);
+        });
+    });
+
+    // Forzar cierre si no termina en 5 segundos
+    setTimeout(() => {
+        console.error('[Server] Cierre forzado tras tiempo de espera agotado.');
+        process.exit(1);
+    }, 5000).unref();
+}
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 

@@ -64,7 +64,7 @@ async function build() {
             console.log(`  📄 Minifying HTML: ${file}`);
             const html = await fs.readFile(file, 'utf8');
             const minified = minify(html, {
-                removeAttributeQuotes: true,
+                removeAttributeQuotes: false,
                 collapseWhitespace: true,
                 removeComments: true,
                 minifyJS: true,
