@@ -74,6 +74,14 @@ const postLimiter = rateLimit({
 
 // ================= API ROUTES =================
 
+api.get('/', (req, res) => {
+    res.json({
+        status: "online",
+        service: "OrphionMC API Engine",
+        version: "1.0.0"
+    });
+});
+
 api.get('/categories', (req, res) => {
     // Check Cache
     if (cache.categories.data && cache.categories.expires > Date.now()) {

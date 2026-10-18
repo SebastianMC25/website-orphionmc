@@ -9,6 +9,9 @@ CREATE TABLE IF NOT EXISTS users (
     two_factor_enabled INTEGER DEFAULT 0,
     minecraft_ign TEXT, -- For detailed avatar/skin
     minecraft_uuid TEXT UNIQUE, -- Official MC UUID
+    discord_id TEXT UNIQUE, -- Official Discord User ID
+    discord_username TEXT,
+    discord_avatar TEXT,
     avatar_url TEXT,
     last_login DATETIME,
     last_ip TEXT,

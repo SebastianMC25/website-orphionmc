@@ -30,6 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
         initAntiBot();
     }
 
+    // Set dynamic Discord OAuth link based on active domain/API
+    const discordBtn = document.getElementById('btn-discord-login');
+    if (discordBtn) {
+        discordBtn.href = `${API_URL}/auth/discord`;
+    }
+
     function showError(msg) {
         if (errorBox) {
             errorBox.textContent = msg;
