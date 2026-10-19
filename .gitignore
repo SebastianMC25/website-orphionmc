@@ -40,3 +40,4 @@ Desktop.ini
 # Build and distribution files
 dist/
 *.zip
+*.bat
