@@ -39,8 +39,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <!-- Favicon & Touch Icons -->
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="assets/images/logo.png">
 
     <!-- Fonts & Icons -->
     <link
@@ -73,7 +75,7 @@
         <div class="navbar-container">
             <!-- Socials Left -->
             <div class="navbar-socials">
-                <a href="https://discord.gg/orphionmc" target="_blank" rel="noopener" title="Discord"><i
+                <a href="https://discord.orphionmc.net" target="_blank" rel="noopener" title="Discord"><i
                         class="fa-brands fa-discord"></i></a>
                 <a href="https://www.youtube.com/channel/UCxnTxY8q4eg3RpkwvY2btPw" target="_blank" rel="noopener"
                     title="YouTube"><i class="fa-brands fa-youtube"></i></a>
@@ -95,10 +97,10 @@
 
                 <ul class="nav-links">
                     <li><a href="#" class="active"><i class="fa fa-house"></i> Inicio</a></li>
+                    <li><a href="#about"><i class="fa fa-shield-halved"></i> Nosotros</a></li>
                     <li><a href="#news"><i class="fa fa-newspaper"></i> Noticias</a></li>
-                    <li><a href="#"><i class="fa fa-store"></i> Tienda</a></li>
-                    <li><a href="forum.html"><i class="fa fa-comments"></i> Foro</a></li>
-                    <li><a href="#"><i class="fa fa-map"></i> Mapa</a></li>
+                    <li><a href="#updates"><i class="fa fa-scroll"></i> Actualizaciones</a></li>
+                    <li><a href="https://discord.orphionmc.net" target="_blank" rel="noopener"><i class="fa fa-store"></i> Tienda</a></li>
                     <li class="mobile-cta"><a href="#hero" class="btn-play"><i class="fa fa-play"></i> JUGAR AHORA</a>
                     </li>
                 </ul>
@@ -131,16 +133,16 @@
             <div class="hero-ip" title="Click para copiar">
                 <span class="ip-text">play.orphionmc.net</span> <i class="fa-regular fa-copy"></i>
                 <span class="divider" style="margin: 0 10px; color: #888;">|</span>
-                <span id="player-count" style="font-size: 1rem; color: var(--gold);">
+                <span class="status-wrapper" style="font-size: 1rem; display: inline-flex; align-items: center;">
                     <span id="status-dot"
-                        style="display:inline-block; width:8px; height:8px; border-radius:50%; background:orange; margin-right:5px;"></span>
-                    CONECTANDO...
+                        style="display:inline-block; width:8px; height:8px; border-radius:50%; background:orange; margin-right:6px; transition: all 0.3s ease;"></span>
+                    <span id="player-count" style="color: var(--gold);">CONECTANDO...</span>
                 </span>
             </div>
 
             <div class="hero-btns">
                 <a href="#about" class="cta-button primary">COMIENZA TU AVENTURA</a>
-                <a href="forum.html" class="cta-button secondary">VISITAR EL FORO</a>
+                <a href="https://discord.orphionmc.net" target="_blank" rel="noopener" class="cta-button secondary"><i class="fa-brands fa-discord"></i> UNIRSE A DISCORD</a>
             </div>
         </div>
     </section>
@@ -160,9 +162,9 @@
                 <p>
                     Elige tu camino entre nuestras clases legendarias: el sabio <span class="highlight">Mago</span>, el
                     letal <span class="highlight">Asesino</span>,
-                    el firme <span class="highlight">Guerrero</span>, el certero <span class="highlight">Arquero</span>
-                    o el místico <span class="highlight">Shaman</span>.
-                    Cada uno con habilidades únicas diseñadas para dominar el campo de batalla.
+                    el firme <span class="highlight">Guerrero</span>, el certero <span class="highlight">Arquero</span>,
+                    el místico <span class="highlight">Shaman</span> o la prestigiosa clase de <span class="vip-badge">Bardo</span> (exclusiva para rangos VIP).
+                    Cada uno con habilidades únicas diseñadas para dominar el campo de batalla y entonar cánticos legendarios.
                 </p>
             </div>
             <div class="video-preview">
@@ -192,7 +194,7 @@
                         <h3>Lanzamiento de OrphionMC 1.0</h3>
                         <p>Explora un mundo lleno de mitología y aventuras épicas. ¡La odisea del Olimpo ha comenzado!
                         </p>
-                        <a href="forum.html" class="news-link">Leer más <i class="fa fa-arrow-right"></i></a>
+                        <a href="https://discord.orphionmc.net" target="_blank" rel="noopener" class="news-link">Más información <i class="fa fa-arrow-right"></i></a>
                     </div>
                 </article>
 
@@ -205,7 +207,7 @@
                         <h3>Nueva Mazmorra: El Laberinto</h3>
                         <p>Adéntrate en las profundidades del Laberinto del Minotauro. Tesoros y peligros aguardan a los
                             valientes.</p>
-                        <a href="forum.html" class="news-link">Leer más <i class="fa fa-arrow-right"></i></a>
+                        <a href="https://discord.orphionmc.net" target="_blank" rel="noopener" class="news-link">Más información <i class="fa fa-arrow-right"></i></a>
                     </div>
                 </article>
 
@@ -218,7 +220,7 @@
                         <h3>Actualización de Habilidades</h3>
                         <p>Hemos renovado por completo el sistema de habilidades. ¡Descubre nuevas formas de combatir!
                         </p>
-                        <a href="#" class="news-link">Leer más <i class="fa fa-arrow-right"></i></a>
+                        <a href="https://discord.orphionmc.net" target="_blank" rel="noopener" class="news-link">Más información <i class="fa fa-arrow-right"></i></a>
                     </div>
                 </article>
             </div>
@@ -274,8 +276,10 @@
                 <h4>Navegación</h4>
                 <ul class="footer-links">
                     <li><a href="#">Inicio</a></li>
+                    <li><a href="#about">Sobre Nosotros</a></li>
                     <li><a href="#news">Noticias</a></li>
-                    <li><a href="forum.html">Foro</a></li>
+                    <li><a href="#updates">Actualizaciones</a></li>
+                    <li><a href="legal/terms.html">Términos de Servicio</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -306,8 +310,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/config.js"></script>
-    <script src="js/auth.js" defer></script>
     <script src="js/server-status.js"></script>
 </body>
 

@@ -1,12 +1,18 @@
 {
-  "name": "OrphionMC RPG",
+  "name": "OrphionMC - MMORPG",
   "short_name": "OrphionMC",
   "description": "El Mejor MMORPG de Minecraft inspirado en la mitología griega.",
-  "start_url": "/forum.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#0d0d0d",
   "theme_color": "#d4af37",
   "icons": [
+    {
+      "src": "/assets/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "/assets/images/icon-192.svg",
       "sizes": "192x192",

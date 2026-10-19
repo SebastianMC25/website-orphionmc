@@ -99,27 +99,38 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     initTriTravelers();
 
-    // ================= HELPER FUNCTIONS =================
-    const copyToClipboard = (text) => {
-        navigator.clipboard.writeText(text).then(() => {
-            const ipElement = document.querySelector('.hero-ip');
-            const originalText = ipElement.innerHTML;
+    // ================= IP CLIPBOARD COPY =================
+    const heroIpBtn = document.querySelector('.hero-ip');
+    if (heroIpBtn) {
+        heroIpBtn.addEventListener('click', () => {
+            const ip = 'play.orphionmc.net';
+            const ipText = heroIpBtn.querySelector('.ip-text');
+            const icon = heroIpBtn.querySelector('.fa-copy') || heroIpBtn.querySelector('.fa-check');
 
-            // Visual feedback
-            ipElement.style.color = '#8bc34a';
-            ipElement.innerHTML = '¡IP COPIADA! <i class="fa-solid fa-check"></i>';
+            navigator.clipboard.writeText(ip).then(() => {
+                if (ipText) {
+                    const originalText = ipText.textContent;
+                    ipText.textContent = '¡IP COPIADA!';
+                    ipText.style.color = '#8bc34a';
+                    if (icon) {
+                        icon.className = 'fa-solid fa-check';
+                        icon.style.color = '#8bc34a';
+                    }
 
-            setTimeout(() => {
-                ipElement.style.color = '';
-                ipElement.innerHTML = originalText;
-            }, 2000);
-        }).catch(err => {
-            console.error('Error al copiar: ', err);
+                    setTimeout(() => {
+                        ipText.textContent = originalText;
+                        ipText.style.color = '';
+                        if (icon) {
+                            icon.className = 'fa-regular fa-copy';
+                            icon.style.color = '';
+                        }
+                    }, 2000);
+                }
+            }).catch(err => {
+                console.error('Error al copiar IP:', err);
+            });
         });
-    };
-
-    // Expose to window for inline onclicks (though we should ideally remove them)
-    window.copyIp = () => copyToClipboard('play.orphionmc.net');
+    }
 
 
     // ================= ANIMATIONS =================
@@ -241,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // PWA Service Worker Registration
 if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('sw.js')
             .then(reg => {
                 console.log('[PWA] Service Worker activo:', reg.scope);
             })

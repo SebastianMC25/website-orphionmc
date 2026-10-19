@@ -1,9 +1,16 @@
-const CACHE_NAME = 'orphionmc-v2';
+const CACHE_NAME = 'orphionmc-static-v3';
 const STATIC_ASSETS = [
-    '/css/custom.css',
-    '/js/config.js',
-    '/js/main.js',
-    '/js/auth.js',
+    './',
+    'index.html',
+    'css/custom.css',
+    'js/main.js',
+    'js/server-status.js',
+    'manifest.json',
+    'favicon.ico',
+    'assets/images/logo.png',
+    'assets/images/poster.png',
+    'legal/terms.html',
+    '404.html',
     'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=MedievalSharp&family=Inter:wght@400;600&display=swap'
 ];
 
@@ -27,19 +34,12 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// 3. Fetch Strategy: Safe for dynamic APIs and auth
+// 3. Fetch Strategy: Static Cache First with network revalidation
 self.addEventListener('fetch', (event) => {
     const { request } = event;
 
     // Solo interceptar peticiones GET
     if (request.method !== 'GET') return;
-
-    const url = new URL(request.url);
-
-    // NUNCA cachear endpoints de API o auth para evitar desincronización de sesiones
-    if (url.pathname.startsWith('/api') || url.hostname.startsWith('api.') || url.pathname.includes('/auth/')) {
-        return;
-    }
 
     // Para páginas HTML: Network-first con fallback a caché
     if (request.headers.get('accept')?.includes('text/html')) {
@@ -57,11 +57,10 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Para recursos estáticos (CSS, JS, Fonts, Images): Cache-first con actualización en segundo plano
+    // Para recursos estáticos: Cache-first con actualización en segundo plano
     event.respondWith(
         caches.match(request).then((cachedResponse) => {
             if (cachedResponse) {
-                // Revalidar en segundo plano
                 fetch(request).then((networkResponse) => {
                     if (networkResponse && networkResponse.status === 200) {
                         caches.open(CACHE_NAME).then((cache) => cache.put(request, networkResponse));

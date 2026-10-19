@@ -1010,3 +1010,17 @@ section {
         padding-bottom: env(safe-area-inset-bottom);
     }
 }
+
+/* ================= VIP BARDO STYLES ================= */
+
+.vip-badge {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(245, 197, 66, 0.15));
+    border: 1px solid rgba(245, 197, 66, 0.5);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    color: #f5c542 !important;
+    text-shadow: 0 0 8px rgba(245, 197, 66, 0.4);
+    display: inline-block;
+}
+
