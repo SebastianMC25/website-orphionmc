@@ -8,6 +8,7 @@ const STATIC_ASSETS = [
     'wiki/colosos.html',
     'wiki/sepulcrales.html',
     'wiki/eventos.html',
+    'wiki/prehistorico.html',
     'wiki/zeus.html',
     'wiki/poseidon.html',
     'wiki/pluto.html',

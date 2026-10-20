@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estegosaurio | Render 3D - OrphionMC Wiki</title>
+    <meta name="description"
+        content="Visor y render 3D oficial de Estegosaurio en OrphionMC RPG. Explora el modelo en 360 grados, sus estadísticas de combate, fases y datos de raid.">
+
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="shortcut icon" href="../favicon.ico">
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/custom.css?v=25">
+    <link rel="stylesheet" href="../css/wiki.css?v=25">
+
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+
+<body class="wiki-body" data-model="dino_stegosaurus" data-model-name="ESTEGOSAURIO">
+
+    <!-- TOP NAVIGATION -->
+    <nav class="wiki-nav">
+        <a href="../index.html" class="wiki-brand">
+            <img src="../assets/images/logo.png" alt="OrphionMC Logo">
+            <span>OrphionMC</span>
+        </a>
+
+        <div class="wiki-nav-links">
+            <a href="../index.html" class="wiki-nav-link"><i class="fa fa-house"></i> Inicio</a>
+            <a href="index.html" class="wiki-nav-link"><i class="fa fa-book-skull"></i> Categorías</a>
+            <a href="prehistorico.html" class="wiki-nav-link active"><i class="fa fa-egg"></i> Reino Prehistórico</a>
+            <a href="prehistorico.html" class="wiki-back-btn"><i class="fa fa-arrow-left"></i> Volver a Dinosaurios</a>
+        </div>
+    </nav>
+
+    <!-- BREADCRUMBS -->
+    <div class="wiki-breadcrumb">
+        <a href="../index.html">Inicio</a> &gt; <a href="index.html">Bestiario</a> &gt; <a href="prehistorico.html">Reino Prehistórico</a> &gt; <strong class="text-gold">Estegosaurio</strong>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="wiki-container">
+
+        <!-- HEADER DEL MOB -->
+        <header class="mob-header">
+            <span class="mob-category-tag" style="background: rgba(234, 179, 8, 0.15); border-color: #16a34a; color: #16a34a;">
+                <i class="fa fa-shield-halved"></i> HERBÍVORO DEFENSIVO • EVENTO METEORITO
+            </span>
+            <h1 class="mob-title">ESTEGOSAURIO</h1>
+        </header>
+
+        <!-- CONTENIDO PRINCIPAL: VISOR 3D + FICHA TÉCNICA -->
+        <div class="wiki-grid">
+
+            <!-- COLUMNA IZQUIERDA: VISOR 3D TIPO MYTHICCRAFT -->
+            <div class="model-viewport-card">
+                <div class="viewport-header">
+                    <span class="viewport-title"><i class="fa fa-cube text-gold"></i> Render 3D Interactivo</span>
+                    <div class="viewport-actions">
+                        <button id="auto-rotate-btn" class="viewport-btn" title="Alternar auto-rotación">
+                            <i class="fa fa-arrows-rotate"></i>
+                        </button>
+                        <button id="reset-cam-btn" class="viewport-btn" title="Centrar cámara">
+                            <i class="fa fa-crosshairs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="canvas-wrapper" class="canvas-wrapper">
+                    <!-- Overlay de carga inicial -->
+                    <div id="model-loading" class="model-loading-overlay">
+                        <div class="loader-spinner"></div>
+                        <span id="loading-text" class="loading-label">CARGANDO RENDER 3D DE ESTEGOSAURIO...</span>
+                    </div>
+
+                    <!-- Canvas Three.js -->
+                    <canvas id="model-canvas"></canvas>
+
+                    <!-- Hint de controles táctiles / ratón -->
+                    <div class="viewport-hint">
+                        <i class="fa fa-hand-pointer"></i> Arrastra para girar 360&deg; | Rueda para zoom
+                    </div>
+                </div>
+
+                <div class="viewport-footer">
+                    <span class="badge-status active"><i class="fa fa-check-circle"></i> Render 3D Activo</span>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: FICHA DE COMBATE Y HABILIDADES -->
+            <div class="wiki-info-card">
+                <h3 class="card-section-title"><i class="fa fa-heart-pulse text-gold"></i> Ficha Técnica de Combate</h3>
+
+                <!-- HEALTH BAR -->
+                <div class="boss-health-card">
+                    <div class="boss-health-title">
+                        <span><i class="fa fa-shield-halved" style="color: #16a34a;"></i> ESTEGOSAURIO - GUARDIÁN DE PLACAS DORSALES <i class="fa fa-shield-halved" style="color: #16a34a;"></i></span>
+                    </div>
+                    <div class="boss-hp-bar-outer">
+                        <div class="boss-hp-bar-inner" style="width: 100%; background: linear-gradient(90deg, #16a34a, #f59e0b);"></div>
+                    </div>
+                    <div class="boss-health-stats">
+                        <span>SALUD: <strong>200 / 200 HP</strong></span>
+                        <span>ORIGEN: <strong>EVENTO METEORITO</strong></span>
+                    </div>
+                </div>
+
+                <!-- INMUNIDADES Y RASGOS -->
+                <h3 class="card-section-title" style="margin-top: 25px;"><i class="fa fa-shield-halved text-gold"></i> Inmunidades y Rasgos Activos</h3>
+                <div class="traits-container">
+                    <span class="trait-pill"><i class="fa fa-shield"></i> Thagomizer Caudal</span>
+                    <span class="trait-pill"><i class="fa fa-bolt"></i> Placas Deflectoras</span>
+                    <span class="trait-pill"><i class="fa fa-dna"></i> Barrido de 360 Grados</span>
+                </div>
+
+                <!-- FASES DEL ENCUENTRO -->
+                <h3 class="card-section-title" style="margin-top: 25px;"><i class="fa fa-hourglass-half text-gold"></i> Fases del Encuentro</h3>
+                <div class="phases-timeline">
+                    <div class="phase-step">
+                        <i class="fa fa-circle-dot phase-dot" style="color: #16a34a;"></i>
+                        <p>Fase 1 (100% - 65% HP): Posición defensiva con barridos de cola y reflejo de impactos a distancia mediante sus placas óseas.</p>
+                    </div>
+                    <div class="phase-step">
+                        <i class="fa fa-circle-dot phase-dot" style="color: #16a34a;"></i>
+                        <p>Fase 2 (65% - 25% HP): Azote del Thagomizer (4 púas caudales afiladas) que causa sangrado severo y fracturas.</p>
+                    </div>
+                    <div class="phase-step">
+                        <i class="fa fa-circle-dot phase-dot" style="color: #16a34a;"></i>
+                        <p>Fase 3 - Giro Desesperado (< 25% HP): Giro giratorio continuo sobre su eje repeliendo todo combate cuerpo a cuerpo.</p>
+                    </div>
+                </div>
+
+                <!-- CONSEJOS DE RAID -->
+                <div class="tactical-tips-card" style="margin-top: 25px;">
+                    <div class="tip-header"><i class="fa fa-compass text-gold"></i> Consejos Tácticos de Raid</div>
+                    <ul class="tip-list">
+                        <li><i class="fa fa-check text-gold"></i> Ataca desde la cabeza: Su frente carece de espinas y es su flanco más desprotegido.</li>
+                        <li><i class="fa fa-check text-gold"></i> No uses proyectiles contra su lomo: Sus placas absorben el 90% del daño de flechas.</li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="main-footer" style="margin-top: 50px;">
+        <div class="footer-bottom">
+            <div class="copyright">&copy; 2024 OrphionMC RPG. Todos los derechos reservados.</div>
+            <div class="credits">Diseñado para la comunidad por <span class="text-gold">Sebastian</span></div>
+        </div>
+    </footer>
+
+    <!-- WIKI 3D ENGINE SCRIPT -->
+    <script type="module" src="../js/wiki-model-viewer.js?v=25"></script>
+
+</body>
+
+</html>
