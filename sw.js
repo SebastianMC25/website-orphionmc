@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orphionmc-static-v33';
+const CACHE_NAME = 'orphionmc-static-v34';
 const STATIC_ASSETS = [
     './',
     'index.html',
@@ -198,7 +198,6 @@ const STATIC_ASSETS = [
     'wiki/specter.html',
     'wiki/zombie_brute.html',
     'wiki/cursed_knight.html',
-    'wiki/winter_golem.html',
     'wiki/slime_triple.html',
     'wiki/slime_lava.html',
     'wiki/slime_frost.html',
@@ -232,7 +231,6 @@ const STATIC_ASSETS = [
     'assets/models/specter.bin',
     'assets/models/zombie_brute.bin',
     'assets/models/cursed_knight.bin',
-    'assets/models/winter_golem.bin',
     'assets/models/slime_triple.bin',
     'assets/models/slime_lava.bin',
     'assets/models/slime_frost.bin',
