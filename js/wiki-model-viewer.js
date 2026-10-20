@@ -317,8 +317,9 @@ function buildModel(rawDoc, textures) {
         return s === 'hitbox' ||
                s === 'hitbox cube' ||
                s.includes('hitbox') ||
-               s.startsWith('ob_hit') ||
+               s.startsWith('ob_') ||
                s.includes('_hit') ||
+               s.endsWith('_target') ||
                s === 'spike' ||
                s.startsWith('attack') ||
                s.includes('_vfx') ||
@@ -442,7 +443,7 @@ async function loadMobModel() {
     try {
         if (loadingText) loadingText.textContent = `CARGANDO RENDER 3D DE ${modelName}...`;
 
-        const modelUrl = `../assets/models/${modelKey}.bin?v=19`;
+        const modelUrl = `../assets/models/${modelKey}.bin?v=20`;
         const doc = await fetchEncryptedModel(modelUrl);
 
         // Cargar texturas embebidas con resolución real
