@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orphionmc-static-v28';
+const CACHE_NAME = 'orphionmc-static-v29';
 const STATIC_ASSETS = [
     './',
     'index.html',
@@ -27,7 +27,7 @@ const STATIC_ASSETS = [
     'wiki/dragon.html',
     'wiki/minotaur.html',
     'wiki/undead_king.html',
-    'wiki/lich_king.html',
+    'wiki/lobster_king.html',
     'wiki/azazel.html',
     'wiki/demon_lord.html',
     'wiki/ent_king.html',
@@ -97,7 +97,7 @@ const STATIC_ASSETS = [
     'assets/models/dragon.bin',
     'assets/models/minotaur.bin',
     'assets/models/undead_king.bin',
-    'assets/models/lich_king.bin',
+    'assets/models/lobster_king.bin',
     'assets/models/azazel.bin',
     'assets/models/demon_lord.bin',
     'assets/models/ent_king.bin',
@@ -156,7 +156,7 @@ const STATIC_ASSETS = [
     'assets/models/dragon.bin',
     'assets/models/minotaur.bin',
     'assets/models/undead_king.bin',
-    'assets/models/lich_king.bin',
+    'assets/models/lobster_king.bin',
     'assets/models/azazel.bin',
     'assets/models/demon_lord.bin',
     'assets/models/ent_king.bin',
