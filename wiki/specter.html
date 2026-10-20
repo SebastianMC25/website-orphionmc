@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espectro Sombrío | Bestiario 3D OrphionMC</title>
+    <link rel="icon" href="../assets/images/logo.png" type="image/png">
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Base Stylesheet -->
+    <link rel="stylesheet" href="../css/custom.css?v=31">
+    <link rel="stylesheet" href="../css/wiki.css?v=31">
+</head>
+
+<body class="wiki-body" data-model="specter" data-model-name="ESPECTRO SOMBRÍO">
+
+    <!-- TOP NAVIGATION -->
+    <nav class="wiki-nav">
+        <a href="../index.html" class="wiki-brand">
+            <img src="../assets/images/logo.png" alt="OrphionMC Logo">
+            <span>OrphionMC</span>
+        </a>
+
+        <div class="wiki-nav-links">
+            <a href="../index.html" class="wiki-nav-link"><i class="fa fa-house"></i> Inicio</a>
+            <a href="index.html" class="wiki-nav-link"><i class="fa fa-book-skull"></i> Categorías</a>
+            <a href="esbirros.html" class="wiki-nav-link active"><i class="fa fa-dungeon"></i> Esbirros de Mazmorra</a>
+            <a href="esbirros.html" class="wiki-back-btn"><i class="fa fa-arrow-left"></i> Volver</a>
+        </div>
+    </nav>
+
+    <!-- BREADCRUMBS -->
+    <div class="wiki-breadcrumb">
+        <a href="../index.html">Inicio</a> &gt; <a href="index.html">Bestiario</a> &gt; <a href="esbirros.html">Esbirros de Mazmorra</a> &gt; <strong class="text-gold">Espectro Sombrío</strong>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="wiki-container">
+
+        <!-- TITLE BANNER -->
+        <header class="wiki-title-banner">
+            <span class="wiki-badge badge-divine" style="background: rgba(245, 197, 66, 0.15); border-color: #f1f5f9; color: #f1f5f9;">
+                <i class="fa fa-dungeon"></i> Ánima Vengativa • Esbirros de Mazmorra
+            </span>
+            <h1 class="wiki-main-title">ESPECTRO SOMBRÍO</h1>
+        </header>
+
+        <!-- TWO COLUMN GRID -->
+        <div class="wiki-grid">
+
+            <!-- LEFT COLUMN: 3D MODEL VIEWER -->
+            <div class="model-column">
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-title"><i class="fa fa-cube"></i> Render 3D Interactivo</span>
+                        <div class="model-quick-actions">
+                            <button id="auto-rotate-btn" class="model-tool-btn" title="Activar/Desactivar giro automático">
+                                <i class="fa fa-rotate"></i>
+                            </button>
+                            <button id="reset-cam-btn" class="model-tool-btn" title="Centrar cámara">
+                                <i class="fa fa-crosshairs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CANVAS WRAPPER -->
+                    <div class="model-canvas-wrapper" id="canvas-wrapper">
+                        <canvas id="model-canvas"></canvas>
+
+                        <div class="model-hint">
+                            <i class="fa fa-hand-pointer"></i> Arrastra para girar 360° | Rueda para zoom
+                        </div>
+
+                        <!-- LOADING OVERLAY -->
+                        <div class="model-loading-overlay" id="model-loading">
+                            <div class="model-spinner"></div>
+                            <span class="model-loading-text" id="loading-text">CARGANDO RENDER 3D DE ESPECTRO SOMBRÍO...</span>
+                        </div>
+                    </div>
+
+                    <!-- FOOTER CONTROLS / STATUS -->
+                    <div class="model-controls-bar">
+                        <div class="controls-row">
+                            <span class="status-pill"><i class="fa fa-check-circle"></i> Render 3D Activo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: COMBAT STATS -->
+            <div class="stats-column">
+
+                <!-- MAIN CARD: SPECS -->
+                <div class="stats-card">
+                    <span class="section-tag"><i class="fa fa-heart-pulse"></i> Ficha Técnica de Mazmorra</span>
+
+                    <!-- MINECRAFT BOSSBAR -->
+                    <div class="boss-bar-display">
+                        <div class="boss-bar-title" style="color: #f1f5f9;">✦ Espectro Sombrío - Ánima Vengativa ✦</div>
+                        <div class="boss-bar-track">
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 6px; color: #bbb;">
+                            <span>Categoría: <strong style="color: #f1f5f9;">Esbirros de Mazmorra</strong></span>
+                            <span>Registro: <strong>Diario de Aventurero</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- TRAITS & IMMUNITIES -->
+                    <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-shield"></i> Habilidades y Rasgos de Combate</span>
+                    <ul class="strategy-list" style="margin-bottom: 0;">
+                        <li><strong class="text-gold">Habilidad 1:</strong> Vuelo ingrávido fantasmal</li>
+                        <li><strong class="text-gold">Habilidad 2:</strong> Disparos etéreos que atraviesan</li>
+                        <li><strong class="text-gold">Habilidad 3:</strong> Evasión flotante continua</li>
+                    </ul>
+
+                    <!-- STRATEGY BOX -->
+                    <div class="strategy-box" style="margin-top: 20px;">
+                        <div class="strategy-title"><i class="fa fa-compass"></i> Consejos Tácticos</div>
+                        <ul class="strategy-list">
+                            <li><strong>Preparación de Batalla:</strong> Mantén tu distancia y sincroniza tus esquivas para contrarrestar sus patrones de ataque.</li>
+                            <li><strong>Recompensas de Aventurero:</strong> Al derrotarlo desbloquearás progreso exclusivo en las recompensas de cazador del Bestiario.</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="main-footer" style="margin-top: 50px;">
+        <div class="footer-bottom">
+            <div class="copyright">&copy; 2024 OrphionMC RPG. Todos los derechos reservados.</div>
+            <div class="credits">Diseñado para la comunidad por <span class="text-gold">Sebastian</span></div>
+        </div>
+    </footer>
+
+    <!-- WIKI 3D ENGINE SCRIPT -->
+    <script type="module" src="../js/wiki-model-viewer.js?v=31"></script>
+
+</body>
+
+</html>
