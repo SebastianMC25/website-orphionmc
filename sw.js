@@ -1,8 +1,11 @@
-const CACHE_NAME = 'orphionmc-static-v10';
+const CACHE_NAME = 'orphionmc-static-v11';
 const STATIC_ASSETS = [
     './',
     'index.html',
+    'wiki/index.html',
+    'wiki/olimpo.html',
     'wiki/zeus.html',
+    'assets/models/zeus.bin',
     'css/custom.css',
     'css/wiki.css',
     'js/main.js',

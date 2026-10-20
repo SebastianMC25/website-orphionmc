@@ -386,14 +386,48 @@ function buildModel(rawDoc, textures) {
     return root;
 }
 
+// Clave criptográfica del Bestiario para protección de modelos 3D
+const CIPHER_KEY_HEX = 'e5a8f4c28b9d3e1a774205f69c3a1b4d8e2f6c9a0b1d3e5f7a9c2e4b6d8f0a2c';
+
+async function fetchEncryptedModel(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status} cargando el archivo del modelo`);
+    const buffer = await response.arrayBuffer();
+
+    const u8 = new Uint8Array(buffer);
+    const iv = u8.slice(0, 12);
+    const tag = u8.slice(12, 28);
+    const data = u8.slice(28);
+
+    const cipherWithTag = new Uint8Array(data.length + tag.length);
+    cipherWithTag.set(data, 0);
+    cipherWithTag.set(tag, data.length);
+
+    const keyBytes = new Uint8Array(CIPHER_KEY_HEX.match(/.{1,2}/g).map(b => parseInt(b, 16)));
+    const cryptoKey = await window.crypto.subtle.importKey(
+        'raw',
+        keyBytes,
+        { name: 'AES-GCM' },
+        false,
+        ['decrypt']
+    );
+
+    const decrypted = await window.crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: iv },
+        cryptoKey,
+        cipherWithTag
+    );
+
+    const text = new TextDecoder().decode(decrypted);
+    return JSON.parse(text);
+}
+
 async function loadZeusModel() {
     try {
         if (loadingText) loadingText.textContent = 'CARGANDO RENDER 3D...';
 
-        const modelUrl = '../assets/models/mso_zeus.bbmodel';
-        const response = await fetch(modelUrl);
-        if (!response.ok) throw new Error(`HTTP ${response.status} cargando el archivo del modelo`);
-        const doc = await response.json();
+        const modelUrl = '../assets/models/zeus.bin';
+        const doc = await fetchEncryptedModel(modelUrl);
 
         // Cargar texturas embebidas con resolución real
         const textures = await loadTextures(doc);

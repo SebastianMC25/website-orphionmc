@@ -600,6 +600,299 @@ body.wiki-body {
     margin-bottom: 8px;
 }
 
+/* ===================================================
+   BESTIARY CATEGORIES HUB & MOB CARDS
+   =================================================== */
+
+.category-hero {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.category-hero h1 {
+    font-size: 2.8rem;
+    color: var(--gold);
+    text-shadow: 0 0 25px var(--gold-glow);
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+}
+
+.category-hero p {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 650px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    margin-bottom: 60px;
+}
+
+.category-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 30px 25px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.4;
+    transition: opacity 0.35s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--gold);
+    box-shadow: 0 15px 35px rgba(245, 197, 66, 0.15);
+}
+
+.category-card:hover::before {
+    opacity: 1;
+}
+
+.category-card.disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.category-card.disabled:hover {
+    transform: none;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.cat-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.cat-icon-box {
+    width: 54px;
+    height: 54px;
+    border-radius: 8px;
+    background: rgba(245, 197, 66, 0.1);
+    border: 1px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    color: var(--gold);
+    box-shadow: 0 0 15px var(--gold-glow);
+}
+
+.cat-title {
+    font-size: 1.35rem;
+    color: #fff;
+    letter-spacing: 1.5px;
+    margin: 0;
+}
+
+.cat-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin-bottom: 22px;
+}
+
+.cat-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    padding-top: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+}
+
+.cat-count {
+    color: var(--gold);
+    font-weight: 600;
+}
+
+.cat-badge-status {
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.cat-badge-status.active {
+    background: rgba(34, 197, 94, 0.15);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+    color: #4ade80;
+}
+
+.cat-badge-status.coming {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #888;
+}
+
+/* ===================================================
+   MOBS GRID (PANTEÓN DEL OLIMPO)
+   =================================================== */
+
+.mob-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 25px;
+    margin-bottom: 60px;
+}
+
+.mob-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.mob-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(245, 197, 66, 0.12);
+}
+
+.mob-card.featured {
+    border-color: var(--gold);
+    background: linear-gradient(180deg, rgba(30, 26, 18, 0.95) 0%, rgba(18, 18, 24, 0.9) 100%);
+    box-shadow: 0 10px 30px rgba(245, 197, 66, 0.1);
+}
+
+.mob-top-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.mob-tier-pill {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #f87171;
+}
+
+.mob-dungeon-pill {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.mob-dungeon-pill strong {
+    color: var(--gold);
+}
+
+.mob-name {
+    font-size: 1.45rem;
+    color: #fff;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+}
+
+.mob-title-sub {
+    font-size: 0.95rem;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: block;
+}
+
+.mob-skills-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: #bbb;
+}
+
+.mob-skills-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+}
+
+.mob-skills-list li i {
+    color: var(--gold);
+    margin-top: 3px;
+    font-size: 0.75rem;
+}
+
+.mob-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    font-weight: 700;
+    transition: all 0.25s ease;
+}
+
+.mob-btn-primary {
+    background: linear-gradient(135deg, var(--gold) 0%, #d4a017 100%);
+    color: #000;
+    box-shadow: 0 4px 15px rgba(245, 197, 66, 0.3);
+}
+
+.mob-btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(245, 197, 66, 0.5);
+    transform: translateY(-2px);
+    color: #000;
+}
+
+.mob-btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #888;
+    cursor: default;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .wiki-grid {

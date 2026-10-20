@@ -41,3 +41,6 @@ Desktop.ini
 dist/
 *.zip
 *.bat
+
+# Raw 3D Source models (Blockbench protected assets)
+*.bbmodel
