@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orphionmc-static-v26';
+const CACHE_NAME = 'orphionmc-static-v27';
 const STATIC_ASSETS = [
     './',
     'index.html',

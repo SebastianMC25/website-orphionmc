@@ -132,10 +132,22 @@ async function loadTextures(bb) {
             texture.minFilter = THREE.NearestFilter;
             texture.generateMipmaps = false;
 
+            // Priorizar uv_width real de la textura, luego resolución del proyecto bbmodel, luego ancho físico
+            let uvW = Number(tex.uv_width) || Number(bb.resolution?.width) || Number(tex.width) || defaultW;
+            let uvH = Number(tex.uv_height) || Number(bb.resolution?.height) || Number(tex.height) || defaultH;
+
+            // Salvaguarda para modelos Bedrock HD (textura 256px mapeada en cuadrícula de 16x16)
+            if (bb.resolution?.width === 16 && uvW > 32) {
+                uvW = 16;
+            }
+            if (bb.resolution?.height === 16 && uvH > 32) {
+                uvH = 16;
+            }
+
             textures.push({
                 map: texture,
-                uvW: Number(tex.uv_width) || Number(tex.resolution?.width) || Number(tex.width) || defaultW,
-                uvH: Number(tex.uv_height) || Number(tex.resolution?.height) || Number(tex.height) || defaultH
+                uvW,
+                uvH
             });
         } catch (e) {
             console.warn('Advertencia cargando textura:', e);
@@ -444,7 +456,7 @@ async function loadMobModel() {
     try {
         if (loadingText) loadingText.textContent = `CARGANDO RENDER 3D DE ${modelName}...`;
 
-        const modelUrl = `../assets/models/${modelKey}.bin?v=26`;
+        const modelUrl = `../assets/models/${modelKey}.bin?v=27`;
         const doc = await fetchEncryptedModel(modelUrl);
 
         // Cargar texturas embebidas con resolución real
