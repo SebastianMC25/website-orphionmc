@@ -131,29 +131,10 @@ async function loadTextures(bb) {
             texture.minFilter = THREE.NearestFilter;
             texture.generateMipmaps = false;
 
-            const uvW = Number(tex.uv_width) || Number(tex.resolution?.width) || Number(tex.width) || defaultW;
-            const uvH = Number(tex.uv_height) || Number(tex.resolution?.height) || (texture.image ? texture.image.width : defaultH);
-
-            let finalTexture = texture;
-            // Si la textura es una tira animada vertical (su altura real es mayor que uvH), recortamos el frame 0 estático
-            if (texture.image && texture.image.height > uvH) {
-                const canvas = document.createElement('canvas');
-                canvas.width = uvW;
-                canvas.height = uvH;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(texture.image, 0, 0, uvW, uvH, 0, 0, uvW, uvH);
-                finalTexture = new THREE.CanvasTexture(canvas);
-                finalTexture.flipY = false;
-                finalTexture.colorSpace = THREE.SRGBColorSpace;
-                finalTexture.magFilter = THREE.NearestFilter;
-                finalTexture.minFilter = THREE.NearestFilter;
-                finalTexture.generateMipmaps = false;
-            }
-
             textures.push({
-                map: finalTexture,
-                uvW: uvW,
-                uvH: uvH
+                map: texture,
+                uvW: Number(tex.uv_width) || Number(tex.resolution?.width) || Number(tex.width) || defaultW,
+                uvH: Number(tex.uv_height) || Number(tex.resolution?.height) || Number(tex.height) || defaultH
             });
         } catch (e) {
             console.warn('Advertencia cargando textura:', e);
@@ -461,7 +442,7 @@ async function loadMobModel() {
     try {
         if (loadingText) loadingText.textContent = `CARGANDO RENDER 3D DE ${modelName}...`;
 
-        const modelUrl = `../assets/models/${modelKey}.bin?v=18`;
+        const modelUrl = `../assets/models/${modelKey}.bin?v=19`;
         const doc = await fetchEncryptedModel(modelUrl);
 
         // Cargar texturas embebidas con resolución real
