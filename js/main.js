@@ -28,9 +28,15 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Close when clicking a link
+        // Close when clicking a link (or toggle dropdown on mobile)
         document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
+            link.addEventListener('click', (e) => {
+                if (window.innerWidth <= 992 && link.classList.contains('dropdown-trigger')) {
+                    e.preventDefault();
+                    const parent = link.closest('.nav-dropdown');
+                    if (parent) parent.classList.toggle('mobile-open');
+                    return;
+                }
                 navbar.classList.remove('mobile-open');
                 const icon = mobileToggle.querySelector('i');
                 if (icon) {

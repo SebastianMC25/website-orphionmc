@@ -240,6 +240,129 @@ body {
     color: var(--gold);
 }
 
+/* ================= NAVIGATION DROPDOWN ================= */
+.nav-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.nav-dropdown .dropdown-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.nav-dropdown .nav-arrow {
+    font-size: 0.72rem;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), color 0.25s ease;
+    color: rgba(255, 255, 255, 0.65);
+    margin-left: 2px;
+}
+
+.nav-dropdown:hover .nav-arrow,
+.nav-dropdown:focus-within .nav-arrow {
+    transform: rotate(180deg);
+    color: var(--gold);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    min-width: 235px;
+    background: rgba(14, 14, 18, 0.98);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(245, 197, 66, 0.35);
+    border-radius: 8px;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.85), 0 0 20px rgba(245, 197, 66, 0.15);
+    padding: 8px;
+    list-style: none;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.25s ease;
+    z-index: 1100;
+}
+
+/* Invisible bridge so mouse hover doesn't break when moving cursor to menu */
+.dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+}
+
+.nav-dropdown:hover .dropdown-menu,
+.nav-dropdown:focus-within .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+.dropdown-menu li {
+    list-style: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links .dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+    color: #e2e8f0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    width: 100%;
+    text-shadow: none;
+    border: 1px solid transparent;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.nav-links .dropdown-menu a i {
+    font-size: 1rem;
+    color: var(--gold);
+    width: 20px;
+    text-align: center;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.nav-links .dropdown-menu a:hover {
+    background: linear-gradient(90deg, rgba(245, 197, 66, 0.2), rgba(245, 197, 66, 0.05));
+    border-color: rgba(245, 197, 66, 0.35);
+    color: #ffffff;
+    transform: translateX(4px);
+    text-shadow: 0 0 8px rgba(245, 197, 66, 0.4);
+}
+
+.nav-links .dropdown-menu a:hover i {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 6px var(--gold));
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245, 197, 66, 0.28), transparent);
+    margin: 6px 4px;
+    list-style: none;
+}
+
+
 /* ================= FLOATING SIDE NAV ================= */
 .side-nav {
     position: fixed;
@@ -902,6 +1025,64 @@ section {
         width: 100%;
         /* Wider target */
     }
+
+    /* Mobile dropdown adaptation */
+    .nav-dropdown {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .nav-dropdown .dropdown-trigger {
+        justify-content: center;
+    }
+
+    .dropdown-menu {
+        position: static;
+        transform: none;
+        box-shadow: none;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(245, 197, 66, 0.2);
+        margin-top: 6px;
+        padding: 6px;
+        width: 85%;
+        max-width: 300px;
+        opacity: 0;
+        visibility: hidden;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .nav-dropdown.mobile-open .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        max-height: 250px;
+        padding: 8px;
+        margin-top: 10px;
+    }
+
+    .nav-dropdown.mobile-open .nav-arrow {
+        transform: rotate(180deg);
+        color: var(--gold);
+    }
+
+    .dropdown-menu::before {
+        display: none;
+    }
+
+    .nav-links .dropdown-menu a {
+        font-size: 1.15rem;
+        padding: 10px 14px;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+    }
+
 
     /* Mobile CTA Button */
     .mobile-cta {

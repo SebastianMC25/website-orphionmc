@@ -51,7 +51,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/custom.css?v=30">
 
     <!-- Preload Hero Poster -->
     <link rel="preload" as="image" href="assets/images/poster.png">
@@ -64,7 +64,7 @@
         <div class="side-nav-body">
             <a href="#hero" class="side-nav-item active" aria-label="Inicio"><i class="fa fa-crown"></i></a>
             <a href="#about" class="side-nav-item" aria-label="Sobre Nosotros"><i class="fa fa-shield-halved"></i></a>
-            <a href="wiki/index.html" class="side-nav-item" aria-label="Bestiario"><i class="fa fa-book-skull"></i></a>
+            <a href="wiki/index.html" class="side-nav-item" aria-label="Wiki"><i class="fa fa-book-bookmark"></i></a>
             <a href="#news" class="side-nav-item" aria-label="Noticias"><i class="fa fa-book-open"></i></a>
             <a href="#updates" class="side-nav-item" aria-label="Actualizaciones"><i class="fa fa-scroll"></i></a>
             <a href="#footer" class="side-nav-item" aria-label="Contacto"><i class="fa fa-cog"></i></a>
@@ -99,7 +99,14 @@
                 <ul class="nav-links">
                     <li><a href="#" class="active"><i class="fa fa-house"></i> Inicio</a></li>
                     <li><a href="#about"><i class="fa fa-shield-halved"></i> Nosotros</a></li>
-                    <li><a href="wiki/index.html"><i class="fa fa-book-skull"></i> Bestiario</a></li>
+                    <li class="nav-dropdown">
+                        <a href="wiki/index.html" class="dropdown-trigger"><i class="fa fa-book-bookmark"></i> Wiki <i class="fa fa-chevron-down nav-arrow"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="wiki/index.html"><i class="fa fa-book-skull"></i> <span>Bestiario</span></a></li>
+                            <li class="dropdown-divider"></li>
+                            <li><a href="wiki/eventos.html"><i class="fa fa-meteor"></i> <span>Eventos del Servidor</span></a></li>
+                        </ul>
+                    </li>
                     <li><a href="#news"><i class="fa fa-newspaper"></i> Noticias</a></li>
                     <li><a href="#updates"><i class="fa fa-scroll"></i> Actualizaciones</a></li>
                     <li><a href="https://discord.orphionmc.net" target="_blank" rel="noopener"><i class="fa fa-store"></i> Tienda</a></li>
@@ -297,7 +304,7 @@
                 <ul class="footer-links">
                     <li><a href="#">Inicio</a></li>
                     <li><a href="#about">Sobre Nosotros</a></li>
-                    <li><a href="wiki/index.html">Bestiario de Criaturas</a></li>
+                    <li><a href="wiki/index.html">Wiki & Bestiario</a></li>
                     <li><a href="#news">Noticias</a></li>
                     <li><a href="#updates">Actualizaciones</a></li>
                     <li><a href="legal/terms.html">Términos de Servicio</a></li>
