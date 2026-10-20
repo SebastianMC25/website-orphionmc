@@ -433,7 +433,7 @@ async function loadMobModel() {
     try {
         if (loadingText) loadingText.textContent = `CARGANDO RENDER 3D DE ${modelName}...`;
 
-        const modelUrl = `../assets/models/${modelKey}.bin?v=15`;
+        const modelUrl = `../assets/models/${modelKey}.bin?v=16`;
         const doc = await fetchEncryptedModel(modelUrl);
 
         // Cargar texturas embebidas con resolución real
@@ -534,3 +534,14 @@ function animate() {
 
 // Start on DOM ready
 document.addEventListener('DOMContentLoaded', init);
+
+// Auto-recarga cuando se activa una nueva versión de caché
+if ('serviceWorker' in navigator) {
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+        }
+    });
+}
