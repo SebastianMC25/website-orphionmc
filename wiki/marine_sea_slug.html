@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babosa Dragón Azul | Render 3D - OrphionMC Wiki</title>
+    <meta name="description"
+        content="Visor y render 3D oficial de Babosa Dragón Azul en OrphionMC RPG. Explora el modelo en 360 grados, sus estadísticas de combate, fases y datos de raid.">
+
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="shortcut icon" href="../favicon.ico">
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/custom.css?v=28">
+    <link rel="stylesheet" href="../css/wiki.css?v=28">
+
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+
+<body class="wiki-body" data-model="marine_sea_slug" data-model-name="BABOSA DRAGÓN AZUL">
+
+    <!-- TOP NAVIGATION -->
+    <nav class="wiki-nav">
+        <a href="../index.html" class="wiki-brand">
+            <img src="../assets/images/logo.png" alt="OrphionMC Logo">
+            <span>OrphionMC</span>
+        </a>
+
+        <div class="wiki-nav-links">
+            <a href="../index.html" class="wiki-nav-link"><i class="fa fa-house"></i> Inicio</a>
+            <a href="index.html" class="wiki-nav-link"><i class="fa fa-book-skull"></i> Categorías</a>
+            <a href="marinas.html" class="wiki-nav-link active"><i class="fa fa-water"></i> Profundidades Marinas</a>
+            <a href="marinas.html" class="wiki-back-btn"><i class="fa fa-arrow-left"></i> Volver a Criaturas Marinas</a>
+        </div>
+    </nav>
+
+    <!-- BREADCRUMBS -->
+    <div class="wiki-breadcrumb">
+        <a href="../index.html">Inicio</a> &gt; <a href="index.html">Bestiario</a> &gt; <a href="marinas.html">Profundidades Marinas</a> &gt; <strong class="text-gold">Babosa Dragón Azul</strong>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="wiki-container">
+
+        <!-- TITLE BANNER -->
+        <header class="wiki-title-banner">
+            <span class="wiki-badge badge-divine" style="background: rgba(6, 182, 212, 0.15); border-color: #0284c7; color: #0284c7;">
+                <i class="fa fa-dragon"></i> ASESINO MÁGICO • SUPERFICIE OCEÁNICA
+            </span>
+            <h1 class="wiki-main-title">BABOSA DRAGÓN AZUL</h1>
+        </header>
+
+        <!-- TWO COLUMN GRID (DISEÑO EXACTO DE ZEUS) -->
+        <div class="wiki-grid">
+
+            <!-- LEFT COLUMN: 3D MODEL VIEWER -->
+            <div class="model-column">
+                <div class="model-card">
+                    <div class="model-header">
+                        <span class="model-title"><i class="fa fa-cube"></i> Render 3D Interactivo</span>
+                        <div class="model-quick-actions">
+                            <button id="auto-rotate-btn" class="model-tool-btn" title="Activar/Desactivar giro automático">
+                                <i class="fa fa-rotate"></i>
+                            </button>
+                            <button id="reset-cam-btn" class="model-tool-btn" title="Centrar cámara">
+                                <i class="fa fa-crosshairs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CANVAS WRAPPER -->
+                    <div class="model-canvas-wrapper" id="canvas-wrapper">
+                        <canvas id="model-canvas"></canvas>
+
+                        <div class="model-hint">
+                            <i class="fa fa-hand-pointer"></i> Arrastra para girar 360° | Rueda para zoom
+                        </div>
+
+                        <!-- LOADING OVERLAY -->
+                        <div class="model-loading-overlay" id="model-loading">
+                            <div class="model-spinner"></div>
+                            <span class="model-loading-text" id="loading-text">CARGANDO RENDER 3D DE BABOSA DRAGÓN AZUL...</span>
+                        </div>
+                    </div>
+
+                    <!-- FOOTER CONTROLS / STATUS -->
+                    <div class="model-controls-bar">
+                        <div class="controls-row">
+                            <span class="status-pill"><i class="fa fa-check-circle"></i> Render 3D Activo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: COMBAT STATS -->
+            <div class="stats-column">
+
+                <!-- MAIN CARD: BOSS SPECS -->
+                <div class="stats-card">
+                    <span class="section-tag"><i class="fa fa-heart-pulse"></i> Ficha Técnica de Combate</span>
+
+                    <!-- MINECRAFT BOSSBAR -->
+                    <div class="boss-bar-display">
+                        <div class="boss-bar-title" style="color: #0284c7;">✦ Babosa Dragón Azul - Nudibranquio Arcano del Oleaje ✦</div>
+                        <div class="boss-bar-track">
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                            <div class="boss-bar-segment" style="background: #0284c7;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 6px; color: #bbb;">
+                            <span>Salud: <strong style="color: #0284c7;">110 / 110 HP</strong></span>
+                            <span>Origen: <strong>Superficie Oceánica</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- TRAITS & IMMUNITIES -->
+                    <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-shield"></i> Inmunidades y Rasgos Activos</span>
+                    <div class="traits-list">
+                        <span class="trait-chip immune" style="border-color: #0284c7; color: #0284c7;"><i class="fa fa-shield-halved"></i> Absorción y Disparo de Veneno</span>
+                        <span class="trait-chip immune" style="border-color: #0284c7; color: #0284c7;"><i class="fa fa-shield-halved"></i> Levitación Hidrodinámica</span>
+                        <span class="trait-chip immune" style="border-color: #0284c7; color: #0284c7;"><i class="fa fa-shield-halved"></i> Resistencia Arcana</span>
+                    </div>
+
+                    <!-- PHASES BREAKDOWN -->
+                    <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-hourglass-half"></i> Fases del Encuentro</span>
+                    <ul class="strategy-list" style="margin-bottom: 0;">
+                        <li><strong class="text-gold">Fase 1 (100% - 50% HP):</strong> Deslizamiento sobre la superficie marina lanzando agujas de toxina azulada con alto veneno.</li>
+                        <li><strong class="text-gold">Fase 2 (< 50% HP):</strong> Expansión de sus ceratas en alas plumosas disparando todas sus toxinas acumuladas en salva.</li>
+                    </ul>
+
+                    <!-- STRATEGY BOX -->
+                    <div class="strategy-box">
+                        <div class="strategy-title"><i class="fa fa-compass"></i> Consejos Tácticos de Raid</div>
+                        <ul class="strategy-list">
+                            <li><strong>Cuidado con sus ceratas (extremidades en forma de dedos):</strong> son las reservas de su veneno más mortífero.</li>
+                            <li><strong>Ataca desde abajo con proyectiles mientras flota en la película superficial del agua.:</strong></li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="main-footer" style="margin-top: 50px;">
+        <div class="footer-bottom">
+            <div class="copyright">&copy; 2024 OrphionMC RPG. Todos los derechos reservados.</div>
+            <div class="credits">Diseñado para la comunidad por <span class="text-gold">Sebastian</span></div>
+        </div>
+    </footer>
+
+    <!-- WIKI 3D ENGINE SCRIPT -->
+    <script type="module" src="../js/wiki-model-viewer.js?v=28"></script>
+
+</body>
+
+</html>
