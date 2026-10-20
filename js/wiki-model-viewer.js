@@ -2,6 +2,21 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { BBModelLoader } from 'three-blockbench';
 
+// POLYFILL: three-blockbench 0.1.0 expects clip.userData to be initialized on THREE.AnimationClip
+if (!THREE.AnimationClip.prototype.hasOwnProperty('userData')) {
+    Object.defineProperty(THREE.AnimationClip.prototype, 'userData', {
+        get() {
+            if (!this._userData) this._userData = {};
+            return this._userData;
+        },
+        set(value) {
+            this._userData = value;
+        },
+        configurable: true,
+        enumerable: true
+    });
+}
+
 // DOM Elements
 const canvasWrapper = document.getElementById('canvas-wrapper');
 const canvas = document.getElementById('model-canvas');
@@ -48,11 +63,11 @@ function init() {
     // 1. Scene
     scene = new THREE.Scene();
 
-    // 2. Camera
-    const width = canvasWrapper.clientWidth;
-    const height = canvasWrapper.clientHeight;
-    camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
-    camera.position.set(0, 18, 55);
+    // 2. Camera - Scaled for Zeus (~8.8 units tall)
+    const width = canvasWrapper.clientWidth || 600;
+    const height = canvasWrapper.clientHeight || 520;
+    camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 500);
+    camera.position.set(0, 5.5, 14.5);
 
     // 3. Renderer
     renderer = new THREE.WebGLRenderer({
@@ -73,14 +88,14 @@ function init() {
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.target.set(0, 14, 0);
-    controls.minDistance = 15;
-    controls.maxDistance = 120;
-    controls.maxPolarAngle = Math.PI / 2 + 0.15; // Don't flip below floor
+    controls.target.set(0, 4.2, 0); // Focus on chest level
+    controls.minDistance = 5;
+    controls.maxDistance = 35;
+    controls.maxPolarAngle = Math.PI / 2 + 0.1;
     controls.autoRotate = false;
-    controls.autoRotateSpeed = 1.5;
+    controls.autoRotateSpeed = 1.2;
 
-    // 6. Ground Shadow / Subtle Grid
+    // 6. Ground Pedestal
     setupFloor();
 
     // 7. Load Blockbench Model
@@ -95,43 +110,41 @@ function init() {
 
 function setupLighting() {
     // Ambient light - warm tone
-    const ambientLight = new THREE.AmbientLight(0xfff5ea, 1.4);
+    const ambientLight = new THREE.AmbientLight(0xfff8ee, 1.6);
     scene.add(ambientLight);
 
     // Key Light - Divine Golden
-    const keyLight = new THREE.DirectionalLight(0xffdf80, 2.2);
-    keyLight.position.set(25, 40, 30);
+    const keyLight = new THREE.DirectionalLight(0xffe599, 2.5);
+    keyLight.position.set(10, 15, 12);
     keyLight.castShadow = true;
-    keyLight.shadow.mapSize.width = 1024;
-    keyLight.shadow.mapSize.height = 1024;
     scene.add(keyLight);
 
     // Rim Light - Cyan Mythic Lightning (back-left)
-    const rimLight = new THREE.DirectionalLight(0x38bdf8, 2.0);
-    rimLight.position.set(-30, 25, -25);
+    const rimLight = new THREE.DirectionalLight(0x38bdf8, 2.2);
+    rimLight.position.set(-12, 12, -10);
     scene.add(rimLight);
 
     // Fill Light - Soft purple / Olympus aura
-    const fillLight = new THREE.DirectionalLight(0xc084fc, 0.9);
-    fillLight.position.set(0, -10, 20);
+    const fillLight = new THREE.DirectionalLight(0xc084fc, 1.0);
+    fillLight.position.set(0, -5, 10);
     scene.add(fillLight);
 }
 
 function setupFloor() {
-    // Elegant divine pedestal circle
-    const pedestalGeo = new THREE.CylinderGeometry(14, 15, 0.6, 32);
+    // Divine pedestal circle scaled for Zeus
+    const pedestalGeo = new THREE.CylinderGeometry(4.2, 4.6, 0.4, 32);
     const pedestalMat = new THREE.MeshStandardMaterial({
-        color: 0x181724,
-        roughness: 0.8,
-        metalness: 0.2
+        color: 0x161522,
+        roughness: 0.7,
+        metalness: 0.3
     });
     const pedestal = new THREE.Mesh(pedestalGeo, pedestalMat);
-    pedestal.position.y = -0.3;
+    pedestal.position.y = -0.2;
     pedestal.receiveShadow = true;
     scene.add(pedestal);
 
     // Golden ring border
-    const ringGeo = new THREE.RingGeometry(13.8, 14.2, 48);
+    const ringGeo = new THREE.RingGeometry(4.15, 4.3, 48);
     const ringMat = new THREE.MeshBasicMaterial({
         color: 0xf5c542,
         side: THREE.DoubleSide
@@ -147,7 +160,6 @@ async function loadZeusModel() {
         if (loadingText) loadingText.textContent = 'CARGANDO ZEUS.BBMODEL...';
 
         const loader = new BBModelLoader();
-        // The model is stored in assets/models/mso_zeus.bbmodel
         const modelUrl = '../assets/models/mso_zeus.bbmodel';
 
         const model = await loader.loadAsync(modelUrl);
@@ -157,16 +169,17 @@ async function loadZeusModel() {
         scene.add(model.scene);
         model.scene.position.set(0, 0, 0);
 
-        // Enable shadow casting on all meshes
+        // Enable shadow casting and nearest-neighbor texture filtering
         model.scene.traverse((child) => {
             if (child.isMesh) {
                 child.castShadow = true;
                 child.receiveShadow = true;
-                // Sharpen texture filtering for authentic pixel-art RPG look
-                if (child.material && child.material.map) {
-                    child.material.map.magFilter = THREE.NearestFilter;
-                    child.material.map.minFilter = THREE.NearestMipmapNearestFilter;
-                    child.material.map.needsUpdate = true;
+                if (child.material) {
+                    if (child.material.map) {
+                        child.material.map.magFilter = THREE.NearestFilter;
+                        child.material.map.minFilter = THREE.NearestMipmapNearestFilter;
+                        child.material.map.needsUpdate = true;
+                    }
                 }
             }
         });
@@ -182,14 +195,14 @@ async function loadZeusModel() {
             loadingOverlay.style.opacity = '0';
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
-            }, 400);
+            }, 350);
         }
 
         console.log('✅ Zeus 3D Model Loaded Successfully!', model);
     } catch (err) {
         console.error('❌ Error cargando el modelo de Zeus:', err);
         if (loadingText) {
-            loadingText.textContent = 'ERROR CARGANDO EL MODELO 3D';
+            loadingText.innerHTML = `ERROR CARGANDO EL MODELO 3D<br><span style="font-size:0.75rem;color:#fca5a5;text-transform:none;">${err?.message || err}</span>`;
             loadingText.style.color = '#ef4444';
         }
     }
@@ -295,8 +308,8 @@ function setupEvents() {
     if (resetCamBtn) {
         resetCamBtn.addEventListener('click', () => {
             controls.reset();
-            camera.position.set(0, 18, 55);
-            controls.target.set(0, 14, 0);
+            camera.position.set(0, 5.5, 14.5);
+            controls.target.set(0, 4.2, 0);
         });
     }
 
