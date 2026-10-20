@@ -54,7 +54,7 @@ function init() {
     controls.autoRotateSpeed = 1.2;
 
     // 6. Cargar y construir el modelo
-    loadZeusModel();
+    loadMobModel();
 
     // 7. Eventos
     setupEvents();
@@ -422,11 +422,15 @@ async function fetchEncryptedModel(url) {
     return JSON.parse(text);
 }
 
-async function loadZeusModel() {
-    try {
-        if (loadingText) loadingText.textContent = 'CARGANDO RENDER 3D...';
+async function loadMobModel() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const modelKey = document.body.dataset.model || urlParams.get('model') || 'zeus';
+    const modelName = document.body.dataset.modelName || modelKey.toUpperCase();
 
-        const modelUrl = '../assets/models/zeus.bin';
+    try {
+        if (loadingText) loadingText.textContent = `CARGANDO RENDER 3D DE ${modelName}...`;
+
+        const modelUrl = `../assets/models/${modelKey}.bin`;
         const doc = await fetchEncryptedModel(modelUrl);
 
         // Cargar texturas embebidas con resolución real
@@ -449,13 +453,13 @@ async function loadZeusModel() {
         setupFloor(center, size);
 
         // Posicionar cámara al frente del mob (los mobs Bedrock miran hacia -Z)
-        const maxDim = Math.max(size.x, size.y, size.z);
-        const camDistance = maxDim * 1.55;
+        const maxDim = Math.max(size.x, size.y, size.z, 20);
+        const camDistance = maxDim * 1.6;
         defaultCamPos.set(center.x + maxDim * 0.35, center.y + maxDim * 0.1, center.z - camDistance);
         camera.position.copy(defaultCamPos);
         controls.target.copy(center);
         camera.near = 1;
-        camera.far = camDistance * 10;
+        camera.far = Math.max(camDistance * 10, 5000);
         camera.updateProjectionMatrix();
         controls.update();
 
@@ -467,9 +471,9 @@ async function loadZeusModel() {
             }, 300);
         }
 
-        console.log('✅ Zeus 3D Render Cargado con éxito estilo MythicCraft!', modelRoot);
+        console.log(`✅ ${modelName} 3D Render cargado con éxito estilo MythicCraft!`, modelRoot);
     } catch (err) {
-        console.error('❌ Error cargando render 3D de Zeus:', err);
+        console.error(`❌ Error cargando render 3D de ${modelName}:`, err);
         if (loadingText) {
             loadingText.innerHTML = `ERROR CARGANDO EL MODELO 3D<br><span style="font-size:0.75rem;color:#fca5a5;text-transform:none;">${err?.message || err}</span>`;
             loadingText.style.color = '#ef4444';
