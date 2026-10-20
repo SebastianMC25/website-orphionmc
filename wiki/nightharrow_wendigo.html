@@ -8,10 +8,10 @@
     <link rel="icon" href="../assets/images/logo.png" type="image/png">
 
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Base Stylesheet -->
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="../css/custom.css?v=31">
     <link rel="stylesheet" href="../css/wiki.css?v=31">
 </head>
@@ -29,7 +29,7 @@
             <a href="../index.html" class="wiki-nav-link"><i class="fa fa-house"></i> Inicio</a>
             <a href="index.html" class="wiki-nav-link"><i class="fa fa-book-skull"></i> Categorías</a>
             <a href="sepulcrales.html" class="wiki-nav-link active"><i class="fa fa-skull"></i> Señores Sepulcrales</a>
-            <a href="sepulcrales.html" class="wiki-back-btn"><i class="fa fa-arrow-left"></i> Volver</a>
+            <a href="sepulcrales.html" class="wiki-back-btn"><i class="fa fa-arrow-left"></i> Volver a Sepulcrales</a>
         </div>
     </nav>
 
@@ -44,7 +44,7 @@
         <!-- TITLE BANNER -->
         <header class="wiki-title-banner">
             <span class="wiki-badge badge-divine" style="background: rgba(245, 197, 66, 0.15); border-color: #f1f5f9; color: #f1f5f9;">
-                <i class="fa fa-skull"></i> Cazador Hambriento • Señores Sepulcrales
+                <i class="fa fa-crown"></i> Espanto del Bosque • Mazmorras Sombrías
             </span>
             <h1 class="wiki-main-title">WENDIGO SOMBRÍO</h1>
         </header>
@@ -94,9 +94,9 @@
             <!-- RIGHT COLUMN: COMBAT STATS -->
             <div class="stats-column">
 
-                <!-- MAIN CARD: SPECS -->
+                <!-- MAIN CARD: BOSS SPECS -->
                 <div class="stats-card">
-                    <span class="section-tag"><i class="fa fa-heart-pulse"></i> Ficha Técnica de Mazmorra</span>
+                    <span class="section-tag"><i class="fa fa-heart-pulse"></i> Ficha Técnica de Combate</span>
 
                     <!-- MINECRAFT BOSSBAR -->
                     <div class="boss-bar-display">
@@ -112,27 +112,45 @@
                             <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
                             <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
                             <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
+                            <div class="boss-bar-segment" style="background: #f1f5f9;"></div>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 6px; color: #bbb;">
-                            <span>Categoría: <strong style="color: #f1f5f9;">Señores Sepulcrales</strong></span>
-                            <span>Registro: <strong>Diario de Aventurero</strong></span>
+                            <span>Salud: <strong style="color: #f1f5f9;">1,500 / 1,500 HP</strong></span>
+                            <span>Mazmorra: <strong>vipIII</strong></span>
                         </div>
                     </div>
 
                     <!-- TRAITS & IMMUNITIES -->
-                    <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-shield"></i> Habilidades y Rasgos de Combate</span>
+                    <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-shield"></i> Inmunidades y Rasgos Activos</span>
+                    <div class="traits-list">
+                        <span class="trait-chip immune" style="border-color: #f1f5f9; color: #f1f5f9;"><i class="fa fa-moon"></i> Cazador Nocturno: +50% Vel en Sombra</span>
+                        <span class="trait-chip immune"><i class="fa fa-snowflake"></i> Aura Gélida: Lentitud Pasiva</span>
+                        <span class="trait-chip immune"><i class="fa fa-temperature-empty"></i> Inmunidad al Frío y Escarcha</span>
+                    </div>
+
+                    <!-- PHASES BREAKDOWN -->
+                    <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-hourglass-half"></i> Fases del Encuentro</span>
                     <ul class="strategy-list" style="margin-bottom: 0;">
-                        <li><strong class="text-gold">Habilidad 1:</strong> Embestida nocturna desgarradora</li>
-                        <li><strong class="text-gold">Habilidad 2:</strong> Aullido espectral que hiela la sangre</li>
-                        <li><strong class="text-gold">Habilidad 3:</strong> Mordisco de sangre con robo de vida</li>
+                        <li><strong class="text-gold">Fase 1 (100% - 70% HP):</strong> Desplazamientos veloces en penumbra con zarpazos gélidos que aplican hipotermia y sangrado.</li>
+                        <li><strong class="text-gold">Fase 2 (70% - 30% HP):</strong> Aullido espectral aterrador que nubla la visión de los jugadores y congela el suelo de la arena.</li>
+                        <li><strong class="text-gold">Fase 3 - Frenesí Caníbal (< 30% HP):</strong> Embestidas salvajes teledirigidas con mordiscos de sangre que restauran su vida al impactar.</li>
                     </ul>
 
                     <!-- STRATEGY BOX -->
-                    <div class="strategy-box" style="margin-top: 20px;">
-                        <div class="strategy-title"><i class="fa fa-compass"></i> Consejos Tácticos</div>
+                    <div class="strategy-box">
+                        <div class="strategy-title"><i class="fa fa-compass"></i> Consejos Tácticos de Raid</div>
                         <ul class="strategy-list">
-                            <li><strong>Preparación de Batalla:</strong> Mantén tu distancia y sincroniza tus esquivas para contrarrestar sus patrones de ataque.</li>
-                            <li><strong>Recompensas de Aventurero:</strong> Al derrotarlo desbloquearás progreso exclusivo en las recompensas de cazador del Bestiario.</li>
+                            <li><strong>Ilumina la arena de combate:</strong> Coloca antorchas o fuentes de luz cálida para disipar las sombras y anular su bonificación de velocidad.</li>
+                            <li><strong>Interrumpe el mordisco:</strong> Si atrapa a un compañero, concentra ataques de alto impacto para liberarlo antes de que complete el drenaje.</li>
                         </ul>
                     </div>
 

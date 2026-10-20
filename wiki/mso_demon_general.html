@@ -8,10 +8,10 @@
     <link rel="icon" href="../assets/images/logo.png" type="image/png">
 
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Base Stylesheet -->
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="../css/custom.css?v=31">
     <link rel="stylesheet" href="../css/wiki.css?v=31">
 </head>
@@ -29,7 +29,7 @@
             <a href="../index.html" class="wiki-nav-link"><i class="fa fa-house"></i> Inicio</a>
             <a href="index.html" class="wiki-nav-link"><i class="fa fa-book-skull"></i> Categorías</a>
             <a href="sepulcrales.html" class="wiki-nav-link active"><i class="fa fa-skull"></i> Señores Sepulcrales</a>
-            <a href="sepulcrales.html" class="wiki-back-btn"><i class="fa fa-arrow-left"></i> Volver</a>
+            <a href="sepulcrales.html" class="wiki-back-btn"><i class="fa fa-arrow-left"></i> Volver a Sepulcrales</a>
         </div>
     </nav>
 
@@ -44,7 +44,7 @@
         <!-- TITLE BANNER -->
         <header class="wiki-title-banner">
             <span class="wiki-badge badge-divine" style="background: rgba(245, 197, 66, 0.15); border-color: #f87171; color: #f87171;">
-                <i class="fa fa-skull"></i> General Demonio • Señores Sepulcrales
+                <i class="fa fa-crown"></i> Comandante del Averno • Mazmorras Abisales
             </span>
             <h1 class="wiki-main-title">BELFEGOR</h1>
         </header>
@@ -94,9 +94,9 @@
             <!-- RIGHT COLUMN: COMBAT STATS -->
             <div class="stats-column">
 
-                <!-- MAIN CARD: SPECS -->
+                <!-- MAIN CARD: BOSS SPECS -->
                 <div class="stats-card">
-                    <span class="section-tag"><i class="fa fa-heart-pulse"></i> Ficha Técnica de Mazmorra</span>
+                    <span class="section-tag"><i class="fa fa-heart-pulse"></i> Ficha Técnica de Combate</span>
 
                     <!-- MINECRAFT BOSSBAR -->
                     <div class="boss-bar-display">
@@ -112,27 +112,45 @@
                             <div class="boss-bar-segment" style="background: #f87171;"></div>
                             <div class="boss-bar-segment" style="background: #f87171;"></div>
                             <div class="boss-bar-segment" style="background: #f87171;"></div>
+                            <div class="boss-bar-segment" style="background: #f87171;"></div>
+                            <div class="boss-bar-segment" style="background: #f87171;"></div>
+                            <div class="boss-bar-segment" style="background: #f87171;"></div>
+                            <div class="boss-bar-segment" style="background: #f87171;"></div>
+                            <div class="boss-bar-segment" style="background: #f87171;"></div>
+                            <div class="boss-bar-segment" style="background: #f87171;"></div>
+                            <div class="boss-bar-segment" style="background: #f87171;"></div>
+                            <div class="boss-bar-segment" style="background: #f87171;"></div>
+                            <div class="boss-bar-segment" style="background: #f87171;"></div>
+                            <div class="boss-bar-segment" style="background: #f87171;"></div>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 6px; color: #bbb;">
-                            <span>Categoría: <strong style="color: #f87171;">Señores Sepulcrales</strong></span>
-                            <span>Registro: <strong>Diario de Aventurero</strong></span>
+                            <span>Salud: <strong style="color: #f87171;">1,800 / 1,800 HP</strong></span>
+                            <span>Mazmorra: <strong>bossHalloween</strong></span>
                         </div>
                     </div>
 
                     <!-- TRAITS & IMMUNITIES -->
-                    <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-shield"></i> Habilidades y Rasgos de Combate</span>
+                    <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-shield"></i> Inmunidades y Rasgos Activos</span>
+                    <div class="traits-list">
+                        <span class="trait-chip immune" style="border-color: #f87171; color: #f87171;"><i class="fa fa-shield"></i> Armadura Infernal: 35 Def</span>
+                        <span class="trait-chip immune"><i class="fa fa-fire"></i> Inmunidad al Fuego y Magma</span>
+                        <span class="trait-chip immune"><i class="fa fa-ghost"></i> Presencia Aterradora</span>
+                    </div>
+
+                    <!-- PHASES BREAKDOWN -->
+                    <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-hourglass-half"></i> Fases del Encuentro</span>
                     <ul class="strategy-list" style="margin-bottom: 0;">
-                        <li><strong class="text-gold">Habilidad 1:</strong> Lluvia de meteoros del averno</li>
-                        <li><strong class="text-gold">Habilidad 2:</strong> Rayo fulgurante de fuego vil</li>
-                        <li><strong class="text-gold">Habilidad 3:</strong> Aliento profano calcinador</li>
+                        <li><strong class="text-gold">Fase 1 (100% - 75% HP):</strong> Golpes ígneos de espada colosal con ondas de choque de fuego vil en abanico sobre la raid.</li>
+                        <li><strong class="text-gold">Fase 2 (75% - 35% HP):</strong> Lluvia de meteoros del averno que caen sobre los jugadores y queman el terreno de combate.</li>
+                        <li><strong class="text-gold">Fase 3 - Calcinación Total (< 35% HP):</strong> Rayo fulgurante de fuego vil y aliento profano continuo en línea recta de altísimo daño.</li>
                     </ul>
 
                     <!-- STRATEGY BOX -->
-                    <div class="strategy-box" style="margin-top: 20px;">
-                        <div class="strategy-title"><i class="fa fa-compass"></i> Consejos Tácticos</div>
+                    <div class="strategy-box">
+                        <div class="strategy-title"><i class="fa fa-compass"></i> Consejos Tácticos de Raid</div>
                         <ul class="strategy-list">
-                            <li><strong>Preparación de Batalla:</strong> Mantén tu distancia y sincroniza tus esquivas para contrarrestar sus patrones de ataque.</li>
-                            <li><strong>Recompensas de Aventurero:</strong> Al derrotarlo desbloquearás progreso exclusivo en las recompensas de cazador del Bestiario.</li>
+                            <li><strong>Protección contra fuego:</strong> Bebe pociones de resistencia ígnea antes de entrar a la arena de combate para mitigar las quemaduras.</li>
+                            <li><strong>Esquiva los meteoros:</strong> Observa los círculos ardientes en el suelo y muévete lateralmente sin quedarte estático.</li>
                         </ul>
                     </div>
 

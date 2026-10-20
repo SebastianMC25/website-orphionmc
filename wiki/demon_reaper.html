@@ -8,10 +8,10 @@
     <link rel="icon" href="../assets/images/logo.png" type="image/png">
 
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Base Stylesheet -->
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="../css/custom.css?v=31">
     <link rel="stylesheet" href="../css/wiki.css?v=31">
 </head>
@@ -29,7 +29,7 @@
             <a href="../index.html" class="wiki-nav-link"><i class="fa fa-house"></i> Inicio</a>
             <a href="index.html" class="wiki-nav-link"><i class="fa fa-book-skull"></i> Categorías</a>
             <a href="sepulcrales.html" class="wiki-nav-link active"><i class="fa fa-skull"></i> Señores Sepulcrales</a>
-            <a href="sepulcrales.html" class="wiki-back-btn"><i class="fa fa-arrow-left"></i> Volver</a>
+            <a href="sepulcrales.html" class="wiki-back-btn"><i class="fa fa-arrow-left"></i> Volver a Sepulcrales</a>
         </div>
     </nav>
 
@@ -44,7 +44,7 @@
         <!-- TITLE BANNER -->
         <header class="wiki-title-banner">
             <span class="wiki-badge badge-divine" style="background: rgba(245, 197, 66, 0.15); border-color: #f59e0b; color: #f59e0b;">
-                <i class="fa fa-skull"></i> Cosechador de Almas • Señores Sepulcrales
+                <i class="fa fa-crown"></i> Segador del Averno • Cavernas Profundas
             </span>
             <h1 class="wiki-main-title">SEGADOR DEMÓNICO</h1>
         </header>
@@ -94,9 +94,9 @@
             <!-- RIGHT COLUMN: COMBAT STATS -->
             <div class="stats-column">
 
-                <!-- MAIN CARD: SPECS -->
+                <!-- MAIN CARD: BOSS SPECS -->
                 <div class="stats-card">
-                    <span class="section-tag"><i class="fa fa-heart-pulse"></i> Ficha Técnica de Mazmorra</span>
+                    <span class="section-tag"><i class="fa fa-heart-pulse"></i> Ficha Técnica de Combate</span>
 
                     <!-- MINECRAFT BOSSBAR -->
                     <div class="boss-bar-display">
@@ -112,27 +112,45 @@
                             <div class="boss-bar-segment" style="background: #f59e0b;"></div>
                             <div class="boss-bar-segment" style="background: #f59e0b;"></div>
                             <div class="boss-bar-segment" style="background: #f59e0b;"></div>
+                            <div class="boss-bar-segment" style="background: #f59e0b;"></div>
+                            <div class="boss-bar-segment" style="background: #f59e0b;"></div>
+                            <div class="boss-bar-segment" style="background: #f59e0b;"></div>
+                            <div class="boss-bar-segment" style="background: #f59e0b;"></div>
+                            <div class="boss-bar-segment" style="background: #f59e0b;"></div>
+                            <div class="boss-bar-segment" style="background: #f59e0b;"></div>
+                            <div class="boss-bar-segment" style="background: #f59e0b;"></div>
+                            <div class="boss-bar-segment" style="background: #f59e0b;"></div>
+                            <div class="boss-bar-segment" style="background: #f59e0b;"></div>
+                            <div class="boss-bar-segment" style="background: #f59e0b;"></div>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 6px; color: #bbb;">
-                            <span>Categoría: <strong style="color: #f59e0b;">Señores Sepulcrales</strong></span>
-                            <span>Registro: <strong>Diario de Aventurero</strong></span>
+                            <span>Salud: <strong style="color: #f59e0b;">1,350 / 1,350 HP</strong></span>
+                            <span>Mazmorra: <strong>cueva7</strong></span>
                         </div>
                     </div>
 
                     <!-- TRAITS & IMMUNITIES -->
-                    <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-shield"></i> Habilidades y Rasgos de Combate</span>
+                    <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-shield"></i> Inmunidades y Rasgos Activos</span>
+                    <div class="traits-list">
+                        <span class="trait-chip immune" style="border-color: #f59e0b; color: #f59e0b;"><i class="fa fa-heart-circle-bolt"></i> Cosecha de Almas: Robo de Vida</span>
+                        <span class="trait-chip immune"><i class="fa fa-ghost"></i> Flotación Etérea</span>
+                        <span class="trait-chip immune"><i class="fa fa-shield"></i> Inmunidad a Flechas Normales</span>
+                    </div>
+
+                    <!-- PHASES BREAKDOWN -->
+                    <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-hourglass-half"></i> Fases del Encuentro</span>
                     <ul class="strategy-list" style="margin-bottom: 0;">
-                        <li><strong class="text-gold">Habilidad 1:</strong> Guadaña de azufre desgarradora</li>
-                        <li><strong class="text-gold">Habilidad 2:</strong> Invocación de caracoles del averno</li>
-                        <li><strong class="text-gold">Habilidad 3:</strong> Tajo en arco con fuego espectral</li>
+                        <li><strong class="text-gold">Fase 1 (100% - 70% HP):</strong> Tajos en arco con su guadaña de azufre desgarradora impregnada de fuego espectral.</li>
+                        <li><strong class="text-gold">Fase 2 (70% - 30% HP):</strong> Invocación de aberraciones del averno que persiguen a los miembros con menor salud del grupo.</li>
+                        <li><strong class="text-gold">Fase 3 - Vórtice de Almas (< 30% HP):</strong> Teletransporte veloz tras la espalda del objetivo con desgarro crítico mortal y drenaje masivo.</li>
                     </ul>
 
                     <!-- STRATEGY BOX -->
-                    <div class="strategy-box" style="margin-top: 20px;">
-                        <div class="strategy-title"><i class="fa fa-compass"></i> Consejos Tácticos</div>
+                    <div class="strategy-box">
+                        <div class="strategy-title"><i class="fa fa-compass"></i> Consejos Tácticos de Raid</div>
                         <ul class="strategy-list">
-                            <li><strong>Preparación de Batalla:</strong> Mantén tu distancia y sincroniza tus esquivas para contrarrestar sus patrones de ataque.</li>
-                            <li><strong>Recompensas de Aventurero:</strong> Al derrotarlo desbloquearás progreso exclusivo en las recompensas de cazador del Bestiario.</li>
+                            <li><strong>Bloqueo en ángulo:</strong> Sus tajos de guadaña tienen un arco de 180 grados; rueda hacia adelante atravesándolo para quedar a su espalda.</li>
+                            <li><strong>Prioriza los esbirros invocados:</strong> Las criaturas invocadas curan al Segador si logran infligir daño; elimínalas con daño en área.</li>
                         </ul>
                     </div>
 
