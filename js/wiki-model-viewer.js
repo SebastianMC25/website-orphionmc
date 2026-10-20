@@ -346,7 +346,7 @@ function buildModel(rawDoc, textures) {
         const origin = Array.isArray(el.origin) ? el.origin : [0, 0, 0];
         group.userData.originAbs = origin;
 
-        if (!isHitbox(el.name)) {
+        if (!isHitbox(el.name) && el.visibility !== false) {
             const mesh = buildCubeMesh(el, textures, origin);
             if (mesh) group.add(mesh);
         }
@@ -369,7 +369,7 @@ function buildModel(rawDoc, textures) {
     function processNode(node, parentGroup, parentOrigin = new THREE.Vector3(0, 0, 0)) {
         if (typeof node === 'string') {
             const el = elementMap.get(node);
-            if (!el || isHitbox(el.name)) return;
+            if (!el || isHitbox(el.name) || el.visibility === false) return;
             const cubeGroup = cubeGroupMap.get(el.uuid);
             if (!cubeGroup) return;
 
@@ -456,7 +456,7 @@ async function loadMobModel() {
     try {
         if (loadingText) loadingText.textContent = `CARGANDO RENDER 3D DE ${modelName}...`;
 
-        const modelUrl = `../assets/models/${modelKey}.bin?v=31`;
+        const modelUrl = `../assets/models/${modelKey}.bin?v=33`;
         const doc = await fetchEncryptedModel(modelUrl);
 
         // Cargar texturas embebidas con resolución real

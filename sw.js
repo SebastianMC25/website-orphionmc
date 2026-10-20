@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orphionmc-static-v32';
+const CACHE_NAME = 'orphionmc-static-v33';
 const STATIC_ASSETS = [
     './',
     'index.html',
@@ -194,7 +194,6 @@ const STATIC_ASSETS = [
     'wiki/skpack_archer.html',
     'wiki/skpack_axebrute.html',
     'wiki/skeleton_archer.html',
-    'wiki/skeleton_shaman.html',
     'wiki/ghoul.html',
     'wiki/specter.html',
     'wiki/zombie_brute.html',
@@ -203,7 +202,6 @@ const STATIC_ASSETS = [
     'wiki/slime_triple.html',
     'wiki/slime_lava.html',
     'wiki/slime_frost.html',
-    'wiki/mutant_zombie.html',
     'wiki/gnoll_archer.html',
     'wiki/gnoll_axe.html',
     'wiki/kobold_warrior.html',
@@ -230,7 +228,6 @@ const STATIC_ASSETS = [
     'assets/models/skpack_archer.bin',
     'assets/models/skpack_axebrute.bin',
     'assets/models/skeleton_archer.bin',
-    'assets/models/skeleton_shaman.bin',
     'assets/models/ghoul.bin',
     'assets/models/specter.bin',
     'assets/models/zombie_brute.bin',
@@ -239,7 +236,6 @@ const STATIC_ASSETS = [
     'assets/models/slime_triple.bin',
     'assets/models/slime_lava.bin',
     'assets/models/slime_frost.bin',
-    'assets/models/mutant_zombie.bin',
     'assets/models/gnoll_archer.bin',
     'assets/models/gnoll_axe.bin',
     'assets/models/kobold_warrior.bin',
