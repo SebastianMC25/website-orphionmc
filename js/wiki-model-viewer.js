@@ -85,8 +85,9 @@ function setupLighting() {
     scene.add(fillLight);
 }
 
-function setupFloor(center, size) {
-    const radius = Math.max(size.x, size.z) * 0.85;
+function setupFloor(center, size, floorY = 0) {
+    // Radio proporcionado al ancho y huella real del mob (evita pedestales gigantes en colas largas)
+    const radius = Math.max(size.x * 0.85, Math.min(size.z * 0.65, size.x * 1.45), 25);
     const pedestalGeo = new THREE.CylinderGeometry(radius, radius * 1.08, 3, 48);
     const pedestalMat = new THREE.MeshStandardMaterial({
         color: 0x161522,
@@ -94,7 +95,7 @@ function setupFloor(center, size) {
         metalness: 0.3
     });
     const pedestal = new THREE.Mesh(pedestalGeo, pedestalMat);
-    pedestal.position.set(center.x, -1.5, center.z);
+    pedestal.position.set(center.x, floorY - 1.5, center.z);
     pedestal.receiveShadow = true;
     scene.add(pedestal);
 
@@ -106,7 +107,7 @@ function setupFloor(center, size) {
     });
     const ring = new THREE.Mesh(ringGeo, ringMat);
     ring.rotation.x = -Math.PI / 2;
-    ring.position.set(center.x, 0.05, center.z);
+    ring.position.set(center.x, floorY + 0.05, center.z);
     scene.add(ring);
 }
 
@@ -443,7 +444,7 @@ async function loadMobModel() {
     try {
         if (loadingText) loadingText.textContent = `CARGANDO RENDER 3D DE ${modelName}...`;
 
-        const modelUrl = `../assets/models/${modelKey}.bin?v=25`;
+        const modelUrl = `../assets/models/${modelKey}.bin?v=26`;
         const doc = await fetchEncryptedModel(modelUrl);
 
         // Cargar texturas embebidas con resolución real
@@ -462,13 +463,15 @@ async function loadMobModel() {
 
         modelCenter.copy(center);
 
-        // Colocar pedestal bajo sus pies
-        setupFloor(center, size);
+        // Colocar pedestal bajo sus pies exactamente
+        const floorY = isFinite(box.min.y) ? box.min.y : 0;
+        setupFloor(center, size, floorY);
 
         // Posicionar cámara al frente del mob (los mobs Bedrock miran hacia -Z)
-        const maxDim = Math.max(size.x, size.y, size.z, 20);
-        const camDistance = maxDim * 1.6;
-        defaultCamPos.set(center.x + maxDim * 0.35, center.y + maxDim * 0.1, center.z - camDistance);
+        // Dimensión visual efectiva proporcional (para que bípedos y cuadrúpedos llenen el viewport como Zeus)
+        const effectiveDim = Math.max(size.y * 1.25, size.x * 1.1, size.z * 0.72, 25);
+        const camDistance = effectiveDim * 1.6;
+        defaultCamPos.set(center.x + effectiveDim * 0.38, center.y + effectiveDim * 0.15, center.z - camDistance);
         camera.position.copy(defaultCamPos);
         controls.target.copy(center);
         camera.near = 1;
