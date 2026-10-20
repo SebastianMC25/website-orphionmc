@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zeus, Dios del Cielo | Bestiario 3D - OrphionMC Wiki</title>
+    <title>Zeus (mso_zeus) | Render 3D - OrphionMC Wiki</title>
     <meta name="description"
-        content="Guía y visor 3D interactivo de Zeus (mso_zeus) en OrphionMC RPG. Explora sus 15 animaciones, estadísticas de combate (2000 HP), habilidades y mecánicas de raid.">
+        content="Visor y render 3D oficial del mob Zeus (mso_zeus) de ModelEngine en OrphionMC RPG. Explora el modelo en 360 grados, sus estadísticas de combate y datos de raid.">
 
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="shortcut icon" href="../favicon.ico">
@@ -47,7 +47,7 @@
         <div class="wiki-nav-links">
             <a href="../index.html" class="wiki-nav-link"><i class="fa fa-house"></i> Inicio</a>
             <a href="../index.html#about" class="wiki-nav-link"><i class="fa fa-shield-halved"></i> Nosotros</a>
-            <a href="zeus.html" class="wiki-nav-link active"><i class="fa fa-dragon"></i> Bestiario 3D</a>
+            <a href="zeus.html" class="wiki-nav-link active"><i class="fa fa-cube"></i> Bestiario 3D</a>
             <a href="../index.html" class="wiki-back-btn"><i class="fa fa-arrow-left"></i> Volver a la Web</a>
         </div>
     </nav>
@@ -66,7 +66,7 @@
             <span class="wiki-badge badge-divine"><i class="fa fa-crown"></i> Jefe Mitológico Divino • Trono del
                 Olimpo</span>
             <h1 class="wiki-main-title">ZEUS, DIOS DEL CIELO Y EL TRUENO</h1>
-            <p class="wiki-subtitle">Entidad ModelEngine: <code class="text-gold">mso_zeus</code> • MythicMobs: <code
+            <p class="wiki-subtitle">Render 3D de ModelEngine: <code class="text-gold">mso_zeus</code> • MythicMobs: <code
                     class="text-gold">MSO_Zeus</code> • Guardián Supremo del Olimpo</p>
         </header>
 
@@ -77,12 +77,12 @@
             <div class="model-column">
                 <div class="model-card">
                     <div class="model-header">
-                        <span class="model-title"><i class="fa fa-cube"></i> Visor 3D ModelEngine en Tiempo Real</span>
+                        <span class="model-title"><i class="fa fa-cube"></i> Render 3D ModelEngine en Tiempo Real</span>
                         <div class="model-quick-actions">
-                            <button id="auto-rotate-btn" class="model-tool-btn" title="Rotación automática">
+                            <button id="auto-rotate-btn" class="model-tool-btn" title="Activar/Desactivar giro automático">
                                 <i class="fa fa-rotate"></i>
                             </button>
-                            <button id="reset-cam-btn" class="model-tool-btn" title="Reiniciar cámara">
+                            <button id="reset-cam-btn" class="model-tool-btn" title="Centrar cámara">
                                 <i class="fa fa-crosshairs"></i>
                             </button>
                         </div>
@@ -99,35 +99,21 @@
                         <!-- LOADING OVERLAY -->
                         <div class="model-loading-overlay" id="model-loading">
                             <div class="model-spinner"></div>
-                            <span class="model-loading-text" id="loading-text">CARGANDO MODELO 3D DE ZEUS...</span>
+                            <span class="model-loading-text" id="loading-text">CARGANDO RENDER 3D DE ZEUS...</span>
                         </div>
                     </div>
 
-                    <!-- ANIMATION CONTROLS BAR -->
+                    <!-- FOOTER CONTROLS / STATUS -->
                     <div class="model-controls-bar">
                         <div class="controls-row">
-                            <div class="anim-select-group">
-                                <label for="anim-select"><i class="fa fa-film"></i> Animación:</label>
-                                <select id="anim-select" class="anim-dropdown">
-                                    <option value="">Cargando animaciones...</option>
-                                </select>
-                            </div>
-
-                            <button id="play-pause-btn" class="anim-btn" title="Pausar o reanudar">
-                                <i id="play-pause-icon" class="fa fa-pause"></i>
-                            </button>
-                        </div>
-
-                        <div class="controls-row">
-                            <span id="anim-status" class="status-pill">Iniciando motor 3D...</span>
-                            <span style="font-size: 0.75rem; color: var(--text-muted);">15 animaciones oficiales de
-                                Blockbench</span>
+                            <span class="status-pill"><i class="fa fa-check-circle"></i> Render 3D Activo</span>
+                            <span style="font-size: 0.8rem; color: var(--gold);"><i class="fa fa-cubes"></i> 198 Cubos ModelEngine (mso_zeus)</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN: COMBAT STATS & SKILLS -->
+            <!-- RIGHT COLUMN: COMBAT STATS -->
             <div class="stats-column">
 
                 <!-- MAIN CARD: BOSS SPECS -->
@@ -186,11 +172,11 @@
                         </div>
                         <div class="stat-box">
                             <span class="stat-box-num">198</span>
-                            <span class="stat-box-label">Huesos / Cubos</span>
+                            <span class="stat-box-label">Cubos 3D</span>
                         </div>
                         <div class="stat-box">
-                            <span class="stat-box-num">15</span>
-                            <span class="stat-box-label">Animaciones</span>
+                            <span class="stat-box-num">256²</span>
+                            <span class="stat-box-label">Textura RPG</span>
                         </div>
                     </div>
 
@@ -208,154 +194,19 @@
                     <span class="section-tag" style="margin-top: 20px;"><i class="fa fa-hourglass-half"></i> Fases del
                         Encuentro</span>
                     <ul class="strategy-list" style="margin-bottom: 0;">
-                        <li><strong class="text-gold">Fase 1 (100% - 80% HP):</strong> Ataques físicos Rebuke y Knock,
-                            intercalados con rayos perforantes Zap.</li>
-                        <li><strong class="text-gold">Fase 2 (80% - 50% HP):</strong> Se activa
-                            <em>Zeus-LightningShockwave</em>; ondas de choque radiales que desestabilizan el grupo.</li>
-                        <li><strong class="text-gold">Fase 3 (50% - 30% HP):</strong> Se desata <em>Zeus-WindBurst</em> y
-                            comienza la invocación de tornados que elevan jugadores por los aires.</li>
-                        <li><strong class="text-gold">Fase 4 - Furia Divina (&lt; 30% HP):</strong>
-                            <em>Zeus-SummonBallLightning</em>; esferas concentradas de alto daño eléctrico y tormenta
-                            infinita.</li>
-                        <li><strong class="text-gold">Fase Cataclismo (Al Morir):</strong> <em>ZeusDeathStorm</em>; al caer
-                            derrotado, genera un vórtice cataclísmico con lluvia de meteoros y rayos antes de registrarse en
-                            el Bestiario.</li>
+                        <li><strong class="text-gold">Fase 1 (100% - 80% HP):</strong> Ataques físicos con ondas de choque y rayos perforantes.</li>
+                        <li><strong class="text-gold">Fase 2 (80% - 50% HP):</strong> Ondas de choque radiales que desestabilizan a todo el grupo de raid.</li>
+                        <li><strong class="text-gold">Fase 3 (50% - 30% HP):</strong> Invocación de tornados y tempestad sagrada constante.</li>
+                        <li><strong class="text-gold">Fase 4 - Furia Divina (&lt; 30% HP):</strong> Esferas de centella concentrada de altísimo daño.</li>
+                        <li><strong class="text-gold">Cataclismo Final (Al Morir):</strong> Al caer derrotado, desata una última tormenta con lluvia de meteoros.</li>
                     </ul>
-                </div>
-
-                <!-- ABILITIES LIST -->
-                <div class="stats-card">
-                    <span class="section-tag"><i class="fa fa-wand-magic-sparkles"></i> Grimorio de Habilidades
-                        Divinas</span>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 18px;">
-                        Haz clic en <strong>"Ver animación en 3D"</strong> para visualizar cómo ejecuta cada movimiento en
-                        el modelo interactivo.
-                    </p>
-
-                    <div class="abilities-container">
-                        <!-- Skill 1 -->
-                        <div class="ability-card">
-                            <div class="ability-header">
-                                <span class="ability-name"><i class="fa fa-bolt text-gold"></i> Rayo Directo
-                                    (Zeus-Zap)</span>
-                                <div class="ability-meta">
-                                    <span class="ability-tag tag-damage">8 DMG + 2 Perforante</span>
-                                    <span class="ability-tag tag-cooldown">CD: 6s</span>
-                                </div>
-                            </div>
-                            <p class="ability-desc">
-                                Canaliza un relámpago penetrante desde el jolt de su arma directo hacia su objetivo de
-                                mayor amenaza. Imposible de esquivar sin cobertura física.
-                            </p>
-                            <a class="ability-anim-badge" onclick="playZeusAnimation('zap')"><i class="fa fa-play"></i> Ver
-                                animación en 3D (zap)</a>
-                        </div>
-
-                        <!-- Skill 2 -->
-                        <div class="ability-card">
-                            <div class="ability-header">
-                                <span class="ability-name"><i class="fa fa-meteor text-gold"></i> Lanzamiento de Relámpago
-                                    (Zeus-Bolt)</span>
-                                <div class="ability-meta">
-                                    <span class="ability-tag tag-damage">15 DMG Eléctrico</span>
-                                    <span class="ability-tag tag-cooldown">CD: 14s</span>
-                                </div>
-                            </div>
-                            <p class="ability-desc">
-                                Carga un proyectil de plasma sagrado y lo arroja con precisión milimétrica, generando una
-                                explosión de chispas y aturdimiento en el área de impacto.
-                            </p>
-                            <a class="ability-anim-badge" onclick="playZeusAnimation('toss_bolt')"><i
-                                    class="fa fa-play"></i> Ver animación en 3D (toss_bolt)</a>
-                        </div>
-
-                        <!-- Skill 3 -->
-                        <div class="ability-card">
-                            <div class="ability-header">
-                                <span class="ability-name"><i class="fa fa-hand-fist text-gold"></i> Golpe Rebuke
-                                    (Zeus-Bash)</span>
-                                <div class="ability-meta">
-                                    <span class="ability-tag tag-damage">18 DMG Físico</span>
-                                    <span class="ability-tag tag-cooldown">CD: 3s</span>
-                                </div>
-                            </div>
-                            <p class="ability-desc">
-                                Asesta un golpe colosal con su brazo a corta distancia que pulveriza a los objetivos
-                                situados en un cono frontal de 5 bloques.
-                            </p>
-                            <a class="ability-anim-badge" onclick="playZeusAnimation('rebuke')"><i class="fa fa-play"></i>
-                                Ver animación en 3D (rebuke)</a>
-                        </div>
-
-                        <!-- Skill 4 -->
-                        <div class="ability-card">
-                            <div class="ability-header">
-                                <span class="ability-name"><i class="fa fa-wind text-gold"></i> Empuje Colosal
-                                    (Zeus-Knockback)</span>
-                                <div class="ability-meta">
-                                    <span class="ability-tag tag-damage">16 DMG + Empuje 20b</span>
-                                    <span class="ability-tag tag-cooldown">CD: 3s</span>
-                                </div>
-                            </div>
-                            <p class="ability-desc">
-                                Libera una ráfaga de presión sónica que arroja violentamente hacia atrás a tanques y
-                                guerreros, rompiendo la formación defensiva del grupo.
-                            </p>
-                            <a class="ability-anim-badge" onclick="playZeusAnimation('knock')"><i class="fa fa-play"></i>
-                                Ver animación en 3D (knock)</a>
-                        </div>
-
-                        <!-- Skill 5 -->
-                        <div class="ability-card">
-                            <div class="ability-header">
-                                <span class="ability-name"><i class="fa fa-cloud-bolt text-gold"></i> Invocación de
-                                    Tormentas y Tornados</span>
-                                <div class="ability-meta">
-                                    <span class="ability-tag tag-phase">&lt; 50% HP</span>
-                                    <span class="ability-tag tag-cooldown">CD: 12s</span>
-                                </div>
-                            </div>
-                            <p class="ability-desc">
-                                Alza los brazos e invoca la tempestad sagrada. Vórtices de viento persiguen a los
-                                jugadores mientras rayos constantes impactan en el suelo del coliseo.
-                            </p>
-                            <a class="ability-anim-badge" onclick="playZeusAnimation('summon_lightning')"><i
-                                    class="fa fa-play"></i> Ver animación en 3D (summon_lightning)</a>
-                        </div>
-
-                        <!-- Skill 6 -->
-                        <div class="ability-card">
-                            <div class="ability-header">
-                                <span class="ability-name"><i class="fa fa-skull-crossbones text-gold"></i> Muerte
-                                    Cataclísmica (Zeus-Death)</span>
-                                <div class="ability-meta">
-                                    <span class="ability-tag tag-phase">Al Morir</span>
-                                    <span class="ability-tag tag-damage">Catástrofe Final</span>
-                                </div>
-                            </div>
-                            <p class="ability-desc">
-                                Al ser derrotado, la ira de Zeus no cesa de inmediato: se desencadena un colapso elemental
-                                donde los supervivientes deben evacuar rápidamente antes de que cese la tormenta.
-                            </p>
-                            <a class="ability-anim-badge" onclick="playZeusAnimation('death')"><i class="fa fa-play"></i>
-                                Ver animación en 3D (death)</a>
-                        </div>
-                    </div>
 
                     <!-- STRATEGY BOX -->
                     <div class="strategy-box">
-                        <div class="strategy-title"><i class="fa fa-compass"></i> Consejos Tácticos de Raid para
-                            Aventureros</div>
+                        <div class="strategy-title"><i class="fa fa-compass"></i> Consejos Tácticos de Raid</div>
                         <ul class="strategy-list">
-                            <li><strong>Composición de Grupo Óptima:</strong> Al menos 1 Guerrero con armadura pesada para
-                                sostener la ThreatTable, 1 Soporte / Shaman con tótems de regeneración constante, y 2 a 3
-                                DPS (Magos o Arqueros) posicionados a máxima distancia.</li>
-                            <li><strong>No uses ataques de Rayo:</strong> Zeus posee inmunidad absoluta contra daño eléctrico;
-                                utiliza hechizos de hielo o armas de fuego/corte.</li>
-                            <li><strong>Cuidado con los bordes de la arena:</strong> Su habilidad de empuje colosal
-                                (<em>knock</em>) puede lanzarte al vacío si no estás atento al retroceso.</li>
-                            <li><strong>Fase de Tornados:</strong> Cuando veas que Zeus canaliza <em>summon_lightning</em>,
-                                mantente en constante movimiento para evitar ser atrapado por los vórtices.</li>
+                            <li><strong>Composición recomendada:</strong> Al menos 1 Guerrero tanque para absorber la amenaza, 1 Soporte para sanar y DPS a distancia.</li>
+                            <li><strong>No uses ataques eléctricos:</strong> Zeus posee inmunidad absoluta contra rayos; utiliza daño cortante o de fuego.</li>
                         </ul>
                     </div>
 

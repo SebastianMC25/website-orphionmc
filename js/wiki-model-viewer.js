@@ -1,61 +1,19 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { BBModelLoader } from 'three-blockbench';
-
-// POLYFILL: three-blockbench 0.1.0 expects clip.userData to be initialized on THREE.AnimationClip
-if (!THREE.AnimationClip.prototype.hasOwnProperty('userData')) {
-    Object.defineProperty(THREE.AnimationClip.prototype, 'userData', {
-        get() {
-            if (!this._userData) this._userData = {};
-            return this._userData;
-        },
-        set(value) {
-            this._userData = value;
-        },
-        configurable: true,
-        enumerable: true
-    });
-}
+import { BBModelParser, resolveOptions } from 'three-blockbench';
 
 // DOM Elements
 const canvasWrapper = document.getElementById('canvas-wrapper');
 const canvas = document.getElementById('model-canvas');
 const loadingOverlay = document.getElementById('model-loading');
 const loadingText = document.getElementById('loading-text');
-const animSelect = document.getElementById('anim-select');
-const playPauseBtn = document.getElementById('play-pause-btn');
-const playPauseIcon = document.getElementById('play-pause-icon');
 const resetCamBtn = document.getElementById('reset-cam-btn');
 const autoRotateBtn = document.getElementById('auto-rotate-btn');
-const animStatus = document.getElementById('anim-status');
-
-// Animation Friendly Labels
-const ANIMATION_LABELS = {
-    'idle': '⚡ Reposo Divino (idle)',
-    'idle_stand': '⚡ Postura Erguida (idle_stand)',
-    'idle_sit': '🪑 Sentado en el Trono (idle_sit)',
-    'walk': '🚶 Caminar Majestuoso (walk)',
-    'zap': '⚡ Rayo Directo (zap)',
-    'toss_bolt': '🔱 Lanzamiento de Relámpago (toss_bolt)',
-    'summon_lightning': '🌩️ Invocación de Tormenta (summon_lightning)',
-    'rebuke': '💥 Golpe Masivo Rebuke (rebuke)',
-    'knock': '🌪️ Golpe de Empuje Colosal (knock)',
-    'shockwave': '🛡️ Onda de Choque Eléctrica (shockwave)',
-    'storm_quake': '🌀 Terremoto de Tormenta (storm_quake)',
-    'summon': '✨ Invocación Divina (summon)',
-    'fly_idle': '🦅 Vuelo Suspendido (fly_idle)',
-    'fly_walk': '💨 Desplazamiento Aéreo (fly_walk)',
-    'death': '💀 Derrota y Cataclismo (death)'
-};
 
 // State
 let scene, camera, renderer, controls;
 let currentModel = null;
-let mixer = null;
-let currentAction = null;
-let isPlaying = true;
-let isAutoRotating = false;
-let clock = new THREE.Clock();
+let isAutoRotating = true; // Auto-rotate by default for showcase
 
 function init() {
     if (!canvas || !canvasWrapper) return;
@@ -63,10 +21,10 @@ function init() {
     // 1. Scene
     scene = new THREE.Scene();
 
-    // 2. Camera - Scaled for Zeus (~8.8 units tall)
+    // 2. Camera - Scaled for Zeus (height ~8.8 units)
     const width = canvasWrapper.clientWidth || 600;
     const height = canvasWrapper.clientHeight || 520;
-    camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 500);
+    camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 500);
     camera.position.set(0, 5.5, 14.5);
 
     // 3. Renderer
@@ -92,13 +50,13 @@ function init() {
     controls.minDistance = 5;
     controls.maxDistance = 35;
     controls.maxPolarAngle = Math.PI / 2 + 0.1;
-    controls.autoRotate = false;
+    controls.autoRotate = true; // Start slowly spinning
     controls.autoRotateSpeed = 1.2;
 
     // 6. Ground Pedestal
     setupFloor();
 
-    // 7. Load Blockbench Model
+    // 7. Load Pure 3D Model
     loadZeusModel();
 
     // 8. Event Listeners
@@ -110,28 +68,28 @@ function init() {
 
 function setupLighting() {
     // Ambient light - warm tone
-    const ambientLight = new THREE.AmbientLight(0xfff8ee, 1.6);
+    const ambientLight = new THREE.AmbientLight(0xfff8ee, 1.8);
     scene.add(ambientLight);
 
-    // Key Light - Divine Golden
-    const keyLight = new THREE.DirectionalLight(0xffe599, 2.5);
-    keyLight.position.set(10, 15, 12);
+    // Key Light - Divine Golden (Front-Right)
+    const keyLight = new THREE.DirectionalLight(0xffe599, 2.8);
+    keyLight.position.set(12, 18, 14);
     keyLight.castShadow = true;
     scene.add(keyLight);
 
-    // Rim Light - Cyan Mythic Lightning (back-left)
-    const rimLight = new THREE.DirectionalLight(0x38bdf8, 2.2);
-    rimLight.position.set(-12, 12, -10);
+    // Rim Light - Cyan Mythic Lightning (Back-Left)
+    const rimLight = new THREE.DirectionalLight(0x38bdf8, 2.5);
+    rimLight.position.set(-14, 14, -12);
     scene.add(rimLight);
 
-    // Fill Light - Soft purple / Olympus aura
-    const fillLight = new THREE.DirectionalLight(0xc084fc, 1.0);
-    fillLight.position.set(0, -5, 10);
+    // Fill Light - Soft purple Olympus aura
+    const fillLight = new THREE.DirectionalLight(0xc084fc, 1.2);
+    fillLight.position.set(0, -6, 12);
     scene.add(fillLight);
 }
 
 function setupFloor() {
-    // Divine pedestal circle scaled for Zeus
+    // Divine pedestal circle
     const pedestalGeo = new THREE.CylinderGeometry(4.2, 4.6, 0.4, 32);
     const pedestalMat = new THREE.MeshStandardMaterial({
         color: 0x161522,
@@ -157,25 +115,71 @@ function setupFloor() {
 
 async function loadZeusModel() {
     try {
-        if (loadingText) loadingText.textContent = 'CARGANDO ZEUS.BBMODEL...';
+        if (loadingText) loadingText.textContent = 'CARGANDO RENDER 3D...';
 
-        const loader = new BBModelLoader();
         const modelUrl = '../assets/models/mso_zeus.bbmodel';
+        const response = await fetch(modelUrl);
+        if (!response.ok) throw new Error(`HTTP ${response.status} cargando el archivo del modelo`);
+        
+        const doc = await response.json();
 
-        const model = await loader.loadAsync(modelUrl);
+        // 1. Recolectar grupos si faltan
+        function collectGroups(nodes, list = []) {
+            nodes.forEach(node => {
+                if (typeof node === 'object' && node !== null) {
+                    list.push(node);
+                    if (Array.isArray(node.children)) {
+                        collectGroups(node.children, list);
+                    }
+                }
+            });
+            return list;
+        }
+
+        if (!doc.groups || doc.groups.length === 0) {
+            doc.groups = collectGroups(doc.outliner || []);
+        }
+
+        // 2. Garantizar tipo cube en todos los elementos
+        if (Array.isArray(doc.elements)) {
+            doc.elements.forEach(el => {
+                if (!el.type) el.type = 'cube';
+            });
+        }
+
+        // 3. Omitir animaciones (render puro como solicitó el usuario)
+        doc.animations = [];
+
+        // 4. Parsear con BBModelParser
+        const options = resolveOptions({
+            unitScale: 1 / 16,
+            loadTextures: true,
+            strict: false
+        });
+
+        const parser = new BBModelParser(undefined, options);
+        const model = await parser.parse(doc, '');
         currentModel = model;
 
-        // Add to scene
+        // Añadir modelo a la escena
         scene.add(model.scene);
         model.scene.position.set(0, 0, 0);
 
-        // Enable shadow casting and nearest-neighbor texture filtering
+        // Optimizar renderizado de texturas pixel-art RPG
         model.scene.traverse((child) => {
             if (child.isMesh) {
                 child.castShadow = true;
                 child.receiveShadow = true;
                 if (child.material) {
-                    if (child.material.map) {
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach(mat => {
+                            if (mat.map) {
+                                mat.map.magFilter = THREE.NearestFilter;
+                                mat.map.minFilter = THREE.NearestMipmapNearestFilter;
+                                mat.map.needsUpdate = true;
+                            }
+                        });
+                    } else if (child.material.map) {
                         child.material.map.magFilter = THREE.NearestFilter;
                         child.material.map.minFilter = THREE.NearestMipmapNearestFilter;
                         child.material.map.needsUpdate = true;
@@ -184,23 +188,17 @@ async function loadZeusModel() {
             }
         });
 
-        // Setup Animation Mixer
-        mixer = model.createMixer();
-
-        // Populate Animation Selector
-        populateAnimations(model);
-
-        // Hide Loading Overlay
+        // Ocultar overlay de carga
         if (loadingOverlay) {
             loadingOverlay.style.opacity = '0';
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
-            }, 350);
+            }, 300);
         }
 
-        console.log('✅ Zeus 3D Model Loaded Successfully!', model);
+        console.log('✅ Zeus 3D Render Cargado con Éxito!', model);
     } catch (err) {
-        console.error('❌ Error cargando el modelo de Zeus:', err);
+        console.error('❌ Error cargando render 3D de Zeus:', err);
         if (loadingText) {
             loadingText.innerHTML = `ERROR CARGANDO EL MODELO 3D<br><span style="font-size:0.75rem;color:#fca5a5;text-transform:none;">${err?.message || err}</span>`;
             loadingText.style.color = '#ef4444';
@@ -208,102 +206,7 @@ async function loadZeusModel() {
     }
 }
 
-function populateAnimations(model) {
-    if (!animSelect) return;
-    animSelect.innerHTML = '';
-
-    const animList = model.animations || [];
-    if (animList.length === 0) {
-        const opt = document.createElement('option');
-        opt.textContent = 'Sin animaciones';
-        animSelect.appendChild(opt);
-        return;
-    }
-
-    // Populate options
-    animList.forEach((anim) => {
-        const opt = document.createElement('option');
-        opt.value = anim.name;
-        opt.textContent = ANIMATION_LABELS[anim.name] || `⚡ ${anim.name}`;
-        animSelect.appendChild(opt);
-    });
-
-    // Default: prioritize 'idle' or 'idle_stand' or the first
-    const preferred = ['idle', 'idle_stand', 'walk'].find(name =>
-        animList.some(a => a.name === name)
-    );
-    const startAnim = preferred || animList[0].name;
-    animSelect.value = startAnim;
-
-    playAnimation(startAnim);
-}
-
-export function playAnimation(animName, loop = true) {
-    if (!currentModel || !mixer) return;
-
-    try {
-        const nextAction = currentModel.createAction(mixer, animName);
-        if (!nextAction) return;
-
-        if (loop) {
-            nextAction.setLoop(THREE.LoopRepeat, Infinity);
-        }
-
-        if (currentAction && currentAction !== nextAction) {
-            nextAction.reset();
-            nextAction.crossFadeFrom(currentAction, 0.35, true);
-            nextAction.play();
-        } else {
-            nextAction.reset();
-            nextAction.play();
-        }
-
-        currentAction = nextAction;
-        isPlaying = true;
-
-        if (playPauseIcon) playPauseIcon.className = 'fa fa-pause';
-        if (animSelect) animSelect.value = animName;
-        if (animStatus) animStatus.textContent = `Reproduciendo: ${animName}`;
-    } catch (e) {
-        console.warn(`No se pudo reproducir animación ${animName}:`, e);
-    }
-}
-
-// Make accessible globally so HTML ability buttons can trigger animations
-window.playZeusAnimation = (name) => {
-    playAnimation(name);
-    // Smoothly scroll or focus viewer if on mobile
-    if (window.innerWidth <= 1024 && canvasWrapper) {
-        canvasWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-};
-
 function setupEvents() {
-    // Dropdown change
-    if (animSelect) {
-        animSelect.addEventListener('change', (e) => {
-            playAnimation(e.target.value);
-        });
-    }
-
-    // Play / Pause
-    if (playPauseBtn) {
-        playPauseBtn.addEventListener('click', () => {
-            if (!currentAction) return;
-            if (isPlaying) {
-                currentAction.paused = true;
-                isPlaying = false;
-                if (playPauseIcon) playPauseIcon.className = 'fa fa-play';
-                if (animStatus) animStatus.textContent = 'Pausado';
-            } else {
-                currentAction.paused = false;
-                isPlaying = true;
-                if (playPauseIcon) playPauseIcon.className = 'fa fa-pause';
-                if (animStatus) animStatus.textContent = `Reproduciendo: ${animSelect.value}`;
-            }
-        });
-    }
-
     // Reset Camera
     if (resetCamBtn) {
         resetCamBtn.addEventListener('click', () => {
@@ -315,6 +218,10 @@ function setupEvents() {
 
     // Auto Rotate
     if (autoRotateBtn) {
+        // Highlight active initially
+        autoRotateBtn.style.background = 'var(--gold)';
+        autoRotateBtn.style.color = '#000';
+
         autoRotateBtn.addEventListener('click', () => {
             isAutoRotating = !isAutoRotating;
             controls.autoRotate = isAutoRotating;
@@ -338,11 +245,6 @@ function onWindowResize() {
 
 function animate() {
     requestAnimationFrame(animate);
-
-    const delta = clock.getDelta();
-    if (mixer && isPlaying) {
-        mixer.update(delta);
-    }
 
     if (controls) {
         controls.update();
