@@ -312,7 +312,10 @@ function buildModel(rawDoc, textures) {
     const elementMap = new Map();
     (bb.elements || []).forEach(el => elementMap.set(el.uuid, el));
 
-    const isHitbox = name => (name || '').toLowerCase() === 'hitbox' || (name || '').toLowerCase() === 'hitbox cube';
+    const isHitbox = name => {
+        const s = (name || '').toLowerCase();
+        return s === 'hitbox' || s === 'hitbox cube' || s.includes('hitbox') || s.startsWith('attack') || s.includes('_vfx') || s.includes('raser');
+    };
 
     function createCubeGroup(el) {
         const group = new THREE.Group();

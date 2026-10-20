@@ -1,9 +1,10 @@
-const CACHE_NAME = 'orphionmc-static-v13';
+const CACHE_NAME = 'orphionmc-static-v14';
 const STATIC_ASSETS = [
     './',
     'index.html',
     'wiki/index.html',
     'wiki/olimpo.html',
+    'wiki/delos.html',
     'wiki/zeus.html',
     'wiki/poseidon.html',
     'wiki/pluto.html',
@@ -13,6 +14,7 @@ const STATIC_ASSETS = [
     'wiki/medusa.html',
     'wiki/loki.html',
     'wiki/buda.html',
+    'wiki/bufobufo.html',
     'assets/models/zeus.bin',
     'assets/models/poseidon.bin',
     'assets/models/pluto.bin',
@@ -22,6 +24,7 @@ const STATIC_ASSETS = [
     'assets/models/medusa.bin',
     'assets/models/loki.bin',
     'assets/models/buda.bin',
+    'assets/models/bufo.bin',
     'css/custom.css',
     'css/wiki.css',
     'js/main.js',
