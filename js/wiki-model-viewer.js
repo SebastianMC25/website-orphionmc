@@ -12,7 +12,7 @@ const autoRotateBtn = document.getElementById('auto-rotate-btn');
 // State
 let scene, camera, renderer, controls;
 let modelCenter = new THREE.Vector3(0, 70, 0);
-let defaultCamPos = new THREE.Vector3(0, 80, 220);
+let defaultCamPos = new THREE.Vector3(30, 80, -220);
 
 function init() {
     if (!canvas || !canvasWrapper) return;
@@ -31,7 +31,8 @@ function init() {
         canvas: canvas,
         antialias: true,
         alpha: true,
-        powerPreference: 'high-performance'
+        powerPreference: 'high-performance',
+        preserveDrawingBuffer: true
     });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -49,7 +50,7 @@ function init() {
     controls.minDistance = 30;
     controls.maxDistance = 600;
     controls.maxPolarAngle = Math.PI / 2 + 0.15;
-    controls.autoRotate = true; // Rotación automática suave de vitrina
+    controls.autoRotate = true; // Rotación de vitrina
     controls.autoRotateSpeed = 1.2;
 
     // 6. Cargar y construir el modelo
@@ -67,20 +68,20 @@ function setupLighting() {
     const ambientLight = new THREE.AmbientLight(0xfff8ee, 1.8);
     scene.add(ambientLight);
 
-    // Luz principal dorada (frontal derecha)
+    // Luz principal dorada (frontal derecha de la vista)
     const keyLight = new THREE.DirectionalLight(0xffe599, 2.5);
-    keyLight.position.set(120, 200, 160);
+    keyLight.position.set(120, 200, -160);
     keyLight.castShadow = true;
     scene.add(keyLight);
 
     // Luz de contorno cian mítica de rayo (trasera izquierda)
     const rimLight = new THREE.DirectionalLight(0x38bdf8, 2.2);
-    rimLight.position.set(-150, 150, -120);
+    rimLight.position.set(-150, 150, 120);
     scene.add(rimLight);
 
     // Luz de relleno púrpura divina
     const fillLight = new THREE.DirectionalLight(0xc084fc, 1.2);
-    fillLight.position.set(0, -50, 120);
+    fillLight.position.set(0, -50, -120);
     scene.add(fillLight);
 }
 
@@ -113,6 +114,9 @@ async function loadTextures(bb) {
     const loader = new THREE.TextureLoader();
     const textures = [];
 
+    const defaultW = Number(bb.resolution?.width) || 256;
+    const defaultH = Number(bb.resolution?.height) || 256;
+
     for (const tex of bb.textures || []) {
         const src = tex.source || tex.path || tex.relative_path;
         if (!src) {
@@ -129,8 +133,8 @@ async function loadTextures(bb) {
 
             textures.push({
                 map: texture,
-                uvW: Number(tex.uv_width) || Number(tex.resolution?.width) || Number(tex.width) || texture.image?.width || 256,
-                uvH: Number(tex.uv_height) || Number(tex.resolution?.height) || Number(tex.height) || texture.image?.height || 256
+                uvW: Number(tex.uv_width) || Number(tex.resolution?.width) || Number(tex.width) || defaultW,
+                uvH: Number(tex.uv_height) || Number(tex.resolution?.height) || Number(tex.height) || defaultH
             });
         } catch (e) {
             console.warn('Advertencia cargando textura:', e);
@@ -144,18 +148,22 @@ function buildCubeMesh(element, textures, originAbs) {
     if (!element.from || !element.to) return null;
 
     const inflate = Number(element.inflate || 0);
-    const from = new THREE.Vector3(element.from[0], element.from[1], element.from[2]);
-    const to = new THREE.Vector3(element.to[0], element.to[1], element.to[2]);
+    const a = new THREE.Vector3(element.from[0], element.from[1], element.from[2]);
+    const s = new THREE.Vector3(element.to[0], element.to[1], element.to[2]);
+
+    const u = Math.sign(s.x - a.x) || 1;
+    const f = Math.sign(s.y - a.y) || 1;
+    const p = Math.sign(s.z - a.z) || 1;
 
     const min = new THREE.Vector3(
-        Math.min(from.x, to.x) - inflate,
-        Math.min(from.y, to.y) - inflate,
-        Math.min(from.z, to.z) - inflate
+        Math.min(a.x, s.x) - inflate,
+        Math.min(a.y, s.y) - inflate,
+        Math.min(a.z, s.z) - inflate
     );
     const max = new THREE.Vector3(
-        Math.max(from.x, to.x) + inflate,
-        Math.max(from.y, to.y) + inflate,
-        Math.max(from.z, to.z) + inflate
+        Math.max(a.x, s.x) + inflate,
+        Math.max(a.y, s.y) + inflate,
+        Math.max(a.z, s.z) + inflate
     );
     const size = new THREE.Vector3().subVectors(max, min);
 
@@ -163,31 +171,48 @@ function buildCubeMesh(element, textures, originAbs) {
     const dx = Math.max(Math.abs(size.x), eps);
     const dy = Math.max(Math.abs(size.y), eps);
     const dz = Math.max(Math.abs(size.z), eps);
+    const isFlat = Math.abs(size.x) < eps || Math.abs(size.y) < eps || Math.abs(size.z) < eps;
 
     const geometry = new THREE.BoxGeometry(dx, dy, dz);
     const center = new THREE.Vector3().addVectors(min, max).multiplyScalar(0.5);
     const offset = new THREE.Vector3().subVectors(center, new THREE.Vector3(originAbs[0], originAbs[1], originAbs[2]));
 
-    const faceNames = ['east', 'west', 'up', 'down', 'south', 'north'];
-    const orderedFaces = [...faceNames];
+    const R = ['east', 'west', 'up', 'down', 'south', 'north'];
+    const L = [...R];
+    const swap = (arr, i1, i2) => {
+        const tmp = arr[i1];
+        arr[i1] = arr[i2];
+        arr[i2] = tmp;
+    };
+    if (u < 0) swap(L, 0, 1);
+    if (f < 0) swap(L, 2, 3);
+    if (p < 0) swap(L, 4, 5);
 
-    if ((to.x - from.x) < 0) [orderedFaces[0], orderedFaces[1]] = [orderedFaces[1], orderedFaces[0]];
-    if ((to.y - from.y) < 0) [orderedFaces[2], orderedFaces[3]] = [orderedFaces[3], orderedFaces[2]];
-    if ((to.z - from.z) < 0) [orderedFaces[4], orderedFaces[5]] = [orderedFaces[5], orderedFaces[4]];
-
+    const invert = !!element.invert;
     const faces = element.faces || {};
-    const materials = orderedFaces.map(faceKey => {
+
+    const materials = L.map(faceKey => {
         const faceData = faces[faceKey] || {};
         const texIdx = typeof faceData.texture === 'number' ? faceData.texture : 0;
         const texObj = textures[texIdx] || textures[0];
 
-        return new THREE.MeshStandardMaterial({
-            map: texObj ? texObj.map : null,
+        const extraProps = isFlat ? {
+            transparent: true,
+            alphaTest: 0.05,
+            depthWrite: false,
+            side: THREE.DoubleSide
+        } : {
             transparent: false,
             alphaTest: 0.5,
             depthWrite: true,
+            side: invert ? THREE.BackSide : THREE.FrontSide
+        };
+
+        return new THREE.MeshStandardMaterial({
+            map: texObj ? texObj.map : null,
             roughness: 0.7,
-            metalness: 0.1
+            metalness: 0.1,
+            ...extraProps
         });
     });
 
@@ -196,9 +221,30 @@ function buildCubeMesh(element, textures, originAbs) {
     mesh.castShadow = true;
     mesh.receiveShadow = true;
 
-    // Mapeo UV de caras de Blockbench a Three.js BoxGeometry
+    if (invert && !isFlat) {
+        const idx = geometry.getIndex();
+        if (idx) {
+            const arr = idx.array;
+            for (let j = 0; j < arr.length; j += 3) {
+                const tmp = arr[j + 1];
+                arr[j + 1] = arr[j + 2];
+                arr[j + 2] = tmp;
+            }
+            idx.needsUpdate = true;
+        }
+        const normals = geometry.getAttribute('normal');
+        if (normals) {
+            for (let j = 0; j < normals.array.length; j++) normals.array[j] *= -1;
+            normals.needsUpdate = true;
+        }
+    }
+
+    // Mapeo UV exacto de MythicCraft BBViewer
     const uvAttr = geometry.getAttribute('uv');
-    orderedFaces.forEach((faceKey, faceIndex) => {
+    const cornerOrder = ['TL', 'TR', 'BR', 'BL'];
+    const rotateCorner = (c, s) => cornerOrder[(cornerOrder.indexOf(c) + s) % 4];
+
+    L.forEach((faceKey, faceIndex) => {
         const faceData = faces[faceKey];
         if (!faceData || !Array.isArray(faceData.uv)) return;
 
@@ -207,25 +253,22 @@ function buildCubeMesh(element, textures, originAbs) {
         const uvW = (texObj && texObj.uvW) || 256;
         const uvH = (texObj && texObj.uvH) || 256;
 
-        const left = u1 / uvW;
-        const right = u2 / uvW;
-        const top = 1 - (v1 / uvH);
-        const bottom = 1 - (v2 / uvH);
+        const Ae = u1 / uvW;
+        const Pe = u2 / uvW;
+        const ze = v1 / uvH;
+        const xt = v2 / uvH;
 
         const corners = {
-            TL: [left, top],
-            TR: [right, top],
-            BR: [right, bottom],
-            BL: [left, bottom]
+            TL: [Ae, ze],
+            TR: [Pe, ze],
+            BR: [Pe, xt],
+            BL: [Ae, xt]
         };
 
         const rot = ((faceData.rotation || 0) % 360 + 360) % 360;
         const steps = rot % 90 === 0 ? rot / 90 : 0;
-        const cornerOrder = ['TL', 'TR', 'BR', 'BL'];
-        const rotateCorner = (c, s) => cornerOrder[(cornerOrder.indexOf(c) + s) % 4];
-
-        // Orden de vértices de BoxGeometry en Three.js: [TL, TR, BL, BR]
         const targetCorners = ['TL', 'TR', 'BL', 'BR'].map(c => corners[rotateCorner(c, steps)]);
+
         const baseIdx = faceIndex * 8;
         for (let p = 0; p < 4; p++) {
             uvAttr.array[baseIdx + p * 2 + 0] = targetCorners[p][0];
@@ -237,7 +280,32 @@ function buildCubeMesh(element, textures, originAbs) {
     return mesh;
 }
 
-function buildModel(bb, textures) {
+function prepareOutliner(bb) {
+    if (!bb || typeof bb !== 'object') return bb;
+    const groupMap = new Map();
+    for (const g of bb.groups || []) {
+        if (g && typeof g === 'object' && typeof g.uuid === 'string') {
+            groupMap.set(g.uuid, g);
+        }
+    }
+    if (!groupMap.size || !Array.isArray(bb.outliner)) return bb;
+
+    function mergeNode(node) {
+        if (typeof node === 'string') return node;
+        if (!node || typeof node !== 'object') return null;
+        const matched = typeof node.uuid === 'string' ? groupMap.get(node.uuid) || {} : {};
+        const children = Array.isArray(node.children) ? node.children : Array.isArray(matched.children) ? matched.children : [];
+        const merged = { ...matched, ...node };
+        merged.children = children.map(mergeNode).filter(Boolean);
+        return merged;
+    }
+
+    const mergedOutliner = bb.outliner.map(mergeNode).filter(Boolean);
+    return { ...bb, outliner: mergedOutliner };
+}
+
+function buildModel(rawDoc, textures) {
+    const bb = prepareOutliner(rawDoc);
     const root = new THREE.Group();
     root.name = '__MODEL_ROOT__';
 
@@ -258,6 +326,7 @@ function buildModel(bb, textures) {
         }
 
         if (el.rotation && Array.isArray(el.rotation)) {
+            group.rotation.order = 'ZYX';
             group.rotation.set(
                 THREE.MathUtils.degToRad(el.rotation[0] || 0),
                 THREE.MathUtils.degToRad(el.rotation[1] || 0),
@@ -295,6 +364,7 @@ function buildModel(bb, textures) {
             boneGroup.position.copy(pos);
 
             if (node.rotation && Array.isArray(node.rotation)) {
+                boneGroup.rotation.order = 'ZYX';
                 boneGroup.rotation.set(
                     THREE.MathUtils.degToRad(node.rotation[0] || 0),
                     THREE.MathUtils.degToRad(node.rotation[1] || 0),
@@ -325,7 +395,7 @@ async function loadZeusModel() {
         if (!response.ok) throw new Error(`HTTP ${response.status} cargando el archivo del modelo`);
         const doc = await response.json();
 
-        // Cargar texturas embebidas
+        // Cargar texturas embebidas con resolución real
         const textures = await loadTextures(doc);
 
         // Construir jerarquía 3D idéntica a MythicCraft BBViewer
@@ -344,10 +414,10 @@ async function loadZeusModel() {
         // Colocar pedestal bajo sus pies
         setupFloor(center, size);
 
-        // Posicionar cámara a distancia ideal
+        // Posicionar cámara al frente del mob (los mobs Bedrock miran hacia -Z)
         const maxDim = Math.max(size.x, size.y, size.z);
         const camDistance = maxDim * 1.55;
-        defaultCamPos.set(center.x, center.y + maxDim * 0.15, center.z + camDistance);
+        defaultCamPos.set(center.x + maxDim * 0.35, center.y + maxDim * 0.1, center.z - camDistance);
         camera.position.copy(defaultCamPos);
         controls.target.copy(center);
         camera.near = 1;
