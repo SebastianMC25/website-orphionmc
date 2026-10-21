@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orphionmc-static-v39';
+const CACHE_NAME = 'orphionmc-static-v40';
 const STATIC_ASSETS = [
     './',
     'index.html',
@@ -173,6 +173,8 @@ const STATIC_ASSETS = [
     'js/main.js',
     'js/server-status.js',
     'js/wiki-model-viewer.js',
+    'js/vendor/three.module.js',
+    'js/vendor/OrbitControls.js',
     'manifest.json',
     'favicon.ico',
     'wiki/skpack_swordbrute.html',
@@ -285,6 +287,6 @@ self.addEventListener('fetch', (event) => {
                 }
                 return networkResponse;
             })
-            .catch(() => caches.match(request))
+            .catch(() => caches.match(request, { ignoreSearch: true }))
     );
 });

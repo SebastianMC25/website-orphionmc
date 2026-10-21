@@ -1,5 +1,10 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+// Redirigir a HTTPS seguro en producción si se ingresó por HTTP
+if (typeof window !== 'undefined' && window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    window.location.replace(window.location.href.replace('http:', 'https:'));
+}
+
+import * as THREE from './vendor/three.module.js';
+import { OrbitControls } from './vendor/OrbitControls.js';
 
 // DOM Elements
 const canvasWrapper = document.getElementById('canvas-wrapper');
@@ -17,23 +22,25 @@ let defaultCamPos = new THREE.Vector3(30, 80, -220);
 function init() {
     if (!canvas || !canvasWrapper) return;
 
-    // 1. Scene
-    scene = new THREE.Scene();
+    try {
+        // 1. Scene
+        scene = new THREE.Scene();
 
-    // 2. Camera
-    const width = canvasWrapper.clientWidth || 600;
-    const height = canvasWrapper.clientHeight || 520;
-    camera = new THREE.PerspectiveCamera(40, width / height, 0.5, 5000);
-    camera.position.copy(defaultCamPos);
+        // 2. Camera
+        const width = canvasWrapper.clientWidth || 600;
+        const height = canvasWrapper.clientHeight || 520;
+        camera = new THREE.PerspectiveCamera(40, width / height, 0.5, 5000);
+        camera.position.copy(defaultCamPos);
 
-    // 3. Renderer
-    renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        antialias: true,
-        alpha: true,
-        powerPreference: 'high-performance',
-        preserveDrawingBuffer: true
-    });
+        // 3. Renderer con fallback para GPUs integradas o navegadores con limitaciones WebGL
+        renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            antialias: true,
+            alpha: true,
+            powerPreference: 'default',
+            preserveDrawingBuffer: true,
+            failIfMajorPerformanceCaveat: false
+        });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
@@ -60,7 +67,13 @@ function init() {
     setupEvents();
 
     // 8. Loop de Render
-    animate();
+        animate();
+    } catch (e) {
+        console.error('Error inicializando gráficos WebGL:', e);
+        if (loadingText) {
+            loadingText.innerHTML = '<div style="color:#ef4444;font-weight:bold;margin-bottom:8px;"><i class="fa fa-triangle-exclamation"></i> ERROR DE GRÁFICOS WEBGL</div><div style="font-size:0.8rem;color:#fca5a5;text-transform:none;margin-bottom:14px;max-width:320px;line-height:1.4;">No se pudo inicializar WebGL en este navegador. Activa la aceleración por hardware en la configuración de tu navegador.</div><button onclick="window.location.reload()" style="background:#fbbf24;color:#111;border:none;padding:6px 14px;border-radius:4px;font-weight:bold;cursor:pointer;font-size:0.85rem;"><i class="fa fa-rotate-right"></i> Reintentar</button>';
+        }
+    }
 }
 
 function setupLighting() {
@@ -416,9 +429,28 @@ function buildModel(rawDoc, textures) {
 const CIPHER_KEY_HEX = 'e5a8f4c28b9d3e1a774205f69c3a1b4d8e2f6c9a0b1d3e5f7a9c2e4b6d8f0a2c';
 
 async function fetchEncryptedModel(url) {
-    const response = await fetch(url);
+    // Timeout de 20 segundos para evitar que la carga quede colgada en conexiones lentas o inestables
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+
+    let response;
+    try {
+        response = await fetch(url, { signal: controller.signal });
+    } catch (e) {
+        clearTimeout(timeoutId);
+        if (e.name === 'AbortError') {
+            throw new Error('Tiempo de espera agotado al descargar el modelo (más de 20s). Comprueba tu conexión a internet.');
+        }
+        throw new Error('Fallo de red al conectar con el servidor: ' + e.message);
+    }
+    clearTimeout(timeoutId);
+
     if (!response.ok) throw new Error(`HTTP ${response.status} cargando el archivo del modelo`);
     const buffer = await response.arrayBuffer();
+
+    if (!window.crypto || !window.crypto.subtle) {
+        throw new Error('Web Crypto API no disponible. Por favor asegúrate de ingresar por HTTPS seguro (https://orphionmc.net).');
+    }
 
     const u8 = new Uint8Array(buffer);
     const iv = u8.slice(0, 12);
@@ -503,7 +535,11 @@ async function loadMobModel() {
     } catch (err) {
         console.error(`❌ Error cargando render 3D de ${modelName}:`, err);
         if (loadingText) {
-            loadingText.innerHTML = `ERROR CARGANDO EL MODELO 3D<br><span style="font-size:0.75rem;color:#fca5a5;text-transform:none;">${err?.message || err}</span>`;
+            loadingText.innerHTML = `
+                <div style="color:#ef4444;font-weight:bold;margin-bottom:8px;"><i class="fa fa-triangle-exclamation"></i> ERROR CARGANDO EL MODELO 3D</div>
+                <div style="font-size:0.8rem;color:#fca5a5;text-transform:none;margin-bottom:14px;max-width:320px;line-height:1.4;">${err?.message || err}</div>
+                <button onclick="window.location.reload()" style="background:#fbbf24;color:#111;border:none;padding:6px 14px;border-radius:4px;font-weight:bold;cursor:pointer;font-size:0.85rem;"><i class="fa fa-rotate-right"></i> Reintentar Carga</button>
+            `;
             loadingText.style.color = '#ef4444';
         }
     }
@@ -557,8 +593,12 @@ function animate() {
     }
 }
 
-// Start on DOM ready
-document.addEventListener('DOMContentLoaded', init);
+// Start on DOM ready (previene que quede colgado si DOMContentLoaded ya ocurrió)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
 
 // Auto-recarga cuando se activa una nueva versión de caché
 if ('serviceWorker' in navigator) {
