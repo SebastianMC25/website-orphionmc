@@ -261,7 +261,9 @@ body {
 }
 
 .nav-dropdown:hover .nav-arrow,
-.nav-dropdown:focus-within .nav-arrow {
+.nav-dropdown:focus-within .nav-arrow,
+.nav-dropdown.open .nav-arrow,
+.nav-dropdown.mobile-open .nav-arrow {
     transform: rotate(180deg);
     color: var(--gold);
 }
@@ -300,7 +302,9 @@ body {
 }
 
 .nav-dropdown:hover .dropdown-menu,
-.nav-dropdown:focus-within .dropdown-menu {
+.nav-dropdown:focus-within .dropdown-menu,
+.nav-dropdown.open .dropdown-menu,
+.nav-dropdown.mobile-open .dropdown-menu {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;

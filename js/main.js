@@ -28,20 +28,43 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Close when clicking a link (or toggle dropdown on mobile)
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                if (window.innerWidth <= 992 && link.classList.contains('dropdown-trigger')) {
-                    e.preventDefault();
-                    const parent = link.closest('.nav-dropdown');
-                    if (parent) parent.classList.toggle('mobile-open');
-                    return;
+        // Dropdown toggle logic (funciona en móvil touch y desktop click)
+        const dropdownTrigger = document.querySelector('.dropdown-trigger');
+        if (dropdownTrigger) {
+            dropdownTrigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const parent = dropdownTrigger.closest('.nav-dropdown');
+                if (parent) {
+                    const isOpen = parent.classList.toggle('mobile-open');
+                    parent.classList.toggle('open', isOpen);
+                    dropdownTrigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
                 }
-                navbar.classList.remove('mobile-open');
-                const icon = mobileToggle.querySelector('i');
-                if (icon) {
-                    icon.classList.remove('fa-xmark');
-                    icon.classList.add('fa-bars');
+            });
+        }
+
+        // Cerrar dropdown al tocar fuera de él
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-dropdown')) {
+                document.querySelectorAll('.nav-dropdown').forEach(dd => {
+                    dd.classList.remove('mobile-open');
+                    dd.classList.remove('open');
+                });
+                const trigger = document.querySelector('.dropdown-trigger');
+                if (trigger) trigger.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Cerrar menú móvil al hacer clic en enlaces normales (no el trigger de wiki)
+        document.querySelectorAll('.nav-links a:not(.dropdown-trigger)').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navbar) navbar.classList.remove('mobile-open');
+                if (mobileToggle) {
+                    const icon = mobileToggle.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-xmark');
+                        icon.classList.add('fa-bars');
+                    }
                 }
                 document.body.style.overflow = ''; // Restore scroll
             });
@@ -87,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const rotSpeed = (Math.random() > 0.5 ? 1 : -1) * (180 + Math.random() * 540);
             const scale = 0.8 + Math.random() * 1.2;
             const opacity = 0.35 + Math.random() * 0.55;
-            const color = colors[Math.floor(Math.random() * colors.length)];
 
             tri.style.setProperty('--x', `${x.toFixed(1)}px`);
             tri.style.setProperty('--y', `${y.toFixed(1)}px`);
