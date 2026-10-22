@@ -3,8 +3,8 @@ if (typeof window !== 'undefined' && window.location.protocol === 'http:' && win
     window.location.replace(window.location.href.replace('http:', 'https:'));
 }
 
-import * as THREE from './vendor/three.module.js';
-import { OrbitControls } from './vendor/OrbitControls.js';
+import * as THREE from './vendor/three.module.js?v=42';
+import { OrbitControls } from './vendor/OrbitControls.js?v=42';
 
 // DOM Elements
 const canvasWrapper = document.getElementById('canvas-wrapper');
