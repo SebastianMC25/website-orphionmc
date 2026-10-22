@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orphionmc-static-v40';
+const CACHE_NAME = 'orphionmc-static-v41';
 const STATIC_ASSETS = [
     './',
     'index.html',
@@ -174,6 +174,7 @@ const STATIC_ASSETS = [
     'js/server-status.js',
     'js/wiki-model-viewer.js',
     'js/vendor/three.module.js',
+    'js/vendor/three.core.js',
     'js/vendor/OrbitControls.js',
     'manifest.json',
     'favicon.ico',
