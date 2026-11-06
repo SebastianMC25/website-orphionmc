@@ -45,3 +45,5 @@ dist/
 # Raw 3D Source models (Blockbench protected assets)
 *.bbmodel
 scratch/
+assets/videos_backup/
+
