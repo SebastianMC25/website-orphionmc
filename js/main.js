@@ -236,6 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const topNews = threads.slice(0, 3);
             const imageMap = {
                 'OFICIAL': 'assets/images/news-launch.jpg',
+                'EVENTOS': 'assets/images/news-labyrinth.jpg',
                 'EVENTO': 'assets/images/news-labyrinth.jpg',
                 'RAIDS': 'assets/images/news-skills.jpg',
                 'UPDATE': 'assets/images/news-forge.jpg',

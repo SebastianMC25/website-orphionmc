@@ -380,7 +380,10 @@
             // 7. Inline code
             safe = safe.replace(/`([^`]+)`/g, '<code style="background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); padding: 2px 6px; border-radius: 4px; color: #f5c542; font-family: monospace; font-size:0.9em;">$1</code>');
 
-            // 8. Line breaks
+            // 8. Markdown Links [Text](url)
+            safe = safe.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color:var(--gold); font-weight:600; text-decoration:underline;">$1 <i class="fa fa-arrow-up-right-from-square" style="font-size:0.8em;"></i></a>');
+
+            // 9. Line breaks
             return safe.replace(/\n/g, '<br>');
         }
     </script>
