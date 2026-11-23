@@ -216,6 +216,7 @@
                 const safeCatName = window.escapeHTML(thread.category_name);
                 const safeAuthor = window.escapeHTML(thread.author_name);
                 const safeRole = window.escapeHTML(thread.author_role);
+                const authorAvatar = thread.avatar_url || `https://mc-heads.net/avatar/${encodeURIComponent(thread.author_name)}/100`;
 
                 let html = `
                     <header class="forum-hero gpu">
@@ -230,9 +231,9 @@
                         <!-- Main Thread Content -->
                         <div class="post">
                             <div class="post-user">
-                                <div class="post-avatar"></div>
+                                <div class="post-avatar" style="background: #222 url('${authorAvatar}') center/cover;"></div>
                                 <span class="post-username">${safeAuthor}</span>
-                                <span class="post-role">${safeRole}</span>
+                                <span class="post-role badge-${thread.author_role || 'user'}">${safeRole}</span>
                             </div>
                             <div class="post-content">
                                 ${formatContent(thread.content)}
@@ -249,12 +250,13 @@
                 posts.forEach((p, index) => {
                     const safePostUser = window.escapeHTML(p.username);
                     const safePostRole = window.escapeHTML(p.role);
+                    const postAvatar = p.avatar_url || `https://mc-heads.net/avatar/${encodeURIComponent(p.username)}/100`;
                     html += `
                         <div class="post" id="post-${p.id}">
                             <div class="post-user">
-                                <div class="post-avatar"></div>
+                                <div class="post-avatar" style="background: #222 url('${postAvatar}') center/cover;"></div>
                                 <span class="post-username">${safePostUser}</span>
-                                <span class="post-role">${safePostRole}</span>
+                                <span class="post-role badge-${p.role || 'user'}">${safePostRole}</span>
                             </div>
                             <div class="post-content">
                                 ${formatContent(p.content)}
@@ -348,14 +350,37 @@
         function formatContent(text) {
             if (!text) return '';
             // 1. Escape HTML
-            const safeText = text
+            let safe = text
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
-            // 2. Format newlines
-            return safeText.replace(/\n/g, '<br>');
+
+            // 2. Headings
+            safe = safe.replace(/^### (.*$)/gim, '<h3 style="color:var(--gold); margin: 20px 0 10px; font-family:\'Cinzel\',serif; font-size:1.25rem;">$1</h3>');
+            safe = safe.replace(/^## (.*$)/gim, '<h2 style="color:var(--gold); border-bottom:1px solid rgba(212,175,55,0.3); padding-bottom:6px; margin: 25px 0 15px; font-family:\'Cinzel\',serif; font-size:1.45rem;">$1</h2>');
+            safe = safe.replace(/^# (.*$)/gim, '<h1 style="color:var(--gold); margin: 30px 0 15px; font-family:\'Cinzel\',serif; font-size:1.75rem; text-shadow: 0 0 10px rgba(212,175,55,0.4);">$1</h1>');
+
+            // 3. Blockquotes
+            safe = safe.replace(/^\> (.*$)/gim, '<blockquote style="border-left: 3px solid var(--gold); padding: 8px 18px; margin: 15px 0; background: rgba(212,175,55,0.06); color: #e0d0b0; font-style: italic; border-radius: 0 6px 6px 0;">$1</blockquote>');
+
+            // 4. Horizontal dividers
+            safe = safe.replace(/^---$/gim, '<hr style="border: none; border-top: 1px solid rgba(212,175,55,0.25); margin: 25px 0;">');
+
+            // 5. Bold & Italic
+            safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#fff; font-weight:700;">$1</strong>');
+            safe = safe.replace(/\*(.*?)\*/g, '<em style="color:#d5d5d5;">$1</em>');
+
+            // 6. Bullet lists
+            safe = safe.replace(/^\* (.*$)/gim, '<li style="margin-left: 20px; list-style-type: square; color:#dcdcdc; padding: 2px 0;">$1</li>');
+            safe = safe.replace(/^([0-9]+)\. (.*$)/gim, '<li style="margin-left: 20px; list-style-type: decimal; color:#dcdcdc; padding: 2px 0;">$2</li>');
+
+            // 7. Inline code
+            safe = safe.replace(/`([^`]+)`/g, '<code style="background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); padding: 2px 6px; border-radius: 4px; color: #f5c542; font-family: monospace; font-size:0.9em;">$1</code>');
+
+            // 8. Line breaks
+            return safe.replace(/\n/g, '<br>');
         }
     </script>
 </body>

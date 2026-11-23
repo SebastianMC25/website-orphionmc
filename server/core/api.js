@@ -135,7 +135,7 @@ api.get('/categories/:id/threads', (req, res) => {
         FROM threads t
         JOIN users u ON t.user_id = u.id
         WHERE t.category_id = ?
-        ORDER BY t.is_pinned DESC, last_post_at DESC
+        ORDER BY t.is_pinned DESC, COALESCE(last_post_at, t.created_at) DESC
     `;
     db.all(sql, [req.params.id], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
