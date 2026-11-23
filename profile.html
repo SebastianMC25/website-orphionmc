@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil de Usuario - OrphionMC</title>
-    <link rel="stylesheet" href="css/custom.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=MedievalSharp&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/custom.css?v=57">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -449,9 +452,9 @@
                 <a href="https://www.youtube.com/channel/UCxnTxY8q4eg3RpkwvY2btPw" target="_blank" rel="noopener" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
             </div>
 
-            <div class="nav-container">
-                <a href="index.html" class="logo" style="text-decoration: none; color: var(--gold); font-family: 'MedievalSharp', cursive; font-size: 1.5rem;">OrphionMC</a>
-                <ul class="nav-links">
+            <div class="navbar-brand-centered" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: max-content; max-width: 90vw; z-index: 100;">
+                <a href="index.html" class="logo" style="text-decoration: none; color: var(--gold); font-family: 'MedievalSharp', cursive, serif; font-size: 1.6rem; letter-spacing: 1.5px; line-height: 1.1; margin-bottom: 2px; text-shadow: 0 0 10px rgba(212, 175, 55, 0.4); display: inline-block;">OrphionMC</a>
+                <ul class="nav-links" style="display: flex; align-items: center; justify-content: center; gap: 8px; list-style: none; margin: 0; padding: 0;">
                     <li><a href="index.html">Inicio</a></li>
                     <li><a href="forum.html">Foro</a></li>
                 </ul>
@@ -599,8 +602,8 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=56"></script>
-    <script src="js/auth.js?v=56"></script>
+    <script src="js/config.js?v=57"></script>
+    <script src="js/auth.js?v=57"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         let targetUserId = params.get('id');

@@ -240,6 +240,58 @@ body {
     color: var(--gold);
 }
 
+/* ================= NAVBAR BRAND CENTERED ================= */
+.navbar-brand-centered {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: max-content;
+    max-width: 90vw;
+    z-index: 100;
+    pointer-events: auto;
+}
+
+.navbar-brand-centered .logo {
+    display: inline-block;
+    text-decoration: none;
+    color: var(--gold);
+    font-family: 'MedievalSharp', cursive, serif;
+    font-size: 1.6rem;
+    letter-spacing: 1.5px;
+    line-height: 1.1;
+    margin-bottom: 2px;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+    transition: all 0.3s ease;
+}
+
+.navbar-brand-centered .logo:hover {
+    color: #fff;
+    text-shadow: 0 0 15px var(--gold);
+    transform: scale(1.03);
+}
+
+.navbar-brand-centered .nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-brand-centered .nav-links a {
+    padding: 3px 12px;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
 /* ================= NAVIGATION DROPDOWN ================= */
 .nav-dropdown {
     position: relative;
