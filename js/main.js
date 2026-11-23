@@ -291,7 +291,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const navSections = [
         { id: 'hero', element: document.getElementById('hero') },
         { id: 'about', element: document.getElementById('about') },
-        { id: 'news', element: document.getElementById('news') },
         { id: 'updates', element: document.getElementById('updates') },
         { id: 'footer', element: document.getElementById('footer') }
     ].filter(s => s.element !== null);
