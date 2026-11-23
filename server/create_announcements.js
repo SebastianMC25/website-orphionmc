@@ -26,13 +26,10 @@ En OrphionMC cada jugador forja su propio destino a través de nuestro sistema d
 ---
 
 ## 🗺️ CÓMO EMPEZAR TU VIAJE
-1. Comandos Esenciales:
+Comandos Esenciales:
 * \`/menu\` — Abre el menú interactivo principal con acceso a todas las funciones.
-* \`/clase\` — Inspecciona y selecciona tu senda de combate inicial.
 * \`/spawn\` — Regresa a la Acrópolis central en cualquier momento.
 * \`/perfil\` — Administra tus atributos, maestrías y árbol de habilidades.
-2. Vinculación Oficial:
-* Vincula tu cuenta de Discord y Minecraft con \`/link\` para reclamar tu rango especial y un paquete de bienvenida en el juego.
 
 ¡Reúne a tu hermandad, afila tu acero y que los Dioses guíen tus pasos en OrphionMC!`
   },
