@@ -673,6 +673,20 @@ api.delete('/staff/threads/:id', requireAuth, requireStaff, (req, res) => {
     });
 });
 
+// Delete Individual Post / Reply (Moderation)
+api.delete('/staff/posts/:id', requireAuth, requireStaff, (req, res) => {
+    const postId = req.params.id;
+    db.run("DELETE FROM posts WHERE id = ?", [postId], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+
+        // Log action
+        db.run("INSERT INTO audit_logs (staff_id, action, target_id, target_type, details) VALUES (?, ?, ?, ?, ?)",
+            [req.session.userId, 'delete_post', postId, 'post', 'Moderator deleted reply']);
+
+        res.json({ message: "Respuesta eliminada correctamente" });
+    });
+});
+
 api.get('/notifications', requireAuth, (req, res) => {
     db.all("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 20",
         [req.session.userId], (err, rows) => {

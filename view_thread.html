@@ -180,9 +180,9 @@
         <!-- Content injected via JS -->
     </div>
 
-    <script src="js/config.js?v=54"></script>
-    <script src="js/auth.js?v=54"></script>
-    <script src="js/stats.js?v=54" defer></script>
+    <script src="js/config.js?v=55"></script>
+    <script src="js/auth.js?v=55"></script>
+    <script src="js/stats.js?v=55" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const API_URL = window.CONFIG.API_BASE;
@@ -204,6 +204,13 @@
                 const { thread, posts } = data;
                 document.title = `${thread.title} - OrphionMC`;
 
+                let currentUser = null;
+                try {
+                    const uStr = localStorage.getItem('user');
+                    if (uStr) currentUser = JSON.parse(uStr);
+                } catch(e) {}
+                const isStaff = currentUser && ['admin', 'moderator', 'staff'].includes(currentUser.role);
+
                 const safeTitle = window.escapeHTML(thread.title);
                 const safePrefix = thread.prefix ? window.escapeHTML(thread.prefix) : '';
                 const safeCatName = window.escapeHTML(thread.category_name);
@@ -216,6 +223,7 @@
                         <div class="meta">
                             En <a href="view_category.html?id=${encodeURIComponent(thread.category_id)}" style="color:var(--gold);">${safeCatName}</a> • 
                             Iniciado por ${safeAuthor} • ${new Date(thread.created_at).toLocaleString()}
+                            ${isStaff ? `<span style="margin-left: 15px;"><button onclick="deleteThread(${thread.id})" style="background:#8e1c1c; color:#fff; border:1px solid #c62828; padding:3px 10px; border-radius:4px; font-size:0.8rem; cursor:pointer; font-weight:bold;"><i class="fa fa-trash"></i> Eliminar Tema</button></span>` : ''}
                         </div>
                     </header>
                     <div class="thread-container">
@@ -242,7 +250,7 @@
                     const safePostUser = window.escapeHTML(p.username);
                     const safePostRole = window.escapeHTML(p.role);
                     html += `
-                        <div class="post">
+                        <div class="post" id="post-${p.id}">
                             <div class="post-user">
                                 <div class="post-avatar"></div>
                                 <span class="post-username">${safePostUser}</span>
@@ -254,6 +262,7 @@
                             <div class="post-footer">
                                 <span>#${index + 2}</span>
                                 <span>${new Date(p.created_at).toLocaleString()}</span>
+                                ${isStaff ? `<button onclick="deletePost(${p.id})" style="background:#8e1c1c; color:#fff; border:none; padding:2px 8px; border-radius:4px; font-size:0.75rem; cursor:pointer; margin-left:12px; font-weight:bold;"><i class="fa fa-trash"></i> Eliminar</button>` : ''}
                             </div>
                         </div>
                     `;
@@ -276,6 +285,36 @@
                 html += `</div>`;
                 container.innerHTML = html;
 
+                window.deleteThread = async function(id) {
+                    if (!confirm("¿ESTÁS SEGURO? Se eliminará el tema completo y todas sus respuestas de forma permanente.")) return;
+                    try {
+                        const fetchFn = window.authFetch || fetch;
+                        const res = await fetchFn(`${API_URL}/staff/threads/${id}`, { method: 'DELETE' });
+                        if (res.ok) {
+                            alert("Tema eliminado exitosamente.");
+                            window.location.href = 'forum.html';
+                        } else {
+                            const err = await res.json();
+                            alert(err.error || "No se pudo eliminar el tema");
+                        }
+                    } catch(e) { alert(e.message); }
+                };
+
+                window.deletePost = async function(id) {
+                    if (!confirm("¿Deseas eliminar este mensaje inapropiado?")) return;
+                    try {
+                        const fetchFn = window.authFetch || fetch;
+                        const res = await fetchFn(`${API_URL}/staff/posts/${id}`, { method: 'DELETE' });
+                        if (res.ok) {
+                            alert("Mensaje eliminado exitosamente.");
+                            window.location.reload();
+                        } else {
+                            const err = await res.json();
+                            alert(err.error || "No se pudo eliminar el mensaje");
+                        }
+                    } catch(e) { alert(e.message); }
+                };
+
                 // Add Event Listener to Reply Button
                 const btnReply = document.getElementById('btn-send-reply');
                 if (btnReply) {
@@ -284,7 +323,8 @@
                         if (!content.trim()) return alert("Escribe algo.");
 
                         try {
-                            const postRes = await fetch(`${API_URL}/threads/${threadId}/posts`, {
+                            const fetchFn = window.authFetch || fetch;
+                            const postRes = await fetchFn(`${API_URL}/threads/${threadId}/posts`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ content }),
