@@ -1281,3 +1281,33 @@ section {
     display: inline-block;
 }
 
+/* ================= ROLE BADGES ================= */
+.badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+    text-transform: uppercase;
+}
+
+.badge-admin {
+    background: #e74c3c;
+    color: #fff;
+    box-shadow: 0 0 6px rgba(231, 76, 60, 0.4);
+}
+
+.badge-staff {
+    background: var(--gold, #d4af37);
+    color: #111;
+    box-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
+}
+
+.badge-moderator, .badge-mod {
+    background: #3498db;
+    color: #fff;
+    box-shadow: 0 0 6px rgba(52, 152, 219, 0.4);
+}
+

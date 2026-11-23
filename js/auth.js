@@ -155,8 +155,9 @@ function updateNavbarAuth(user) {
             roleBadge = `<span class="badge badge-${normalizedRole}" style="margin-left:8px; font-size:0.6rem; vertical-align:middle;">${roleLabels[normalizedRole] || normalizedRole.toUpperCase()}</span>`;
         }
 
-        // Show staff panel link if applicable
-        if (['admin', 'staff', 'moderator'].includes(normalizedRole)) {
+        // Show panel link to all administrative staff ranks (admin, staff, moderator)
+        const staffRoles = ['admin', 'staff', 'moderator'];
+        if (staffRoles.includes(normalizedRole)) {
             if (!navUl.querySelector('#nav-staff') && !navUl.querySelector('a[href*="staff_dashboard"]')) {
                 const liStaff = document.createElement('li');
                 liStaff.id = 'nav-staff';

@@ -30,7 +30,7 @@ main.get('/index.html', (req, res) => {
     res.sendFile(path.join(webRoot, 'index.html'));
 });
 
-// Protect the staff dashboard
+// Protect the staff/admin dashboard (admin, staff, moderator)
 main.get('/staff_dashboard.html', requireStaff, (req, res) => {
     res.sendFile(path.join(webRoot, 'staff_dashboard.html'));
 });

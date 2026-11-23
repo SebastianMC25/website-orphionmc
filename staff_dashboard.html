@@ -302,9 +302,10 @@
             currentStaff = JSON.parse(localStorage.getItem('user'));
         } catch(e) {}
 
-        if (!currentStaff || !['admin', 'moderator', 'staff'].includes(currentStaff.role)) {
-            alert("Acceso denegado: este panel es exclusivo para Administradores y Staff.");
-            window.location.href = 'forum.html';
+        const staffRoles = ['admin', 'staff', 'moderator'];
+        if (!currentStaff || !staffRoles.includes((currentStaff.role || '').toLowerCase())) {
+            alert("Acceso denegado: este panel es exclusivo para el equipo de Administración y Moderación.");
+            window.location.href = 'index.html';
         }
 
         function showSection(id) {
