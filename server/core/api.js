@@ -688,15 +688,106 @@ api.post('/notifications/read', requireAuth, (req, res) => {
 
 // ================= USER PROFILES =================
 
-// Public Profile Data
+// Public Profile Data with Stats
 api.get('/users/:id', (req, res) => {
     const userId = req.params.id;
-    db.get(`
-        SELECT id, username, role, avatar_url, last_login as last_activity, created_at, minecraft_ign
-        FROM users WHERE id = ?
-    `, [userId], (err, user) => {
+    const sql = `
+        SELECT 
+            u.id, u.username, u.role, u.avatar_url, u.last_login as last_activity, 
+            u.created_at, u.minecraft_ign, u.discord_username, u.bio,
+            (SELECT COUNT(*) FROM threads WHERE user_id = u.id) as thread_count,
+            (SELECT COUNT(*) FROM posts WHERE user_id = u.id) as post_count,
+            (SELECT COALESCE(SUM(vote_value), 0) FROM thread_votes tv JOIN threads t ON tv.thread_id = t.id WHERE t.user_id = u.id) as reputation
+        FROM users u WHERE u.id = ?
+    `;
+    db.get(sql, [userId], (err, user) => {
         if (err || !user) return res.status(404).json({ error: "Usuario no encontrado" });
         res.json(user);
+    });
+});
+
+// Update Own Profile (Username, Minecraft IGN, Bio, Avatar preference)
+api.put('/users/profile', requireAuth, (req, res) => {
+    const userId = req.session.userId;
+    let { username, minecraft_ign, bio, avatar_preference } = req.body;
+
+    db.get('SELECT * FROM users WHERE id = ?', [userId], (err, currentUser) => {
+        if (err || !currentUser) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        // Validate username
+        let targetUsername = currentUser.username;
+        if (username && username.trim() !== '') {
+            const clean = username.trim();
+            if (clean.length < 3 || clean.length > 25) {
+                return res.status(400).json({ error: "El nombre de usuario debe tener entre 3 y 25 caracteres." });
+            }
+            if (!/^[a-zA-Z0-9_]+$/.test(clean)) {
+                return res.status(400).json({ error: "El nombre de usuario solo puede contener letras, números y guiones bajos." });
+            }
+            targetUsername = clean;
+        }
+
+        // Check if username is already taken by someone else
+        db.get('SELECT id FROM users WHERE username = ? AND id != ?', [targetUsername, userId], (checkErr, existing) => {
+            if (existing) {
+                return res.status(409).json({ error: "Este nombre de usuario ya está en uso." });
+            }
+
+            // Sanitize Minecraft IGN
+            let cleanIGN = currentUser.minecraft_ign;
+            if (minecraft_ign !== undefined) {
+                const trimmed = (minecraft_ign || '').trim();
+                if (trimmed === '') {
+                    cleanIGN = null;
+                } else if (/^[a-zA-Z0-9_]{3,16}$/.test(trimmed)) {
+                    cleanIGN = trimmed;
+                } else {
+                    return res.status(400).json({ error: "El usuario de Minecraft debe tener entre 3 y 16 caracteres válidos." });
+                }
+            }
+
+            // Sanitize bio
+            let cleanBio = (bio !== undefined) ? (bio || '').trim().substring(0, 200) : (currentUser.bio || '');
+
+            // Handle avatar
+            let newAvatarUrl = currentUser.avatar_url;
+            if (avatar_preference === 'minecraft' && cleanIGN) {
+                newAvatarUrl = `https://mc-heads.net/avatar/${cleanIGN}`;
+            } else if (avatar_preference === 'discord' && currentUser.discord_id) {
+                newAvatarUrl = currentUser.discord_avatar
+                    ? `https://cdn.discordapp.com/avatars/${currentUser.discord_id}/${currentUser.discord_avatar}.png`
+                    : `https://cdn.discordapp.com/embed/avatars/${(BigInt(currentUser.discord_id) >> 22n) % 6n}.png`;
+            }
+
+            // Update in database
+            db.run(
+                'UPDATE users SET username = ?, minecraft_ign = ?, bio = ?, avatar_url = ? WHERE id = ?',
+                [targetUsername, cleanIGN, cleanBio, newAvatarUrl, userId],
+                (updateErr) => {
+                    if (updateErr) {
+                        return res.status(500).json({ error: "Error al actualizar perfil en la base de datos." });
+                    }
+
+                    // Update session
+                    req.session.username = targetUsername;
+
+                    return res.json({
+                        success: true,
+                        message: "Perfil actualizado correctamente.",
+                        user: {
+                            id: userId,
+                            username: targetUsername,
+                            minecraft_ign: cleanIGN,
+                            bio: cleanBio,
+                            avatar_url: newAvatarUrl,
+                            role: currentUser.role
+                        }
+                    });
+                }
+            );
+        });
     });
 });
 
