@@ -1,7 +1,7 @@
 // OrphionMC Frontend Config
 const CONFIG = {
-    // URL de la API del servidor (déjalo vacío para autodetección o especifica tu URL de backend)
-    CUSTOM_API: '', // Ej: 'http://localhost:3000/api' o 'https://api.orphionmc.net'
+    // URL de la API del servidor en Bot-Hosting
+    CUSTOM_API: 'http://fi18.bot-hosting.cloud:25611/api',
 
     // Dynamic API discovery
     get API_BASE() {

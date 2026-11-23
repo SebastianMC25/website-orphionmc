@@ -24,7 +24,7 @@ const mainRouter = require('./core/main');
 const crypto = require('crypto');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.SERVER_PORT || process.env.PORT || 3000;
 
 // trust proxy is REQUIRED when behind Cloudflare/Nginx to get real IP for rate limiting
 app.set('trust proxy', 1);
