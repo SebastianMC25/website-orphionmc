@@ -222,6 +222,68 @@ document.addEventListener("DOMContentLoaded", () => {
     animateStagger(".updates-list", ".update-item");
     animateSection(".footer-videos");
 
+    // ================= DYNAMIC FORUM NEWS LOADER =================
+    const loadDynamicNews = async () => {
+        const newsGrid = document.querySelector('#news .news-grid');
+        if (!newsGrid || !window.CONFIG || !window.CONFIG.API_BASE) return;
+
+        try {
+            const res = await fetch(`${window.CONFIG.API_BASE}/categories/1/threads`);
+            if (!res.ok) return;
+            const threads = await res.json();
+            if (!Array.isArray(threads) || threads.length === 0) return;
+
+            const topNews = threads.slice(0, 3);
+            const imageMap = {
+                'OFICIAL': 'assets/images/news-launch.png',
+                'EVENTO': 'assets/images/news-labyrinth.png',
+                'RAIDS': 'assets/images/news-skills.png',
+                'UPDATE': 'assets/images/news-launch.png',
+                'REGLAS': 'assets/images/news-skills.png'
+            };
+            const defaultImages = [
+                'assets/images/news-launch.png',
+                'assets/images/news-labyrinth.png',
+                'assets/images/news-skills.png'
+            ];
+
+            const escapeFn = window.escapeHTML || ((s) => s ? String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '');
+
+            newsGrid.innerHTML = topNews.map((t, idx) => {
+                const dateObj = new Date(t.created_at);
+                const dateStr = dateObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+                const prefixStr = t.prefix ? ` • ${escapeFn(t.prefix)}` : '';
+                const safeTitle = escapeFn(t.title);
+                const safeId = encodeURIComponent(t.id);
+                const img = imageMap[t.prefix] || defaultImages[idx % defaultImages.length];
+
+                let excerpt = '';
+                if (t.content) {
+                    excerpt = t.content
+                        .replace(/^[#>\*\-\s]+/gm, '')
+                        .replace(/\n+/g, ' ')
+                        .trim();
+                    if (excerpt.length > 130) excerpt = excerpt.substring(0, 127) + '...';
+                }
+
+                return `
+                    <article class="news-card">
+                        <div class="news-image" style="background-image: url('${img}');"></div>
+                        <div class="news-info">
+                            <span class="news-date">${dateStr}${prefixStr}</span>
+                            <h3>${safeTitle}</h3>
+                            <p>${escapeFn(excerpt || 'Consulta el anuncio completo y todos los detalles en el foro oficial de OrphionMC.')}</p>
+                            <a href="view_thread.html?id=${safeId}" class="news-link">Leer en el Foro <i class="fa fa-arrow-right"></i></a>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        } catch (e) {
+            console.warn('[News] Fallback a noticias estáticas:', e.message);
+        }
+    };
+    loadDynamicNews();
+
     // ================= NAVIGATION SCROLLSPY =================
     const navSections = [
         { id: 'hero', element: document.getElementById('hero') },

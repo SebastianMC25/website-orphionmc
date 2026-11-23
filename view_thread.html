@@ -180,9 +180,9 @@
         <!-- Content injected via JS -->
     </div>
 
-    <script src="js/config.js?v=58"></script>
-    <script src="js/auth.js?v=58"></script>
-    <script src="js/stats.js?v=56" defer></script>
+    <script src="js/config.js?v=62"></script>
+    <script src="js/auth.js?v=62"></script>
+    <script src="js/stats.js?v=62" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const API_URL = window.CONFIG.API_BASE;
@@ -223,7 +223,8 @@
                         <h1>${safePrefix ? `<span class="tag-prefix" style="font-size: 0.5em; vertical-align:middle;">${safePrefix}</span> ` : ''}${safeTitle}</h1>
                         <div class="meta">
                             En <a href="view_category.html?id=${encodeURIComponent(thread.category_id)}" style="color:var(--gold);">${safeCatName}</a> • 
-                            Iniciado por ${safeAuthor} • ${new Date(thread.created_at).toLocaleString()}
+                            Iniciado por ${safeAuthor} • ${new Date(thread.created_at).toLocaleString()} • 
+                            <span style="color:#aaa;"><i class="fa fa-eye"></i> ${parseInt(thread.views, 10) || 0} vistas</span>
                             ${isStaff ? `<span style="margin-left: 15px;"><button onclick="deleteThread(${thread.id})" style="background:#8e1c1c; color:#fff; border:1px solid #c62828; padding:3px 10px; border-radius:4px; font-size:0.8rem; cursor:pointer; font-weight:bold;"><i class="fa fa-trash"></i> Eliminar Tema</button></span>` : ''}
                         </div>
                     </header>

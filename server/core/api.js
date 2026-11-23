@@ -109,8 +109,10 @@ api.get('/categories', (req, res) => {
     const sql = `
         SELECT c.*, 
         (SELECT COUNT(*) FROM threads WHERE category_id = c.id) as thread_count,
+        (SELECT COALESCE(SUM(views), 0) FROM threads WHERE category_id = c.id) as total_views,
         (SELECT COUNT(*) FROM posts p JOIN threads t ON p.thread_id = t.id WHERE t.category_id = c.id) + 
-        (SELECT COUNT(*) FROM threads WHERE category_id = c.id) as post_count
+        (SELECT COUNT(*) FROM threads WHERE category_id = c.id) as post_count,
+        (SELECT MAX(created_at) FROM threads WHERE category_id = c.id) as last_thread_at
         FROM categories c 
         ORDER BY view_order ASC
     `;
@@ -145,19 +147,22 @@ api.get('/categories/:id/threads', (req, res) => {
 
 // Global Stats (Static routes first)
 api.get('/stats', (req, res) => {
-    db.get(`SELECT (SELECT COUNT(*) FROM users) as user_count, (SELECT COUNT(*) FROM posts) + (SELECT COUNT(*) FROM threads) as message_count`, [], (err, row) => {
-        res.json(row);
+    db.get(`SELECT 
+        (SELECT COUNT(*) FROM users) as user_count, 
+        (SELECT COUNT(*) FROM posts) + (SELECT COUNT(*) FROM threads) as message_count,
+        (SELECT COALESCE(SUM(views), 0) FROM threads) as total_views`, [], (err, row) => {
+        res.json(row || { user_count: 0, message_count: 0, total_views: 0 });
     });
 });
 
 // Recent Threads (Static routes first)
 api.get('/threads/recent', (req, res) => {
     const sql = `
-        SELECT t.id, t.title, t.created_at, u.username, u.avatar_url
+        SELECT t.id, t.title, t.prefix, t.content, t.views, t.created_at, u.username, u.avatar_url
         FROM threads t
         JOIN users u ON t.user_id = u.id
         ORDER BY t.created_at DESC
-        LIMIT 5
+        LIMIT 6
     `;
     db.all(sql, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });

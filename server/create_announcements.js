@@ -6,7 +6,7 @@ const announcements = [
     prefix: 'OFICIAL',
     is_pinned: 1,
     created_at: '2026-08-15 14:00:00',
-    views: 342,
+    views: 0,
     content: `# ⚡ ¡BIENVENIDOS A ORPHIONMC MMORPG 1.21.x!
 
 > "Los antiguos dioses observan desde las alturas del monte sagrado. Solo aquellos de corazón indomable ascenderán a la gloria eterna."
@@ -40,7 +40,7 @@ Comandos Esenciales:
     prefix: 'EVENTO',
     is_pinned: 1,
     created_at: '2026-11-16 20:10:00',
-    views: 156,
+    views: 0,
     content: `# ☄️ EVENTOS DINÁMICOS DEL MUNDO ABIERTO
 
 > "El cielo se tiñe de carmesí y los mares rugen con cólera desatada. El mundo de OrphionMC está vivo y en constante peligro."
@@ -71,7 +71,7 @@ Navegar por las aguas profundas de OrphionMC requiere tripulaciones bien armadas
     prefix: 'RAIDS',
     is_pinned: 1,
     created_at: '2026-09-25 19:15:00',
-    views: 278,
+    views: 0,
     content: `# 🏛️ MAZMORRAS INSTANCIADAS (MYTHICDUNGEONS)
 
 > "Solo los héroes más valientes se atreven a descender a las profundidades del Tártaro o escalar los picos prohibidos del Olimpo."
@@ -102,7 +102,7 @@ Cada mazmorra culmina en una arena diseñada a medida con mecánicas y fases de 
     prefix: 'UPDATE',
     is_pinned: 0,
     created_at: '2026-10-22 18:40:00',
-    views: 214,
+    views: 0,
     content: `# 🎁 CAJAS MÍTICAS ELEMENTALES & FORJA DEL OLIMPO
 
 > "Hefesto ha avivado los fuegos sagrados de su fragua para bendecir a los mortales con artefactos de poder inigualable."
@@ -132,7 +132,7 @@ En el centro de la Acrópolis encontrarás los altares elementales:
     prefix: 'REGLAS',
     is_pinned: 0,
     created_at: '2026-08-28 17:30:00',
-    views: 185,
+    views: 0,
     content: `# 📜 NORMAS DE LA COMUNIDAD & JUEGO LIMPIO
 
 > "Un gran reino se construye con honor, respeto y justicia entre todos sus guerreros."

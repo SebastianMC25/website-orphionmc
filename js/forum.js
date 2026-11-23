@@ -47,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const cleanName = escape(cat.name);
             const cleanDesc = escape(cat.description || 'Sin descripción');
             const threadCount = typeof cat.thread_count === 'number' ? cat.thread_count : 0;
+            const viewCount = typeof cat.total_views === 'number' ? cat.total_views : 0;
+            const lastPostText = cat.last_thread_at ? new Date(cat.last_thread_at).toLocaleDateString() : '--';
 
             itemsHtml += `
                 <div class="forum-item">
@@ -56,10 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p>${cleanDesc}</p>
                     </div>
                     <div class="forum-stats">
-                        <span>${threadCount}</span> Temas
+                        <span>${threadCount}</span> Temas<br>
+                        <span style="font-size: 0.75rem; color: #888;">${viewCount} Vistas</span>
                     </div>
                     <div class="forum-last-post">
-                        --
+                        ${lastPostText !== '--' ? `Última act.:<br>${lastPostText}` : '--'}
                     </div>
                 </div>
             `;
