@@ -28,18 +28,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     playerCount.textContent = `${onlineCount} / ${maxCount} Online`;
                     playerCount.style.color = '#4CAF50';
                 } else {
-                    // Servidor Offline
-                    statusDot.style.backgroundColor = '#F44336';
-                    statusDot.style.boxShadow = '0 0 10px #F44336';
-                    playerCount.textContent = 'Offline';
-                    playerCount.style.color = '#F44336';
+                    // Servidor Offline / En preparación
+                    statusDot.style.backgroundColor = '#f39c12';
+                    statusDot.style.boxShadow = '0 0 10px #f39c12';
+                    playerCount.textContent = 'Próximamente';
+                    playerCount.style.color = '#f39c12';
                 }
             })
             .catch(error => {
                 console.warn('No se pudo consultar el estado del servidor:', error);
-                statusDot.style.backgroundColor = '#888888';
-                statusDot.style.boxShadow = 'none';
-                playerCount.textContent = 'play.orphionmc.net';
+                statusDot.style.backgroundColor = '#f39c12';
+                statusDot.style.boxShadow = '0 0 8px #f39c12';
+                playerCount.textContent = 'Próximamente';
                 playerCount.style.color = 'var(--gold)';
             });
     }
