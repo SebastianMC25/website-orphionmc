@@ -14,7 +14,6 @@ if (fs.existsSync(envServerPath)) {
 const express = require('express');
 const helmet = require('helmet');
 const session = require('express-session');
-const SQLiteStore = require('connect-sqlite3')(session);
 
 // Modular Routers (Sub-apps)
 const apiRouter = require('./core/api');
@@ -91,7 +90,6 @@ const sessionSecret = process.env.SESSION_SECRET || (
 const isCrossDomain = process.env.COOKIE_CROSS_DOMAIN === 'true';
 
 const sessionConfig = {
-    store: new SQLiteStore({ db: 'sessions.db', dir: path.resolve(__dirname) }),
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,

@@ -1,6 +1,6 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const db = require('./core/db');
 
 // Script administrativo para crear o actualizar usuario desde consola
