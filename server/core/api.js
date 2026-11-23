@@ -305,104 +305,18 @@ api.get('/auth/init', (req, res) => {
     antiBot.initSession(req, res);
 });
 
-// Auth Routes
-api.post('/auth/register', authLimiter, antiBot.verify, async (req, res) => {
-    const { username, password, email } = req.body;
-
-    // Strict input validation
-    if (!username || typeof username !== 'string' || !password || typeof password !== 'string') {
-        return res.status(400).json({ error: "Usuario y contraseña requeridos" });
-    }
-
-    const cleanUsername = username.trim();
-    if (!/^[a-zA-Z0-9_]{3,20}$/.test(cleanUsername)) {
-        return res.status(400).json({ error: "El usuario debe tener entre 3 y 20 caracteres alfanuméricos o guion bajo." });
-    }
-
-    if (password.length < 6 || password.length > 100) {
-        return res.status(400).json({ error: "La contraseña debe tener entre 6 y 100 caracteres." });
-    }
-
-    if (email && (typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))) {
-        return res.status(400).json({ error: "El correo electrónico no es válido." });
-    }
-
-    try {
-        const hash = await bcrypt.hash(password, 10);
-        db.run(`INSERT INTO users (username, password_hash, email) VALUES (?, ?, ?)`,
-            [cleanUsername, hash, email ? email.trim() : null], function (err) {
-                if (err) {
-                    const isDup = err.code === 'ER_DUP_ENTRY' || err.message.includes('UNIQUE constraint failed') || err.message.includes('Duplicate entry');
-                    if (isDup && (err.message.includes('username') || err.message.includes('users.username'))) {
-                        return res.status(409).json({ error: "El nombre de usuario ya existe" });
-                    }
-                    if (isDup && (err.message.includes('email') || err.message.includes('users.email'))) {
-                        return res.status(409).json({ error: "El email ya está registrado" });
-                    }
-                    return res.status(500).json({ error: "Error en el registro" });
-                }
-
-                // Rotation on register too (best practice)
-                req.session.regenerate((err) => {
-                    req.session.userId = this.lastID;
-                    req.session.username = cleanUsername;
-                    req.session.role = 'user';
-                    req.session.fingerprint = { ip: req.ip, ua: req.get('User-Agent') };
-
-                    res.json({ id: this.lastID, username: cleanUsername, role: 'user' });
-                });
-            });
-    } catch (e) { res.status(500).json({ error: "Error interno" }); }
+// Auth Routes - Exclusivo a Discord OAuth
+api.post('/auth/register', (req, res) => {
+    return res.status(403).json({
+        error: "El registro manual por correo está deshabilitado.",
+        message: "Por favor, inicia sesión con Discord para registrarte o acceder automáticamente."
+    });
 });
 
-api.post('/auth/login', authLimiter, antiBot.verify, (req, res) => {
-    const { username, password } = req.body;
-    db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, row) => {
-        if (!row || !(await bcrypt.compare(password, row.password_hash))) {
-            return res.status(401).json({ error: "Credenciales inválidas" });
-        }
-
-        // 1. Check if banned
-        if (row.is_banned) {
-            return res.status(403).json({
-                error: "Tu cuenta ha sido suspendida permanentemente.",
-                reason: "Violación de los términos de servicio."
-            });
-        }
-
-        // 2. Update last login info
-        db.run("UPDATE users SET last_login = CURRENT_TIMESTAMP, last_ip = ? WHERE id = ?", [req.ip, row.id]);
-
-        // Professional Session Rotation
-        req.session.regenerate((err) => {
-            if (err) return res.status(500).json({ error: "Error de sesión" });
-
-            // Store user data in the NEW session
-            req.session.userId = row.id;
-            req.session.username = row.username;
-            req.session.role = row.role;
-
-            // Initial fingerprint
-            req.session.fingerprint = {
-                ip: req.ip,
-                ua: req.get('User-Agent')
-            };
-
-            // Log security event (last login & IP)
-            db.run("UPDATE users SET last_login = CURRENT_TIMESTAMP, last_ip = ? WHERE id = ?", [req.ip, row.id]);
-
-            // If 2FA is enabled, we don't return the full success yet or return a flag
-            if (row.two_factor_enabled) {
-                // Here we would normally mark session as "awaiting 2fa"
-                req.session.needs2FA = true;
-                return res.json({
-                    requires2FA: true,
-                    user: { id: row.id, username: row.username }
-                });
-            }
-
-            res.json({ user: { id: row.id, username: row.username, role: row.role } });
-        });
+api.post('/auth/login', (req, res) => {
+    return res.status(403).json({
+        error: "El inicio de sesión manual está deshabilitado.",
+        message: "Por favor, inicia sesión exclusivamente mediante Discord."
     });
 });
 
@@ -473,37 +387,19 @@ api.post('/auth/login/verify-2fa', (req, res) => {
     });
 });
 
-// Account Recovery
-api.post('/auth/recovery/request', authLimiter, (req, res) => {
-    const { email } = req.body;
-    db.get("SELECT id FROM users WHERE email = ?", [email], async (err, row) => {
-        if (!row) {
-            // Security Best Practice: Don't reveal if email exists
-            return res.json({ message: "Si el correo está registrado, recibirás instrucciones." });
-        }
-
-        try {
-            const token = await SecurityLogic.createResetToken(row.id);
-            // In production, send email here. For now, we log it.
-            console.log(`[RECOVERY] Token for user ${row.id}: ${token}`);
-            SecurityLogic.addNotification(row.id, 'system', { message: "Se ha solicitado un restablecimiento de contraseña." });
-            res.json({ message: "Si el correo está registrado, recibirás instrucciones." });
-        } catch (e) { res.status(500).json({ error: "Error interno" }); }
+// Account Recovery - Deshabilitado (Cuentas gestionadas vía Discord)
+api.post('/auth/recovery/request', (req, res) => {
+    return res.status(403).json({
+        error: "La recuperación por correo está deshabilitada.",
+        message: "Las cuentas de OrphionMC están gestionadas exclusivamente a través de Discord."
     });
 });
 
-api.post('/auth/recovery/reset', authLimiter, async (req, res) => {
-    const { token, newPassword } = req.body;
-    try {
-        const resetData = await SecurityLogic.verifyResetToken(token);
-        if (!resetData) return res.status(400).json({ error: "Token inválido o expirado" });
-
-        const hash = await bcrypt.hash(newPassword, 10);
-        db.run("UPDATE users SET password_hash = ? WHERE id = ?", [hash, resetData.user_id], (err) => {
-            db.run("UPDATE password_reset_tokens SET used = 1 WHERE id = ?", [resetData.id]);
-            res.json({ message: "Contraseña actualizada. Ya puedes iniciar sesión." });
-        });
-    } catch (e) { res.status(500).json({ error: "Error interno" }); }
+api.post('/auth/recovery/reset', (req, res) => {
+    return res.status(403).json({
+        error: "El restablecimiento de contraseña manual está deshabilitado.",
+        message: "Por favor, inicia sesión mediante Discord."
+    });
 });
 
 // ================= MINECRAFT INTEGRATION =================

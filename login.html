@@ -4,31 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - OrphionMC</title>
+    <title>Acceso con Discord - OrphionMC</title>
     <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=MedievalSharp&family=Inter:wght@400;600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/custom.css?v=58">
     <style>
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: #000;
+            background: #08080a;
+            color: #eee;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .auth-container {
             width: 100%;
-            max-width: 400px;
-            background: rgba(20, 20, 20, 0.95);
-            border: 1px solid #333;
+            max-width: 440px;
+            background: rgba(14, 14, 16, 0.96);
+            border: 1px solid #2a2a30;
             border-top: 3px solid var(--gold);
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            padding: 45px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85), 0 0 25px rgba(212, 175, 55, 0.15);
             text-align: center;
             position: relative;
             z-index: 2;
@@ -36,85 +43,152 @@
 
         .auth-logo {
             font-family: 'MedievalSharp', cursive;
-            font-size: 2.5rem;
+            font-size: 2.6rem;
             color: var(--gold);
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             display: block;
             text-decoration: none;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .auth-logo:hover {
+            color: #fff;
+            transform: scale(1.02);
         }
 
         .auth-title {
             color: #fff;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            letter-spacing: 0.5px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            color: #888;
-            margin-bottom: 5px;
+        .auth-info-card {
+            background: rgba(88, 101, 242, 0.08);
+            border: 1px solid rgba(88, 101, 242, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 25px;
+            text-align: center;
             font-size: 0.9rem;
+            color: #bbb;
+            line-height: 1.5;
         }
 
-        .form-group input {
+        .btn-discord {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
             width: 100%;
-            padding: 12px;
-            background: #111;
-            border: 1px solid #333;
-            color: #fff;
-            border-radius: 4px;
-            outline: none;
-            transition: border 0.3s;
-        }
-
-        .form-group input:focus {
-            border-color: var(--gold);
-        }
-
-        .btn-auth {
-            width: 100%;
-            padding: 12px;
-            background: var(--gold);
-            color: #000;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
+            padding: 16px 20px;
+            background: #5865F2;
+            color: #ffffff;
+            font-size: 1.05rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
+            transition: all 0.25s ease;
+            letter-spacing: 0.5px;
+            box-sizing: border-box;
             cursor: pointer;
-            transition: filter 0.3s;
-            font-family: 'Cinzel', serif;
         }
 
-        .btn-auth:hover {
-            filter: brightness(1.1);
+        .btn-discord:hover {
+            background: #4752c4;
+            box-shadow: 0 6px 25px rgba(88, 101, 242, 0.7);
+            transform: translateY(-2px);
+            color: #ffffff;
+        }
+
+        .auth-helper-text {
+            color: #777;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            line-height: 1.4;
         }
 
         .auth-links {
-            margin-top: 20px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #222;
             font-size: 0.9rem;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
         }
 
         .auth-links a {
-            color: var(--gold);
+            color: #aaa;
             text-decoration: none;
+            transition: color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .auth-links a:hover {
-            text-decoration: underline;
+            color: var(--gold);
         }
 
         .error-msg {
-            color: #ff5555;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
+            background: rgba(231, 76, 60, 0.15);
+            border: 1px solid #e74c3c;
+            color: #ff6b6b;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            margin-bottom: 20px;
             display: none;
         }
 
-        /* Simplified generic video bg reused */
+        .session-card {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 25px;
+            display: none;
+            text-align: center;
+        }
+
+        .session-card p {
+            margin: 0 0 12px;
+            color: #eee;
+            font-size: 0.95rem;
+        }
+
+        .session-card .btn-continue {
+            display: block;
+            background: var(--gold);
+            color: #000;
+            font-weight: 700;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            transition: filter 0.2s;
+        }
+
+        .session-card .btn-continue:hover {
+            filter: brightness(1.15);
+        }
+
+        .session-card .btn-logout {
+            background: transparent;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-decoration: underline;
+        }
+
         .video-bg {
             position: fixed;
             top: 0;
@@ -122,7 +196,7 @@
             width: 100%;
             height: 100%;
             z-index: 1;
-            opacity: 0.4;
+            opacity: 0.35;
             pointer-events: none;
             background: #000 url('assets/images/poster.png') no-repeat center center / cover;
         }
@@ -138,64 +212,61 @@
 
         <div id="error-box" class="error-msg"></div>
 
-        <form id="login-form">
-            <!-- Honeypot field (hidden from humans) -->
-            <div style="display: none;">
-                <label>Si ves esto, no rellenes nada</label>
-                <input type="text" id="website_field" name="website_field" autocomplete="off">
-            </div>
-            <input type="hidden" id="antibot_token" name="antibot_token">
-
-            <div class="form-group">
-                <label>Usuario</label>
-                <input type="text" id="username" required>
-            </div>
-            <div class="form-group">
-                <label>Contraseña</label>
-                <input type="password" id="password" required>
-            </div>
-            <button type="submit" class="btn-auth">ENTRAR AHORA</button>
-        </form>
-
-        <div style="margin: 20px 0; display: flex; align-items: center; gap: 10px; color: #555;">
-            <hr style="flex: 1; border: 0; border-top: 1px solid #333;">
-            <span>O</span>
-            <hr style="flex: 1; border: 0; border-top: 1px solid #333;">
+        <!-- Active Session Card (if user is already logged in) -->
+        <div id="active-session-banner" class="session-card">
+            <p><i class="fa fa-user-check" style="color:var(--gold);"></i> Sesión activa como <b id="session-username" style="color:var(--gold);">Usuario</b></p>
+            <a href="forum.html" class="btn-continue"><i class="fa fa-comments"></i> Continuar al Foro</a>
+            <button onclick="logoutCurrentSession()" class="btn-logout"><i class="fa fa-sign-out-alt"></i> Cerrar sesión para cambiar de cuenta</button>
         </div>
 
-        <a href="https://api.orphionmc.net/api/auth/discord" id="btn-discord-login" class="btn-auth"
-            style="background: #5865F2; color: #fff; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;">
-            <i class="fab fa-discord"></i> ENTRAR CON DISCORD
+        <div class="auth-info-card">
+            <i class="fa-brands fa-discord" style="color: #5865F2; font-size: 1.8rem; margin-bottom: 8px; display: inline-block;"></i>
+            <p style="margin: 0;">El acceso y registro a <b>OrphionMC</b> se realiza exclusivamente mediante <b>Discord</b>. Tu perfil del foro se crea o sincroniza al instante.</p>
+        </div>
+
+        <a href="https://api.orphionmc.net/api/auth/discord" id="btn-discord-login" class="btn-discord">
+            <i class="fa-brands fa-discord fa-xl"></i> CONTINUAR CON DISCORD
         </a>
 
+        <p class="auth-helper-text">
+            <i class="fa fa-shield-halved" style="color: var(--gold);"></i> Seguro, sin contraseñas manuales ni correos electrónicos.
+        </p>
+
         <div class="auth-links">
-            <p>¿No tienes cuenta? <a href="register.html">Regístrate aquí</a></p>
-            <p><a href="forum.html">Volver al Foro</a></p>
+            <a href="forum.html"><i class="fa fa-arrow-left"></i> Volver al Foro</a>
+            <a href="index.html"><i class="fa fa-house"></i> Inicio</a>
         </div>
     </div>
 
-    <script src="js/config.js?v=56"></script>
-    <script src="js/auth.js?v=56"></script>
+    <script src="js/config.js?v=58"></script>
+    <script src="js/auth.js?v=58"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const userStr = localStorage.getItem('user');
             if (userStr) {
                 try {
                     const u = JSON.parse(userStr);
-                    const container = document.querySelector('.auth-container');
-                    if (container && u && u.username) {
-                        const banner = document.createElement('div');
-                        banner.style.cssText = 'background: rgba(212,175,55,0.15); border: 1px solid var(--gold); border-radius: 8px; padding: 15px; margin-bottom: 20px;';
-                        banner.innerHTML = `
-                            <p style="margin:0 0 10px; color:#fff;">Sesión activa como <b style="color:var(--gold);">${window.escapeHTML ? window.escapeHTML(u.username) : u.username}</b>.</p>
-                            <a href="forum.html" class="btn-auth" style="display:block; text-decoration:none; padding:8px 15px; font-size:0.9rem; margin-top:5px;">Continuar al Foro</a>
-                        `;
-                        const title = document.querySelector('.auth-title');
-                        if (title) title.insertAdjacentElement('afterend', banner);
+                    if (u && u.username) {
+                        const banner = document.getElementById('active-session-banner');
+                        if (banner) {
+                            banner.style.display = 'block';
+                            document.getElementById('session-username').innerText = u.username;
+                        }
                     }
                 } catch(e) {}
             }
         });
+
+        async function logoutCurrentSession() {
+            try {
+                const API_URL = (window.CONFIG && window.CONFIG.API_BASE) ? window.CONFIG.API_BASE : 'https://api.orphionmc.net/api';
+                const fetchFn = window.authFetch || fetch;
+                await fetchFn(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include' });
+            } catch(e) {}
+            localStorage.removeItem('user');
+            localStorage.removeItem('auth_token');
+            window.location.reload();
+        }
     </script>
 </body>
 

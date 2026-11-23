@@ -23,7 +23,7 @@ forum.get('/categoria', (req, res) => res.sendFile(path.join(webRoot, 'view_cate
 forum.get('/tema', (req, res) => res.sendFile(path.join(webRoot, 'view_thread.html')));
 forum.get('/nuevo-tema', (req, res) => res.sendFile(path.join(webRoot, 'create_thread.html')));
 forum.get('/login', (req, res) => res.sendFile(path.join(webRoot, 'login.html')));
-forum.get('/registro', (req, res) => res.sendFile(path.join(webRoot, 'register.html')));
+forum.get('/registro', (req, res) => res.redirect('/login'));
 
 // Professional SEO & OpenGraph Bridge
 // In a premium setup, we'd use a templating engine (EJS/Pug) or a middleware
