@@ -22,6 +22,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('register-form');
     const errorBox = document.getElementById('error-box');
 
+    // 0. Detect post-login redirect from Discord OAuth
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('discord_login') === '1' && urlParams.get('uname')) {
+        const discordUser = {
+            id: parseInt(urlParams.get('uid'), 10),
+            username: urlParams.get('uname'),
+            role: urlParams.get('urole') || 'user'
+        };
+        localStorage.setItem('user', JSON.stringify(discordUser));
+        updateNavbarAuth(discordUser);
+
+        // Clean query params from URL without refreshing
+        urlParams.delete('discord_login');
+        urlParams.delete('uid');
+        urlParams.delete('uname');
+        urlParams.delete('urole');
+        const cleanQuery = urlParams.toString();
+        const cleanUrl = window.location.pathname + (cleanQuery ? '?' + cleanQuery : '');
+        window.history.replaceState({}, document.title, cleanUrl);
+    }
+
     // Check session on load
     checkSession();
 
@@ -126,12 +147,30 @@ async function checkSession() {
             localStorage.setItem('user', JSON.stringify(user));
             updateNavbarAuth(user);
         } else {
-            localStorage.removeItem('user');
-            updateNavbarAuth(null);
+            const stored = localStorage.getItem('user');
+            if (stored) {
+                try {
+                    updateNavbarAuth(JSON.parse(stored));
+                } catch(e) {
+                    localStorage.removeItem('user');
+                    updateNavbarAuth(null);
+                }
+            } else {
+                updateNavbarAuth(null);
+            }
         }
     } catch (e) {
         console.error("Error al verificar sesión", e);
-        updateNavbarAuth(null);
+        const stored = localStorage.getItem('user');
+        if (stored) {
+            try {
+                updateNavbarAuth(JSON.parse(stored));
+            } catch(err) {
+                updateNavbarAuth(null);
+            }
+        } else {
+            updateNavbarAuth(null);
+        }
     }
 }
 

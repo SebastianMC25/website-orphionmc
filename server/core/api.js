@@ -50,7 +50,7 @@ api.use(cors({
         // Domain pattern matches (orphionmc.net, bot-hosting.net, github.io, localhost on any port)
         if (
             /^https?:\/\/(?:[a-z0-9-]+\.)*orphionmc\.net(?::\d+)?$/i.test(lowerOrigin) ||
-            /^https?:\/\/(?:[a-z0-9-]+\.)*bot-hosting\.net(?::\d+)?$/i.test(lowerOrigin) ||
+            /^https?:\/\/(?:[a-z0-9-]+\.)*bot-hosting\.(?:net|cloud)(?::\d+)?$/i.test(lowerOrigin) ||
             /^https?:\/\/(?:[a-z0-9-]+\.)*github\.io(?::\d+)?$/i.test(lowerOrigin) ||
             /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?$/i.test(lowerOrigin)
         ) {

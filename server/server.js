@@ -79,32 +79,24 @@ app.use(globalLimiter);
 // For local dev: set DOMAIN=OrphionMC.local in .env
 const DOMAIN = process.env.DOMAIN || 'orphionmc.net';
 
-// Session Configuration (Shared across subdomains)
-const isProduction = process.env.NODE_ENV === 'production' || process.env.COOKIE_SECURE === 'true';
-const sessionSecret = process.env.SESSION_SECRET || (
-    isProduction 
-        ? (() => { console.warn('[Security Warning] Generando SESSION_SECRET aleatorio en memoria.'); return crypto.randomBytes(32).toString('hex'); })()
-        : 'OrphionMC_secret_key_subdomains'
-);
-
-const isCrossDomain = process.env.COOKIE_CROSS_DOMAIN === 'true';
+// Session Configuration
+const sessionSecret = process.env.SESSION_SECRET || 'OrphionMC_session_gWM076QKEfdvgKcEGz2hNflI';
+const cookieSecureSetting = process.env.COOKIE_SECURE === 'true' ? true : (process.env.COOKIE_SECURE === 'false' ? false : 'auto');
 
 const sessionConfig = {
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: isProduction, // Set to true if using HTTPS
-        sameSite: (isProduction && isCrossDomain) ? 'none' : 'lax',
+        secure: cookieSecureSetting,
+        sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000 // 1 week
     }
 };
 
-// Only set domain if we are using the official domain (not localhost)
+// Only bind cookie.domain if COOKIE_DOMAIN is explicitly configured in .env
 if (process.env.COOKIE_DOMAIN) {
     sessionConfig.cookie.domain = process.env.COOKIE_DOMAIN;
-} else if (DOMAIN !== 'localhost' && !DOMAIN.includes('local') && !isCrossDomain) {
-    sessionConfig.cookie.domain = `.${DOMAIN}`;
 }
 
 app.use(session(sessionConfig));

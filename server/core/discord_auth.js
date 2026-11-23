@@ -6,6 +6,36 @@ const db = require('./db');
 
 const discordAuth = express.Router();
 
+const OAUTH_SECRET = process.env.SESSION_SECRET || 'OrphionMC_Discord_OAuth_Secret_Key';
+
+/**
+ * Genera un token state firmado criptográficamente para proteger contra CSRF
+ * sin depender exclusivamente de cookies que puedan ser bloqueadas por el navegador.
+ */
+function generateSignedState() {
+    const timestamp = Date.now().toString();
+    const nonce = crypto.randomBytes(8).toString('hex');
+    const payload = `${timestamp}:${nonce}`;
+    const sig = crypto.createHmac('sha256', OAUTH_SECRET).update(payload).digest('hex');
+    return `${payload}:${sig}`;
+}
+
+/**
+ * Verifica la firma HMAC del token state (válido por 30 minutos)
+ */
+function verifySignedState(state) {
+    if (!state || typeof state !== 'string') return false;
+    const parts = state.split(':');
+    if (parts.length !== 3) return false;
+    const [timestamp, nonce, sig] = parts;
+    const payload = `${timestamp}:${nonce}`;
+    const expected = crypto.createHmac('sha256', OAUTH_SECRET).update(payload).digest('hex');
+    if (sig !== expected) return false;
+    const age = Date.now() - parseInt(timestamp, 10);
+    if (isNaN(age) || age < 0 || age > 30 * 60 * 1000) return false;
+    return true;
+}
+
 /**
  * Obtiene la URL de redirección configurada o fallback según el host
  */
@@ -13,9 +43,10 @@ function getRedirectUri(req) {
     if (process.env.DISCORD_REDIRECT_URI) {
         return process.env.DISCORD_REDIRECT_URI;
     }
-    const host = req.get('host') || 'api.orphionmc.net';
-    const isLocal = host.includes('localhost') || host.includes('local') || host.includes('127.0.0.1');
-    const protocol = isLocal ? 'http' : 'https';
+    const host = req.get('host') || 'orphionmc.net';
+    const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
+    const isHttps = req.secure || req.headers['x-forwarded-proto'] === 'https' || (!isLocal && !host.includes(':'));
+    const protocol = isHttps ? 'https' : 'http';
     return `${protocol}://${host}/api/auth/discord/callback`;
 }
 
@@ -23,22 +54,36 @@ function getRedirectUri(req) {
  * Determina el destino final del usuario tras autenticarse con éxito
  */
 function getPostLoginRedirect(req) {
-    if (req.session.returnTo && req.session.returnTo.startsWith('/')) {
+    if (req.session && req.session.returnTo && (req.session.returnTo.startsWith('/') || req.session.returnTo.startsWith('http'))) {
         const dest = req.session.returnTo;
         delete req.session.returnTo;
         return dest;
     }
 
     const host = req.get('host') || '';
-    const isLocal = host.includes('localhost') || host.includes('local') || host.includes('127.0.0.1');
-    const protocol = isLocal ? 'http' : 'https';
+    const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
 
     if (isLocal) {
-        return `${protocol}://${host}/forum.html`;
+        return `http://${host}/forum.html`;
     }
 
-    const DOMAIN = process.env.DOMAIN || 'orphionmc.net';
-    return `${protocol}://foro.${DOMAIN}/`;
+    return 'https://orphionmc.net/forum.html';
+}
+
+/**
+ * Redirecciona al frontend adjuntando los parámetros de usuario para sincronización
+ */
+function redirectWithAuth(res, baseUrl, user) {
+    try {
+        const u = new URL(baseUrl);
+        u.searchParams.set('discord_login', '1');
+        u.searchParams.set('uid', user.id);
+        u.searchParams.set('uname', user.username);
+        u.searchParams.set('urole', user.role || 'user');
+        return res.redirect(u.toString());
+    } catch (e) {
+        return res.redirect(baseUrl);
+    }
 }
 
 /**
@@ -85,19 +130,27 @@ discordAuth.get('/auth/discord', (req, res) => {
         `);
     }
 
-    const state = crypto.randomBytes(16).toString('hex');
-    req.session.oauthState = state; // Protección anti-CSRF
+    const state = generateSignedState();
+    if (req.session) {
+        req.session.oauthState = state;
+    }
 
     // Guardar referencia de origen si está disponible
     const referer = req.get('referer');
     if (referer && !referer.includes('discord.com')) {
-        req.session.returnTo = referer;
+        if (req.session) req.session.returnTo = referer;
     }
 
     const scope = encodeURIComponent('identify email');
     const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}`;
 
-    res.redirect(url);
+    if (req.session) {
+        req.session.save(() => {
+            res.redirect(url);
+        });
+    } else {
+        res.redirect(url);
+    }
 });
 
 /**
@@ -111,17 +164,22 @@ discordAuth.get('/auth/discord/callback', async (req, res) => {
     const redirectUri = getRedirectUri(req);
     const postLoginUrl = getPostLoginRedirect(req);
 
-    // 1. Verificación de State contra CSRF
-    if (!state || state !== req.session.oauthState) {
+    // 1. Verificación de State contra CSRF (Session match OR HMAC cryptographically valid)
+    const sessionMatch = req.session && req.session.oauthState && req.session.oauthState === state;
+    const hmacValid = verifySignedState(state);
+
+    if (!sessionMatch && !hmacValid) {
         return res.status(403).send(`
             <div style="background:#111; color:#fff; font-family:sans-serif; text-align:center; padding:50px;">
                 <h2 style="color:#ff5555;">Estado de seguridad inválido o expirado</h2>
                 <p>Por motivos de seguridad, la solicitud fue rechazada. Intenta iniciar sesión de nuevo.</p>
-                <a href="/login.html" style="color:#d4af37;">← Volver al login</a>
+                <a href="https://orphionmc.net/login.html" style="color:#d4af37;">← Volver al login</a>
             </div>
         `);
     }
-    delete req.session.oauthState;
+    if (req.session) {
+        delete req.session.oauthState;
+    }
 
     if (!code) {
         return res.status(400).send('Código de autorización no proporcionado por Discord.');
@@ -169,14 +227,23 @@ discordAuth.get('/auth/discord/callback', async (req, res) => {
                     [discord_id, username, avatar, avatarUrl, req.ip, user.id]
                 );
 
-                req.session.regenerate((regErr) => {
-                    if (regErr) return res.status(500).send('Error al regenerar sesión');
+                const saveSessionAndRedirect = () => {
                     req.session.userId = user.id;
                     req.session.username = user.username;
                     req.session.role = user.role;
                     req.session.fingerprint = { ip: req.ip, ua: req.get('User-Agent') };
-                    return res.redirect(postLoginUrl);
-                });
+                    req.session.save(() => {
+                        return redirectWithAuth(res, postLoginUrl, user);
+                    });
+                };
+
+                if (req.session.regenerate) {
+                    req.session.regenerate((regErr) => {
+                        saveSessionAndRedirect();
+                    });
+                } else {
+                    saveSessionAndRedirect();
+                }
             } else {
                 // Usuario nuevo -> Registro automático con username seguro y contraseña cifrada
                 let cleanBase = (username || 'user').replace(/[^a-zA-Z0-9_]/g, '').substring(0, 15);
@@ -196,14 +263,25 @@ discordAuth.get('/auth/discord/callback', async (req, res) => {
                         }
 
                         const newUserId = this.lastID;
-                        req.session.regenerate((regErr) => {
-                            if (regErr) return res.status(500).send('Error al regenerar sesión');
+                        const newUser = { id: newUserId, username: defaultUsername, role: 'user' };
+
+                        const saveSessionAndRedirect = () => {
                             req.session.userId = newUserId;
                             req.session.username = defaultUsername;
                             req.session.role = 'user';
                             req.session.fingerprint = { ip: req.ip, ua: req.get('User-Agent') };
-                            return res.redirect(postLoginUrl);
-                        });
+                            req.session.save(() => {
+                                return redirectWithAuth(res, postLoginUrl, newUser);
+                            });
+                        };
+
+                        if (req.session.regenerate) {
+                            req.session.regenerate((regErr) => {
+                                saveSessionAndRedirect();
+                            });
+                        } else {
+                            saveSessionAndRedirect();
+                        }
                     }
                 );
             }
@@ -215,7 +293,7 @@ discordAuth.get('/auth/discord/callback', async (req, res) => {
             <div style="background:#111; color:#fff; font-family:sans-serif; text-align:center; padding:50px;">
                 <h2 style="color:#ff5555;">Error durante la autenticación con Discord</h2>
                 <p>Verifica que el Client Secret y Redirect URI coincidan en el portal de Discord Developers.</p>
-                <a href="/login.html" style="color:#d4af37;">← Volver al login</a>
+                <a href="https://orphionmc.net/login.html" style="color:#d4af37;">← Volver al login</a>
             </div>
         `);
     }
