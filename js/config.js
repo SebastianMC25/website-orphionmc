@@ -1,7 +1,7 @@
 // OrphionMC Frontend Config
 const CONFIG = {
-    // URL de la API del servidor en Bot-Hosting
-    CUSTOM_API: 'http://fi18.bot-hosting.cloud:25611/api',
+    // URL de la API oficial con HTTPS vía Cloudflare
+    CUSTOM_API: 'https://api.orphionmc.net/api',
 
     // Dynamic API discovery
     get API_BASE() {
