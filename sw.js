@@ -1,7 +1,14 @@
-const CACHE_NAME = 'orphionmc-static-v45';
+const CACHE_NAME = 'orphionmc-static-v46';
 const STATIC_ASSETS = [
     './',
     'index.html',
+    'forum.html',
+    'login.html',
+    'register.html',
+    'view_category.html',
+    'view_thread.html',
+    'create_thread.html',
+    'profile.html',
     'wiki/index.html',
     'wiki/olimpo.html',
     'wiki/delos.html',
@@ -322,8 +329,9 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const { request } = event;
 
-    // Solo interceptar peticiones GET
+    // Solo interceptar peticiones GET y excluir llamadas dinámicas de API/autenticación
     if (request.method !== 'GET') return;
+    if (request.url.includes('/api') || request.url.includes('/auth') || request.url.includes('api.')) return;
 
     event.respondWith(
         fetch(request)
