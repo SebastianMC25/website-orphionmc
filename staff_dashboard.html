@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=MedievalSharp&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/custom.css?v=57">
+    <link rel="stylesheet" href="css/custom.css?v=59">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -206,7 +206,6 @@
                 <ul class="nav-links" style="display: flex; align-items: center; justify-content: center; gap: 8px; list-style: none; margin: 0; padding: 0;">
                     <li><a href="index.html">Inicio</a></li>
                     <li><a href="forum.html">Foro</a></li>
-                    <li id="nav-staff"><a href="staff_dashboard.html" style="color:var(--gold);"><i class="fa fa-shield-halved"></i> Panel</a></li>
                 </ul>
             </div>
         </div>
@@ -216,13 +215,13 @@
         <aside class="staff-sidebar">
             <h2 style="color: var(--gold); margin-bottom: 25px; font-family: MedievalSharp;">OrphionMC OPS</h2>
             <ul class="staff-nav">
-                <li><button onclick="showSection('overview')" id="nav-overview" class="active"><i
-                            class="fa fa-chart-line"></i> Resumen</button></li>
-                <li><button onclick="showSection('users')" id="nav-users"><i class="fa fa-users"></i> Usuarios</button>
+                <li><button type="button" onclick="showSection('overview')" id="nav-overview" class="active"><i
+                            class="fa fa-chart-line" style="pointer-events:none;"></i> Resumen</button></li>
+                <li><button type="button" onclick="showSection('users')" id="nav-users"><i class="fa fa-users" style="pointer-events:none;"></i> Usuarios</button>
                 </li>
-                <li><button onclick="showSection('moderation')" id="nav-moderation"><i class="fa fa-gavel"></i>
+                <li><button type="button" onclick="showSection('moderation')" id="nav-moderation"><i class="fa fa-gavel" style="pointer-events:none;"></i>
                         Moderación</button></li>
-                <li><button onclick="showSection('logs')" id="nav-logs"><i class="fa fa-list"></i> Logs de
+                <li><button type="button" onclick="showSection('logs')" id="nav-logs"><i class="fa fa-list" style="pointer-events:none;"></i> Logs de
                         Auditoría</button></li>
             </ul>
         </aside>
@@ -292,8 +291,8 @@
         </main>
     </div>
 
-    <script src="js/config.js?v=58"></script>
-    <script src="js/auth.js?v=58"></script>
+    <script src="js/config.js?v=59"></script>
+    <script src="js/auth.js?v=59"></script>
     <script>
         const API_URL = (window.CONFIG && window.CONFIG.API_BASE) ? window.CONFIG.API_BASE : 'https://api.orphionmc.net/api';
 
@@ -311,13 +310,16 @@
         function showSection(id) {
             document.querySelectorAll('.staff-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.staff-nav button').forEach(b => b.classList.remove('active'));
-            document.getElementById(`section-${id}`).classList.add('active');
-            document.getElementById(`nav-${id}`).classList.add('active');
+            
+            const targetSection = document.getElementById(`section-${id}`);
+            const targetBtn = document.getElementById(`nav-${id}`);
+            if (targetSection) targetSection.classList.add('active');
+            if (targetBtn) targetBtn.classList.add('active');
 
             if (id === 'overview') loadStats();
-            if (id === 'users') loadUsers();
-            if (id === 'moderation') loadModeration();
-            if (id === 'logs') loadLogs();
+            else if (id === 'users') loadUsers();
+            else if (id === 'moderation') loadModeration();
+            else if (id === 'logs') loadLogs();
         }
 
         async function apiCall(path, method = 'GET', body = null) {
@@ -337,7 +339,7 @@
             const res = await fetchFn(`${API_URL}${path}`, options);
             if (!res.ok) {
                 const err = await res.json().catch(() => ({ error: 'Error en la petición' }));
-                throw new Error(err.error || 'Error en petición');
+                throw new Error(err.error || err.message || 'Error en petición');
             }
             return res.json();
         }
@@ -345,90 +347,125 @@
         async function loadStats() {
             try {
                 const stats = await apiCall('/staff/stats');
-                document.getElementById('stat-users').innerText = stats.totalUsers;
-                document.getElementById('stat-threads').innerText = stats.threadsToday;
-                document.getElementById('stat-posts').innerText = stats.totalPosts;
+                document.getElementById('stat-users').innerText = stats.totalUsers ?? 0;
+                document.getElementById('stat-threads').innerText = stats.threadsToday ?? 0;
+                document.getElementById('stat-posts').innerText = stats.totalPosts ?? 0;
 
                 const logs = await apiCall('/staff/logs');
                 const list = document.getElementById('recent-activity-list');
-                list.innerHTML = logs.slice(0, 5).map(l => {
-                    const safeStaff = window.escapeHTML(l.staff_name);
-                    const safeAction = window.escapeHTML(l.action);
-                    const safeTarget = window.escapeHTML(l.target_type);
-                    const safeId = encodeURIComponent(l.target_id);
+                const safeLogs = Array.isArray(logs) ? logs : [];
+                list.innerHTML = safeLogs.slice(0, 5).map(l => {
+                    const safeStaff = window.escapeHTML(l.staff_name || 'Staff');
+                    const safeAction = window.escapeHTML(l.action || 'acción');
+                    const safeTarget = window.escapeHTML(l.target_type || 'elemento');
+                    const safeId = encodeURIComponent(l.target_id || 0);
                     return `
                         <div class="log-entry">
                             <span class="log-staff">${safeStaff}</span> ejecutó <b>${safeAction}</b> en ${safeTarget} #${safeId}
                         </div>
                     `;
                 }).join('') || 'Sin actividad reciente.';
-            } catch (e) { alert(e.message); }
+            } catch (e) {
+                console.error("Error cargando stats:", e);
+                const list = document.getElementById('recent-activity-list');
+                if (list) list.innerHTML = `<p style="color:#ff6b6b;"><i class="fa fa-triangle-exclamation"></i> ${window.escapeHTML(e.message)}</p>`;
+            }
         }
 
         async function loadUsers() {
-            const users = await apiCall('/staff/users');
             const tbody = document.getElementById('users-tbody');
-            tbody.innerHTML = users.map(u => {
-                const safeUsername = window.escapeHTML(u.username);
-                const safeRole = window.escapeHTML(u.role);
-                const safeIgn = u.minecraft_ign ? window.escapeHTML(u.minecraft_ign) : '---';
-                const safeId = parseInt(u.id, 10);
-                const isBanned = Boolean(u.is_banned);
-                return `
-                    <tr>
-                        <td>${safeUsername}</td>
-                        <td><span class="badge badge-${safeRole}">${safeRole.toUpperCase()}</span></td>
-                        <td>${safeIgn}</td>
-                        <td>${isBanned ? '<span class="badge badge-banned">SÍ</span>' : 'NO'}</td>
-                        <td>
-                            <button onclick="toggleBan(${safeId}, ${isBanned})" class="btn-sm ${isBanned ? '' : 'btn-ban'}">
-                                ${isBanned ? 'DESBAN' : 'BAN'}
-                            </button>
-                            <button onclick="changeRole(${safeId})" class="btn-sm">RANGO</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#aaa;"><i class="fa fa-spinner fa-spin"></i> Cargando usuarios...</td></tr>';
+            try {
+                const users = await apiCall('/staff/users');
+                if (!Array.isArray(users) || users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#888;">No hay usuarios registrados.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = users.map(u => {
+                    const safeUsername = window.escapeHTML(u.username);
+                    const safeRole = window.escapeHTML(u.role || 'user');
+                    const safeIgn = u.minecraft_ign ? window.escapeHTML(u.minecraft_ign) : '---';
+                    const safeId = parseInt(u.id, 10);
+                    const isBanned = Boolean(u.is_banned);
+                    return `
+                        <tr>
+                            <td><b>${safeUsername}</b></td>
+                            <td><span class="badge badge-${safeRole}">${safeRole.toUpperCase()}</span></td>
+                            <td>${safeIgn}</td>
+                            <td>${isBanned ? '<span class="badge badge-banned">SÍ</span>' : 'NO'}</td>
+                            <td>
+                                <button onclick="toggleBan(${safeId}, ${isBanned})" class="btn-sm ${isBanned ? '' : 'btn-ban'}">
+                                    ${isBanned ? 'DESBAN' : 'BAN'}
+                                </button>
+                                <button onclick="changeRole(${safeId})" class="btn-sm">RANGO</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error("Error cargando usuarios:", e);
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff6b6b; padding:20px;"><i class="fa fa-triangle-exclamation"></i> Error al cargar usuarios: ${window.escapeHTML(e.message)}</td></tr>`;
+            }
         }
 
         async function loadModeration() {
-            const threads = await apiCall('/staff/moderation/threads');
             const tbody = document.getElementById('mod-tbody');
-            tbody.innerHTML = threads.map(t => {
-                const safeTitle = window.escapeHTML(t.title);
-                const safeStatus = window.escapeHTML(t.status);
-                const safeId = parseInt(t.id, 10);
-                return `
-                    <tr>
-                        <td>${safeTitle}</td>
-                        <td><span class="badge">${safeStatus.toUpperCase()}</span></td>
-                        <td>${new Date(t.created_at).toLocaleDateString()}</td>
-                        <td>
-                            <button onclick="deleteThread(${safeId})" class="btn-sm btn-ban">ELIMINAR</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            if (tbody) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#aaa;"><i class="fa fa-spinner fa-spin"></i> Cargando hilos...</td></tr>';
+            try {
+                const threads = await apiCall('/staff/moderation/threads');
+                if (!Array.isArray(threads) || threads.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#888;">No hay temas para moderar.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = threads.map(t => {
+                    const safeTitle = window.escapeHTML(t.title);
+                    const safeStatus = window.escapeHTML(t.status || 'open');
+                    const safeId = parseInt(t.id, 10);
+                    return `
+                        <tr>
+                            <td><a href="view_thread.html?id=${safeId}" target="_blank" style="color:#eee; text-decoration:none;">${safeTitle}</a></td>
+                            <td><span class="badge">${safeStatus.toUpperCase()}</span></td>
+                            <td>${new Date(t.created_at).toLocaleDateString()}</td>
+                            <td>
+                                <button onclick="deleteThread(${safeId})" class="btn-sm btn-ban"><i class="fa fa-trash"></i> ELIMINAR</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error("Error cargando moderación:", e);
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#ff6b6b; padding:20px;"><i class="fa fa-triangle-exclamation"></i> Error al cargar moderación: ${window.escapeHTML(e.message)}</td></tr>`;
+            }
         }
 
         async function loadLogs() {
-            const logs = await apiCall('/staff/logs');
             const container = document.getElementById('logs-container');
-            container.innerHTML = logs.map(l => {
-                const safeStaff = window.escapeHTML(l.staff_name);
-                const safeAction = window.escapeHTML(l.action);
-                const safeTarget = window.escapeHTML(l.target_type);
-                const safeId = encodeURIComponent(l.target_id);
-                const safeDetails = window.escapeHTML(l.details);
-                return `
-                    <div class="log-entry">
-                        <span class="log-date">${new Date(l.created_at).toLocaleString()}</span>
-                        <span class="log-staff">${safeStaff}</span> -> 
-                        <b>${safeAction}</b> (${safeTarget} #${safeId})
-                        <pre style="font-size:0.7rem; color:#888;">${safeDetails}</pre>
-                    </div>
-                `;
-            }).join('');
+            if (container) container.innerHTML = '<p style="text-align:center; padding:20px; color:#aaa;"><i class="fa fa-spinner fa-spin"></i> Cargando logs...</p>';
+            try {
+                const logs = await apiCall('/staff/logs');
+                if (!Array.isArray(logs) || logs.length === 0) {
+                    container.innerHTML = '<p style="color:#888; text-align:center; padding:20px;">No hay registros de auditoría aún.</p>';
+                    return;
+                }
+                container.innerHTML = logs.map(l => {
+                    const safeStaff = window.escapeHTML(l.staff_name || 'Staff');
+                    const safeAction = window.escapeHTML(l.action || 'Acción');
+                    const safeTarget = window.escapeHTML(l.target_type || 'Elemento');
+                    const safeId = encodeURIComponent(l.target_id || 0);
+                    const safeDetails = window.escapeHTML(l.details || '');
+                    return `
+                        <div class="log-entry">
+                            <span class="log-date">${new Date(l.created_at).toLocaleString()}</span>
+                            <span class="log-staff">${safeStaff}</span> &rarr; 
+                            <b>${safeAction}</b> (${safeTarget} #${safeId})
+                            ${safeDetails ? `<pre style="font-size:0.75rem; color:#aaa; margin-top:5px; background:#111; padding:6px; border-radius:4px;">${safeDetails}</pre>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error("Error cargando logs:", e);
+                container.innerHTML = `<p style="color:#ff6b6b; text-align:center; padding:20px;"><i class="fa fa-triangle-exclamation"></i> Error al cargar logs: ${window.escapeHTML(e.message)}</p>`;
+            }
         }
 
         async function toggleBan(id, isCurrentlyBanned) {

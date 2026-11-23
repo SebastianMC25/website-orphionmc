@@ -48,8 +48,9 @@ const Middleware = {
             return res.redirect('/login.html');
         }
 
-        const userRole = req.session.role || 'user';
-        if (allowedRoles.includes(userRole)) {
+        const userRole = (req.session.role || 'user').toLowerCase();
+        const normalizedAllowed = allowedRoles.map(r => r.toLowerCase());
+        if (normalizedAllowed.includes(userRole)) {
             return next();
         }
 

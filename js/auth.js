@@ -144,21 +144,25 @@ function updateNavbarAuth(user) {
     // Remove existing login/logout/user items to prevent duplicates
     const staleItems = navUl.querySelectorAll('#nav-login, #nav-user, #nav-logout, #nav-staff');
     staleItems.forEach(item => item.remove());
+    navUl.querySelectorAll('li a[href*="staff_dashboard"]').forEach(a => a.closest('li')?.remove());
 
     if (user) {
         // Dynamic Role Badge
+        const normalizedRole = (user.role || 'user').toLowerCase();
         let roleBadge = '';
-        if (user.role && user.role !== 'user') {
+        if (normalizedRole && normalizedRole !== 'user') {
             const roleLabels = { 'admin': 'ADMIN', 'moderator': 'MOD', 'staff': 'STAFF' };
-            roleBadge = `<span class="badge badge-${user.role}" style="margin-left:8px; font-size:0.6rem; vertical-align:middle;">${roleLabels[user.role] || user.role.toUpperCase()}</span>`;
+            roleBadge = `<span class="badge badge-${normalizedRole}" style="margin-left:8px; font-size:0.6rem; vertical-align:middle;">${roleLabels[normalizedRole] || normalizedRole.toUpperCase()}</span>`;
         }
 
         // Show staff panel link if applicable
-        if (['admin', 'staff', 'moderator'].includes(user.role)) {
-            const liStaff = document.createElement('li');
-            liStaff.id = 'nav-staff';
-            liStaff.innerHTML = `<a href="staff_dashboard.html" style="color:var(--gold);"><i class="fa fa-shield-halved"></i> Panel</a>`;
-            navUl.appendChild(liStaff);
+        if (['admin', 'staff', 'moderator'].includes(normalizedRole)) {
+            if (!navUl.querySelector('#nav-staff') && !navUl.querySelector('a[href*="staff_dashboard"]')) {
+                const liStaff = document.createElement('li');
+                liStaff.id = 'nav-staff';
+                liStaff.innerHTML = `<a href="staff_dashboard.html" style="color:var(--gold);"><i class="fa fa-shield-halved"></i> Panel</a>`;
+                navUl.appendChild(liStaff);
+            }
         }
 
         const safeUsername = window.escapeHTML ? window.escapeHTML(user.username) : user.username;

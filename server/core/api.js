@@ -460,14 +460,14 @@ api.post('/minecraft/link/verify', (req, res) => {
 // ================= STAFF / INTERNAL TOOLS =================
 
 api.get('/staff/stats', requireAuth, requireStaff, (req, res) => {
-    const stats = {};
-    db.get("SELECT COUNT(*) as count FROM users", (err, row) => {
-        stats.totalUsers = row.count;
-        db.get("SELECT COUNT(*) as count FROM threads WHERE created_at > date('now','-1 day')", (err, row) => {
-            stats.threadsToday = row.count;
-            db.get("SELECT COUNT(*) as count FROM posts", (err, row) => {
-                stats.totalPosts = row.count;
-                res.json(stats);
+    const stats = { totalUsers: 0, threadsToday: 0, totalPosts: 0 };
+    db.get("SELECT COUNT(*) as count FROM users", (err1, row1) => {
+        if (row1 && row1.count !== undefined) stats.totalUsers = row1.count;
+        db.get("SELECT COUNT(*) as count FROM threads WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)", (err2, row2) => {
+            if (row2 && row2.count !== undefined) stats.threadsToday = row2.count;
+            db.get("SELECT COUNT(*) as count FROM posts", (err3, row3) => {
+                if (row3 && row3.count !== undefined) stats.totalPosts = row3.count;
+                return res.json(stats);
             });
         });
     });
@@ -476,7 +476,7 @@ api.get('/staff/stats', requireAuth, requireStaff, (req, res) => {
 api.get('/staff/users', requireAuth, requireStaff, (req, res) => {
     db.all("SELECT id, username, role, minecraft_ign, last_ip, is_banned, created_at FROM users ORDER BY created_at DESC LIMIT 50", (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json(rows);
+        res.json(rows || []);
     });
 });
 
@@ -539,11 +539,11 @@ api.get('/staff/logs', requireAuth, requireStaff, (req, res) => {
     db.all(`
         SELECT l.*, u.username as staff_name 
         FROM audit_logs l 
-        JOIN users u ON l.staff_id = u.id 
+        LEFT JOIN users u ON l.staff_id = u.id 
         ORDER BY l.created_at DESC LIMIT 50
     `, (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json(rows);
+        res.json(rows || []);
     });
 });
 
@@ -551,7 +551,7 @@ api.get('/staff/logs', requireAuth, requireStaff, (req, res) => {
 api.get('/staff/moderation/threads', requireAuth, requireStaff, (req, res) => {
     db.all("SELECT id, title, status, created_at FROM threads ORDER BY created_at DESC LIMIT 20", (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json(rows);
+        res.json(rows || []);
     });
 });
 
