@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const axios = require('axios');
 const bcrypt = require('bcryptjs');
 const db = require('./db');
+const { createAuthToken } = require('./auth_token');
 
 const discordAuth = express.Router();
 
@@ -76,7 +77,9 @@ function getPostLoginRedirect(req) {
 function redirectWithAuth(res, baseUrl, user) {
     try {
         const u = new URL(baseUrl);
+        const token = createAuthToken(user);
         u.searchParams.set('discord_login', '1');
+        if (token) u.searchParams.set('token', token);
         u.searchParams.set('uid', user.id);
         u.searchParams.set('uname', user.username);
         u.searchParams.set('urole', user.role || 'user');

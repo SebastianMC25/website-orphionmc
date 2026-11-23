@@ -1,45 +1,67 @@
 const path = require('path');
+const { verifyAuthToken } = require('./auth_token');
 
 /**
- * OrphionMC Centralized Middleware for RBAC and Error Handling
+ * Función auxiliar para verificar si la petición espera respuesta en JSON
+ */
+function isJsonRequest(req) {
+    if (req.xhr) return true;
+    if (req.headers.accept && typeof req.headers.accept === 'string' && req.headers.accept.includes('json')) return true;
+    if (req.headers['content-type'] && typeof req.headers['content-type'] === 'string' && req.headers['content-type'].includes('json')) return true;
+    if (req.originalUrl && req.originalUrl.includes('/api/')) return true;
+    return false;
+}
+
+/**
+ * Intenta autenticar al usuario mediante token Bearer si no tiene sesión activa
+ */
+function resolveUser(req) {
+    if (req.session && req.session.userId) {
+        return true;
+    }
+    const authHeader = req.headers.authorization;
+    if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7).trim();
+        const decoded = verifyAuthToken(token);
+        if (decoded && decoded.id) {
+            if (!req.session) req.session = {};
+            req.session.userId = decoded.id;
+            req.session.username = decoded.username;
+            req.session.role = decoded.role || 'user';
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * OrphionMC Centralized Middleware for RBAC and Auth
  */
 const Middleware = {
-    /**
-     * Role-Based Authorization Factory
-     * @param {string[]} allowedRoles - List of roles that can access the route
-     */
     requireRole: (allowedRoles) => (req, res, next) => {
-        // 1. Check if user is authenticated
-        if (!req.session.userId) {
-            if (req.xhr || req.headers.accept.includes('json')) {
+        resolveUser(req);
+
+        if (!req.session || !req.session.userId) {
+            if (isJsonRequest(req)) {
                 return res.status(401).json({ error: "No autorizado. Inicia sesión." });
             }
             return res.redirect('/login.html');
         }
 
-        // 2. Check Role
         const userRole = req.session.role || 'user';
         if (allowedRoles.includes(userRole)) {
             return next();
         }
 
-        // 3. Handle Unauthorized (403)
-        console.warn(`[Security] Unauthorized access attempt: 
-            User ID: ${req.session.userId} 
-            Role: ${userRole} 
-            Path: ${req.originalUrl} 
-            IP: ${req.ip}`);
+        console.warn(`[Security] Unauthorized access attempt: User ID: ${req.session.userId} Role: ${userRole} Path: ${req.originalUrl}`);
 
-        // Decide based on Accept header (HTML vs JSON)
-        if (req.xhr || req.headers.accept && req.headers.accept.includes('json')) {
+        if (isJsonRequest(req)) {
             return res.status(403).json({ 
                 error: "Acceso denegado", 
                 message: "No tienes los permisos necesarios para esta acción." 
             });
-        } else {
-            // Serve the custom 403 page
-            return res.status(403).sendFile(path.join(__dirname, '../../403.html'));
         }
+        return res.status(403).sendFile(path.join(__dirname, '../../403.html'));
     }
 };
 
@@ -48,9 +70,11 @@ module.exports = {
     requireModerator: Middleware.requireRole(['admin', 'moderator']),
     requireStaff: Middleware.requireRole(['admin', 'moderator', 'staff']),
     requireAuth: (req, res, next) => {
-        if (!req.session.userId) {
-            if (req.xhr || req.headers.accept.includes('json')) {
-                return res.status(401).json({ error: "No autorizado" });
+        resolveUser(req);
+
+        if (!req.session || !req.session.userId) {
+            if (isJsonRequest(req)) {
+                return res.status(401).json({ error: "No autorizado. Inicia sesión." });
             }
             return res.redirect('/login.html');
         }

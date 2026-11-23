@@ -600,8 +600,8 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=51"></script>
-    <script src="js/auth.js?v=51"></script>
+    <script src="js/config.js?v=52"></script>
+    <script src="js/auth.js?v=52"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         let targetUserId = params.get('id');
@@ -854,14 +854,23 @@
 
             try {
                 const apiBase = (window.CONFIG && window.CONFIG.API_BASE) ? window.CONFIG.API_BASE : 'https://api.orphionmc.net/api';
-                const res = await fetch(`${apiBase}/users/profile`, {
+                const fetchFn = window.authFetch || fetch;
+                const res = await fetchFn(`${apiBase}/users/profile`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify(payload),
                     credentials: 'include'
                 });
 
-                const data = await res.json();
+                let data;
+                try {
+                    data = await res.json();
+                } catch(parseErr) {
+                    throw new Error(`Error en el servidor (${res.status}). Por favor reintenta o vuelve a iniciar sesión.`);
+                }
                 if (!res.ok) throw new Error(data.error || 'Error al guardar cambios.');
 
                 fb.style.display = 'block';

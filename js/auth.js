@@ -1,5 +1,23 @@
 const API_URL = window.CONFIG ? window.CONFIG.API_BASE : 'http://localhost:3000/api';
 
+/**
+ * Universal authenticated fetch helper
+ * Automáticamente adjunta headers JSON, credenciales y token Bearer si existe
+ */
+window.authFetch = function(url, options = {}) {
+    options = options || {};
+    options.headers = options.headers || {};
+    if (!options.headers['Accept']) {
+        options.headers['Accept'] = 'application/json';
+    }
+    const token = localStorage.getItem('auth_token');
+    if (token && !options.headers['Authorization']) {
+        options.headers['Authorization'] = `Bearer ${token}`;
+    }
+    options.credentials = 'include';
+    return fetch(url, options);
+};
+
 // Anti-Bot Token globally stored
 let currentAntiBotToken = null;
 
@@ -30,11 +48,16 @@ document.addEventListener('DOMContentLoaded', () => {
             username: urlParams.get('uname'),
             role: urlParams.get('urole') || 'user'
         };
+        const authToken = urlParams.get('token');
+        if (authToken) {
+            localStorage.setItem('auth_token', authToken);
+        }
         localStorage.setItem('user', JSON.stringify(discordUser));
         updateNavbarAuth(discordUser);
 
         // Clean query params from URL without refreshing
         urlParams.delete('discord_login');
+        urlParams.delete('token');
         urlParams.delete('uid');
         urlParams.delete('uname');
         urlParams.delete('urole');
@@ -87,6 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || 'Error al iniciar sesión');
 
+                if (data.token) {
+                    localStorage.setItem('auth_token', data.token);
+                }
                 if (data.user) {
                     localStorage.setItem('user', JSON.stringify(data.user));
                 }
@@ -127,6 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || 'Error al registrarse');
 
+                if (data.token) {
+                    localStorage.setItem('auth_token', data.token);
+                }
                 localStorage.setItem('user', JSON.stringify({ id: data.id, username: data.username, role: data.role || 'user' }));
 
                 alert("Cuenta creada y sesión iniciada.");
@@ -231,6 +260,7 @@ function updateNavbarAuth(user) {
             e.preventDefault();
             await fetch(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include' });
             localStorage.removeItem('user');
+            localStorage.removeItem('auth_token');
             window.location.reload();
         });
 

@@ -6,6 +6,7 @@ const cors = require('cors');
 const antiBot = require('./antibot');
 const SecurityLogic = require('./security_logic');
 const { requireAuth, requireAdmin, requireModerator, requireStaff } = require('./middleware');
+const { createAuthToken } = require('./auth_token');
 const discordAuth = require('./discord_auth');
 
 const api = express.Router(); // Using router to mount on the main app easily
@@ -831,6 +832,12 @@ api.get('/me', requireAuth, (req, res) => {
         if (err || !row) return res.status(404).json({ error: "Usuario no encontrado" });
         res.json(row);
     });
+});
+
+// Global error handler for API router ensuring CORS headers are kept
+api.use((err, req, res, next) => {
+    console.error('[API Error Handler]', err);
+    res.status(err.status || 500).json({ error: err.message || "Error interno del servidor" });
 });
 
 module.exports = api;
