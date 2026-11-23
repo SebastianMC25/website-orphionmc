@@ -20,6 +20,9 @@
     let isTicking = false;
 
     function initVideo() {
+        // Try to load first available source
+        video.src = videoSources[0];
+
         video.addEventListener('loadedmetadata', function () {
             isVideoReady = true;
             video.classList.add('has-video');
@@ -40,16 +43,6 @@
                 isVideoReady = false;
             }
         });
-
-        // Try to load first available source
-        video.src = videoSources[0];
-
-        // If video already has metadata cached/loaded
-        if (video.readyState >= 1) {
-            isVideoReady = true;
-            video.classList.add('has-video');
-            updateScrub();
-        }
     }
 
     function onScroll() {
