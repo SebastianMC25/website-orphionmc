@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orphionmc-static-v59';
+const CACHE_NAME = 'orphionmc-static-v60';
 const STATIC_ASSETS = [
     './',
     'index.html',
@@ -223,7 +223,10 @@ const STATIC_ASSETS = [
     'assets/models/dino_baby_hatzego.bin',
     'css/custom.css',
     'css/wiki.css',
+    'js/config.js',
+    'js/auth.js',
     'js/main.js',
+    'js/hero-scrub.js',
     'js/server-status.js',
     'js/wiki-model-viewer.js',
     'js/vendor/three.module.js',

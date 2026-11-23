@@ -120,6 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
             tri.style.setProperty('--rot-speed', `${rotSpeed.toFixed(0)}deg`);
             tri.style.setProperty('--scale', scale.toFixed(2));
             tri.style.setProperty('--opacity', opacity.toFixed(2));
+            const color = colors[Math.floor(Math.random() * colors.length)];
             tri.style.setProperty('--color', color);
 
             container.appendChild(tri);
@@ -163,18 +164,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ================= ANIMATIONS =================
 
-    // 1. Hero Animation (Parallax)
-    gsap.to(".video-bg", {
-        scrollTrigger: {
-            trigger: ".hero",
-            start: "top top",
-            end: "bottom top",
-            scrub: true
-        },
-        y: 80, // Smooth parallax on retro poster background
-        ease: "none"
-    });
-
+    // 1. Hero Content Animation
+    // Note: Parallax on .video-bg removed because the cinematic video is fixed and scrubbed by hero-scrub.js;
+    // displacing it caused a gap under the fixed navbar.
     gsap.to(".hero-content", {
         scrollTrigger: {
             trigger: ".hero",
@@ -230,51 +222,92 @@ document.addEventListener("DOMContentLoaded", () => {
     animateStagger(".updates-list", ".update-item");
     animateSection(".footer-videos");
 
-    // ================= NAVIGATION =================
-    const sections = ['hero', 'about', 'news', 'updates', 'footer-wrapper'];
-    const navLinks = document.querySelectorAll('.navbar a');
-    const sideNavItems = document.querySelectorAll('.side-nav-item');
+    // ================= NAVIGATION SCROLLSPY =================
+    const navSections = [
+        { id: 'hero', element: document.getElementById('hero') },
+        { id: 'about', element: document.getElementById('about') },
+        { id: 'news', element: document.getElementById('news') },
+        { id: 'updates', element: document.getElementById('updates') },
+        { id: 'footer', element: document.getElementById('footer') }
+    ].filter(s => s.element !== null);
+
+    const sideNavLinks = document.querySelectorAll('.side-nav-item');
+    const topNavLinks = document.querySelectorAll('.nav-links a');
+
+    function setActiveSection(activeId) {
+        // Update Side Nav
+        sideNavLinks.forEach(item => {
+            const href = item.getAttribute('href') || '';
+            if (href.startsWith('#')) {
+                const targetId = href.substring(1);
+                if (targetId === activeId) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            } else {
+                item.classList.remove('active');
+            }
+        });
+
+        // Update Top Nav
+        topNavLinks.forEach(link => {
+            const href = link.getAttribute('href') || '';
+            if (href.startsWith('#')) {
+                const targetId = href.substring(1);
+                if (targetId === activeId || (targetId === '' && activeId === 'hero')) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            }
+        });
+    }
 
     const updateActiveNav = () => {
-        let current = "";
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop || window.scrollY || 0;
+        const windowHeight = window.innerHeight || 800;
+        const documentHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
 
-        sections.forEach(sectionId => {
-            const section = document.getElementById(sectionId) || document.getElementById(sectionId.replace('-wrapper', ''));
-            if (!section) return;
+        // If near bottom of the page, activate footer
+        if (scrollY + windowHeight >= documentHeight - 80) {
+            setActiveSection('footer');
+            return;
+        }
 
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
+        let currentSectionId = 'hero';
 
-            if (scrollY >= (sectionTop - sectionHeight / 3)) {
-                current = sectionId.replace('-wrapper', '');
+        for (let i = 0; i < navSections.length; i++) {
+            const sec = navSections[i];
+            const rect = sec.element.getBoundingClientRect();
+            // Active when section top reaches upper half of viewport
+            if (rect.top <= windowHeight * 0.45) {
+                currentSectionId = sec.id;
             }
-        });
+        }
 
-        // Loop through side nav items
-        sideNavItems.forEach(item => {
-            item.classList.remove('active');
-            const href = item.getAttribute('href').substring(1); // remove #
-
-            // Special case for top/home
-            if ((href === '' && current === 'hero') || href === current) {
-                item.classList.add('active');
-            }
-        });
-
-        // Loop through top nav items (simplified matching)
-        navLinks.forEach(link => {
-            const href = link.getAttribute('href').substring(1);
-            if (href === current) {
-                link.classList.add('active');
-            } else if (href === '' && current === 'hero') {
-                // Home link logic if needed
-            } else {
-                link.classList.remove('active');
-            }
-        });
+        setActiveSection(currentSectionId);
     };
 
-    window.addEventListener('scroll', updateActiveNav);
+    // Smooth scroll and immediate active state on click
+    sideNavLinks.forEach(item => {
+        item.addEventListener('click', (e) => {
+            const href = item.getAttribute('href') || '';
+            if (href.startsWith('#')) {
+                const targetId = href.substring(1);
+                const targetElem = document.getElementById(targetId);
+                if (targetElem) {
+                    e.preventDefault();
+                    targetElem.scrollIntoView({ behavior: 'smooth' });
+                    setActiveSection(targetId);
+                }
+            }
+        });
+    });
+
+    window.addEventListener('scroll', updateActiveNav, { passive: true });
+    window.addEventListener('resize', updateActiveNav, { passive: true });
+    updateActiveNav();
 });
 
 // PWA Service Worker Registration
