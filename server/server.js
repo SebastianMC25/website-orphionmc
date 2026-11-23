@@ -79,18 +79,20 @@ app.use(globalLimiter);
 // For local dev: set DOMAIN=OrphionMC.local in .env
 const DOMAIN = process.env.DOMAIN || 'orphionmc.net';
 
-// Session Configuration
+// Session Configuration (Persistent in MariaDB / MySQL)
+const MySQLSessionStore = require('./core/session_store');
 const sessionSecret = process.env.SESSION_SECRET || 'OrphionMC_session_gWM076QKEfdvgKcEGz2hNflI';
 const cookieSecureSetting = process.env.COOKIE_SECURE === 'true' ? true : (process.env.COOKIE_SECURE === 'false' ? false : 'auto');
 
 const sessionConfig = {
+    store: new MySQLSessionStore(),
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     cookie: {
         secure: cookieSecureSetting,
         sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 1 week
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 días persistentes (Recordar sesión)
     }
 };
 
@@ -101,24 +103,14 @@ if (process.env.COOKIE_DOMAIN) {
 
 app.use(session(sessionConfig));
 
-// Session Security: IP & User-Agent Fingerprinting
+// Session Activity Logging
 app.use((req, res, next) => {
-    if (req.session.userId) {
-        const currentFingerprint = {
-            ip: req.ip,
-            ua: req.get('User-Agent')
-        };
-
+    if (req.session && req.session.userId) {
         if (!req.session.fingerprint) {
-            req.session.fingerprint = currentFingerprint;
-        } else {
-            // Check for significant changes (IP or UA)
-            // Note: In some mobile networks IPs change frequently, but for a premium platform,
-            // we should at least log or be cautious. 
-            if (req.session.fingerprint.ua !== currentFingerprint.ua) {
-                console.warn(`[Security] Session fingerprint mismatch for user ${req.session.userId}: UA changed.`);
-                return req.session.destroy(() => res.status(401).json({ error: "Sesión invalidada por seguridad." }));
-            }
+            req.session.fingerprint = {
+                ip: req.ip,
+                ua: req.get('User-Agent')
+            };
         }
     }
     next();

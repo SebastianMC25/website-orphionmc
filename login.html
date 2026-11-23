@@ -174,8 +174,29 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=53"></script>
-    <script src="js/auth.js?v=53"></script>
+    <script src="js/config.js?v=54"></script>
+    <script src="js/auth.js?v=54"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                try {
+                    const u = JSON.parse(userStr);
+                    const container = document.querySelector('.auth-container');
+                    if (container && u && u.username) {
+                        const banner = document.createElement('div');
+                        banner.style.cssText = 'background: rgba(212,175,55,0.15); border: 1px solid var(--gold); border-radius: 8px; padding: 15px; margin-bottom: 20px;';
+                        banner.innerHTML = `
+                            <p style="margin:0 0 10px; color:#fff;">Sesión activa como <b style="color:var(--gold);">${window.escapeHTML ? window.escapeHTML(u.username) : u.username}</b>.</p>
+                            <a href="forum.html" class="btn-auth" style="display:block; text-decoration:none; padding:8px 15px; font-size:0.9rem; margin-top:5px;">Continuar al Foro</a>
+                        `;
+                        const title = document.querySelector('.auth-title');
+                        if (title) title.insertAdjacentElement('afterend', banner);
+                    }
+                } catch(e) {}
+            }
+        });
+    </script>
 </body>
 
 </html>
