@@ -5,6 +5,8 @@ const announcements = [
     title: '¡Bienvenidos a OrphionMC: La Gran Odisea en el Olimpo Comienza!',
     prefix: 'OFICIAL',
     is_pinned: 1,
+    created_at: '2026-08-15 14:00:00',
+    views: 342,
     content: `# ⚡ ¡BIENVENIDOS A ORPHIONMC MMORPG 1.21.x!
 
 > "Los antiguos dioses observan desde las alturas del monte sagrado. Solo aquellos de corazón indomable ascenderán a la gloria eterna."
@@ -37,6 +39,8 @@ Comandos Esenciales:
     title: 'Furia Celestial: Caída de Meteoritos y el Despertar del Kraken en Alta Mar',
     prefix: 'EVENTO',
     is_pinned: 1,
+    created_at: '2026-11-16 20:10:00',
+    views: 156,
     content: `# ☄️ EVENTOS DINÁMICOS DEL MUNDO ABIERTO
 
 > "El cielo se tiñe de carmesí y los mares rugen con cólera desatada. El mundo de OrphionMC está vivo y en constante peligro."
@@ -66,6 +70,8 @@ Navegar por las aguas profundas de OrphionMC requiere tripulaciones bien armadas
     title: 'Las Cámaras de los Dioses: Desafía a Zeus, Poseidón y Cerbero en Mazmorras Instanciadas',
     prefix: 'RAIDS',
     is_pinned: 1,
+    created_at: '2026-09-25 19:15:00',
+    views: 278,
     content: `# 🏛️ MAZMORRAS INSTANCIADAS (MYTHICDUNGEONS)
 
 > "Solo los héroes más valientes se atreven a descender a las profundidades del Tártaro o escalar los picos prohibidos del Olimpo."
@@ -95,6 +101,8 @@ Cada mazmorra culmina en una arena diseñada a medida con mecánicas y fases de 
     title: 'La Forja Divina: Cajas Elementales 3D, Armas Legendarias y Zona AFK',
     prefix: 'UPDATE',
     is_pinned: 0,
+    created_at: '2026-10-22 18:40:00',
+    views: 214,
     content: `# 🎁 CAJAS MÍTICAS ELEMENTALES & FORJA DEL OLIMPO
 
 > "Hefesto ha avivado los fuegos sagrados de su fragua para bendecir a los mortales con artefactos de poder inigualable."
@@ -123,6 +131,8 @@ En el centro de la Acrópolis encontrarás los altares elementales:
     title: 'Leyes del Olimpo y Seguridad: Reglas de Convivencia y Vinculación Oficial',
     prefix: 'REGLAS',
     is_pinned: 0,
+    created_at: '2026-08-28 17:30:00',
+    views: 185,
     content: `# 📜 NORMAS DE LA COMUNIDAD & JUEGO LIMPIO
 
 > "Un gran reino se construye con honor, respeto y justicia entre todos sus guerreros."
@@ -171,8 +181,8 @@ db.get("SELECT id FROM users WHERE role = 'admin' LIMIT 1", [], (err, admin) => 
           if (existing) {
             console.log(`Thread '${ann.title}' already exists with ID ${existing.id}. Updating content...`);
             db.run(
-              "UPDATE threads SET content = ?, prefix = ?, is_pinned = ? WHERE id = ?",
-              [ann.content, ann.prefix, ann.is_pinned, existing.id],
+              "UPDATE threads SET content = ?, prefix = ?, is_pinned = ?, created_at = ?, views = ? WHERE id = ?",
+              [ann.content, ann.prefix, ann.is_pinned, ann.created_at, ann.views, existing.id],
               (err) => {
                 if (err) return reject(err);
                 console.log(`Thread ${existing.id} updated.`);
@@ -182,8 +192,8 @@ db.get("SELECT id FROM users WHERE role = 'admin' LIMIT 1", [], (err, admin) => 
           } else {
             console.log(`Inserting thread '${ann.title}'...`);
             db.run(
-              "INSERT INTO threads (category_id, user_id, title, content, prefix, is_pinned) VALUES (?, ?, ?, ?, ?, ?)",
-              [catId, adminId, ann.title, ann.content, ann.prefix, ann.is_pinned],
+              "INSERT INTO threads (category_id, user_id, title, content, prefix, is_pinned, created_at, views) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+              [catId, adminId, ann.title, ann.content, ann.prefix, ann.is_pinned, ann.created_at, ann.views],
               function(err) {
                 if (err) return reject(err);
                 console.log(`Thread created with ID ${this.lastID}`);
