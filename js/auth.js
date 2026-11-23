@@ -139,6 +139,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+window.checkAuth = async function() {
+    let user = null;
+    try {
+        const stored = localStorage.getItem('user');
+        if (stored) user = JSON.parse(stored);
+    } catch (e) {}
+
+    try {
+        const res = await fetch(`${API_URL}/me`, { credentials: 'include' });
+        if (res.ok) {
+            user = await res.json();
+            localStorage.setItem('user', JSON.stringify(user));
+            return user;
+        }
+    } catch (e) {}
+
+    return user;
+};
+
 async function checkSession() {
     try {
         const res = await fetch(`${API_URL}/me`, { credentials: 'include' });
@@ -199,9 +218,10 @@ function updateNavbarAuth(user) {
         }
 
         const safeUsername = window.escapeHTML ? window.escapeHTML(user.username) : user.username;
+        const profileHref = (user && user.id) ? `profile.html?id=${encodeURIComponent(user.id)}` : 'profile.html';
         const li = document.createElement('li');
         li.id = 'nav-user';
-        li.innerHTML = `<a href="profile.html"><i class="fa fa-user"></i> ${safeUsername}${roleBadge}</a>`;
+        li.innerHTML = `<a href="${profileHref}"><i class="fa fa-user"></i> ${safeUsername}${roleBadge}</a>`;
 
         const liLogout = document.createElement('li');
         liLogout.id = 'nav-logout';

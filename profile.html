@@ -202,20 +202,38 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=49"></script>
-    <script src="js/auth.js?v=49"></script>
+    <script src="js/config.js?v=50"></script>
+    <script src="js/auth.js?v=50"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         let targetUserId = params.get('id');
         let currentUser = null;
 
         async function initProfile() {
-            currentUser = await checkAuth();
-            if (!targetUserId && currentUser) targetUserId = currentUser.id;
-            if (!targetUserId) { window.location.href = 'login.html'; return; }
+            try {
+                if (typeof window.checkAuth === 'function') {
+                    currentUser = await window.checkAuth();
+                } else if (localStorage.getItem('user')) {
+                    currentUser = JSON.parse(localStorage.getItem('user'));
+                }
+            } catch (e) {
+                console.warn('Error reading currentUser:', e);
+            }
+
+            if (!targetUserId && currentUser) {
+                targetUserId = currentUser.id;
+            }
+
+            if (!targetUserId) {
+                window.location.href = 'login.html';
+                return;
+            }
 
             try {
-                const user = await fetch(`${window.CONFIG.API_BASE}/users/${targetUserId}`).then(r => r.json());
+                const apiBase = (window.CONFIG && window.CONFIG.API_BASE) ? window.CONFIG.API_BASE : 'https://api.orphionmc.net/api';
+                const res = await fetch(`${apiBase}/users/${encodeURIComponent(targetUserId)}`);
+                if (!res.ok) throw new Error("Usuario no encontrado en la base de datos.");
+                const user = await res.json();
                 if (user.error) throw new Error(user.error);
 
                 renderBasicInfo(user);
@@ -223,45 +241,62 @@
 
                 // If viewing own profile, show notifications tab
                 if (currentUser && currentUser.id == targetUserId) {
-                    document.getElementById('tab-notif').style.display = 'block';
+                    const tabNotif = document.getElementById('tab-notif');
+                    if (tabNotif) tabNotif.style.display = 'block';
                 }
 
                 document.getElementById('profile-loader').style.display = 'none';
                 document.getElementById('profile-content').style.display = 'block';
             } catch (e) {
-                alert("Usuario no encontrado");
-                window.location.href = 'forum.html';
+                console.error("Error al cargar perfil:", e);
+                const loader = document.getElementById('profile-loader');
+                if (loader) {
+                    loader.innerHTML = `
+                        <div style="background: rgba(20,20,20,0.9); border: 1px solid #444; border-radius: 8px; max-width: 480px; margin: 40px auto; padding: 30px; text-align: center;">
+                            <h3 style="color: #ff5555; margin-top: 0;">Error al cargar perfil</h3>
+                            <p style="color: #ccc;">${window.escapeHTML ? window.escapeHTML(e.message) : e.message}</p>
+                            <a href="forum.html" style="color: var(--gold); text-decoration: underline;">← Volver al Foro</a>
+                        </div>
+                    `;
+                }
             }
         }
 
         function renderBasicInfo(user) {
-            document.getElementById('p-username').innerText = user.username;
-            document.getElementById('p-joined').innerText = new Date(user.created_at).toLocaleDateString();
-            document.getElementById('p-active').innerText = user.last_activity ? new Date(user.last_activity).toLocaleString() : 'Nunca';
+            document.getElementById('p-username').innerText = user.username || 'Usuario';
+            document.getElementById('p-joined').innerText = user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Reciente';
+            document.getElementById('p-active').innerText = user.last_activity ? new Date(user.last_activity).toLocaleString() : 'Reciente';
 
-            if (user.avatar_url) document.getElementById('p-avatar').src = user.avatar_url;
-            else if (user.minecraft_ign) document.getElementById('p-avatar').src = `https://mc-heads.net/avatar/${user.minecraft_ign}`;
+            if (user.avatar_url) {
+                document.getElementById('p-avatar').src = user.avatar_url;
+            } else if (user.minecraft_ign) {
+                document.getElementById('p-avatar').src = `https://mc-heads.net/avatar/${encodeURIComponent(user.minecraft_ign)}`;
+            }
 
             const badgeCont = document.getElementById('p-badge-container');
-            const roleClass = `badge-${user.role}`;
-            badgeCont.innerHTML = `<span class="badge ${roleClass}">${user.role.toUpperCase()}</span>`;
+            const role = user.role || 'user';
+            const roleClass = `badge-${role}`;
+            badgeCont.innerHTML = `<span class="badge ${roleClass}">${role.toUpperCase()}</span>`;
             if (user.minecraft_ign) {
-                badgeCont.innerHTML += `<span class="badge" style="background:#555; margin-left:10px;"><i class="fa fa-cube"></i> ${user.minecraft_ign}</span>`;
+                badgeCont.innerHTML += `<span class="badge" style="background:#555; margin-left:10px;"><i class="fa fa-cube"></i> ${window.escapeHTML(user.minecraft_ign)}</span>`;
             }
         }
 
         async function loadActivity(type) {
             const list = document.getElementById(`${type}-list`);
+            if (!list) return;
             list.innerHTML = '<p style="color:#666">Cargando actividad...</p>';
 
             try {
-                const data = await fetch(`${window.CONFIG.API_BASE}/users/${targetUserId}/${type}`).then(r => r.json());
+                const apiBase = (window.CONFIG && window.CONFIG.API_BASE) ? window.CONFIG.API_BASE : 'https://api.orphionmc.net/api';
+                const data = await fetch(`${apiBase}/users/${encodeURIComponent(targetUserId)}/${type}`).then(r => r.json());
+                const items = Array.isArray(data) ? data : [];
 
                 if (type === 'posts') {
-                    list.innerHTML = data.map(t => {
+                    list.innerHTML = items.map(t => {
                         const safeTitle = window.escapeHTML(t.title);
                         const safeCat = window.escapeHTML(t.category_name);
-                        const safeStatus = window.escapeHTML(t.status);
+                        const safeStatus = window.escapeHTML(t.status || 'open');
                         const safeId = encodeURIComponent(t.id);
                         return `
                             <div class="activity-card">
@@ -273,10 +308,10 @@
                                 </div>
                             </div>
                         `;
-                    }).join('') || '<p>No ha creado temas aún.</p>';
+                    }).join('') || '<p style="color:#888;">No ha creado temas aún.</p>';
                 } else if (type === 'replies') {
-                    list.innerHTML = data.map(p => {
-                        const safeThreadTitle = window.escapeHTML(p.thread_title);
+                    list.innerHTML = items.map(p => {
+                        const safeThreadTitle = window.escapeHTML(p.thread_title || 'Tema');
                         const safeSnippet = window.escapeHTML(p.content ? p.content.substring(0, 100) : '');
                         const safeThreadId = encodeURIComponent(p.thread_id);
                         const safePostId = encodeURIComponent(p.id);
@@ -289,10 +324,11 @@
                                 </div>
                             </div>
                         `;
-                    }).join('') || '<p>No ha realizado respuestas aún.</p>';
+                    }).join('') || '<p style="color:#888;">No ha realizado respuestas aún.</p>';
                 } else if (type === 'notifications') {
-                    const notifs = await fetch(`${window.CONFIG.API_BASE}/notifications`, { credentials: 'include' }).then(r => r.json());
-                    list.innerHTML = notifs.map(n => {
+                    const notifs = await fetch(`${apiBase}/notifications`, { credentials: 'include' }).then(r => r.json());
+                    const nList = Array.isArray(notifs) ? notifs : [];
+                    list.innerHTML = nList.map(n => {
                         let msg = 'Nueva notificación';
                         try {
                             const d = JSON.parse(n.data);
@@ -305,10 +341,10 @@
                                 <div class="activity-details">${new Date(n.created_at).toLocaleString()}</div>
                             </div>
                         `;
-                    }).join('') || '<p>No tienes notificaciones.</p>';
+                    }).join('') || '<p style="color:#888;">No tienes notificaciones.</p>';
                 }
             } catch (e) {
-                list.innerHTML = '<p style="color:red">Error al cargar datos.</p>';
+                list.innerHTML = '<p style="color:#ff5555">Error al cargar actividad.</p>';
             }
         }
 
@@ -316,13 +352,14 @@
             document.querySelectorAll('.tab-section').forEach(s => s.style.display = 'none');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
-            document.getElementById(`tab-${tabId}`).style.display = 'block';
-            event.target.classList.add('active');
+            const targetSection = document.getElementById(`tab-${tabId}`);
+            if (targetSection) targetSection.style.display = 'block';
+            if (event && event.target) event.target.classList.add('active');
 
             loadActivity(tabId);
         }
 
-        initProfile();
+        document.addEventListener('DOMContentLoaded', initProfile);
     </script>
 </body>
 
