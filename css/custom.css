@@ -19,6 +19,7 @@
 html {
     scroll-behavior: smooth;
     font-size: 16px;
+    background-color: #0b0b0b;
 }
 
 * {
@@ -29,10 +30,12 @@ html {
 
 body {
     font-family: "Cinzel", "Trebuchet MS", serif;
-    background: #000;
+    background: #0b0b0b;
+    background-color: #0b0b0b;
     color: var(--text-main);
     line-height: 1.6;
     overflow-x: hidden;
+    min-height: 100vh;
 }
 
 /* ================= UTILITIES ================= */
@@ -618,7 +621,8 @@ section {
 }
 
 /* Backgrounds for readability - Wynncraft-style seamless transparency */
-.section-bg-dark {
+section.section-bg-dark,
+div.section-bg-dark {
     background: transparent;
     border-top: none;
     padding: 70px 0;

@@ -1,4 +1,4 @@
-const API_URL = window.CONFIG ? window.CONFIG.API_BASE : 'http://localhost:3000/api';
+window.API_URL = (window.CONFIG && window.CONFIG.API_BASE) ? window.CONFIG.API_BASE : 'https://api.orphionmc.net/api';
 
 /**
  * Universal authenticated fetch helper

@@ -8,11 +8,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=MedievalSharp&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/custom.css?v=62">
+    <link rel="stylesheet" href="css/custom.css?v=66">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --gold: #d4af37;
+        }
+
+        html, body {
+            background-color: #0b0b0b !important;
+            background: #0b0b0b !important;
+            color: #eee;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
         .staff-container {
@@ -25,11 +35,12 @@
         }
 
         .staff-sidebar {
-            background: #0a0a0a;
-            border: 1px solid #333;
+            background: #0d0d10;
+            border: 1px solid #25252b;
             padding: 25px;
             border-radius: 12px;
             height: fit-content;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .staff-nav {
@@ -66,10 +77,11 @@
 
         .staff-section {
             display: none;
-            background: #0a0a0a;
-            border: 1px solid #333;
+            background: #0d0d10;
+            border: 1px solid #25252b;
             padding: 30px;
             border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .staff-section.active {
@@ -84,11 +96,18 @@
         }
 
         .stat-box {
-            background: #111;
+            background: #141418;
             padding: 20px;
             border-radius: 10px;
-            border: 1px solid #222;
+            border: 1px solid #25252b;
             text-align: center;
+        }
+
+        .staff-card {
+            background: #141418;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #25252b;
         }
 
         .stat-box h4 {
@@ -192,7 +211,7 @@
     </style>
 </head>
 
-<body class="section-bg-dark">
+<body class="staff-dashboard">
     <!-- Navbar injected by auth.js -->
     <nav class="navbar" id="main-nav">
         <div class="navbar-container">
@@ -291,10 +310,10 @@
         </main>
     </div>
 
-    <script src="js/config.js?v=62"></script>
-    <script src="js/auth.js?v=62"></script>
+    <script src="js/config.js?v=66"></script>
+    <script src="js/auth.js?v=66"></script>
     <script>
-        const API_URL = (window.CONFIG && window.CONFIG.API_BASE) ? window.CONFIG.API_BASE : 'https://api.orphionmc.net/api';
+        const DASH_API = (window.CONFIG && window.CONFIG.API_BASE) ? window.CONFIG.API_BASE : (window.API_URL || 'https://api.orphionmc.net/api');
 
         // Check staff access
         let currentStaff = null;
@@ -329,7 +348,7 @@
                     <i class="fa fa-shield-halved fa-2x" style="color: #e74c3c; margin-bottom: 12px; display: inline-block;"></i>
                     <h4 style="color: #fff; margin-bottom: 8px; font-family: MedievalSharp;">Sesión Administrativa Requerida</h4>
                     <p style="color: #bbb; font-size: 0.9rem; margin-bottom: 15px;">Tu token de administrador no está sincronizado o ha caducado. Vuelve a iniciar sesión con Discord para consultar y gestionar estos datos.</p>
-                    <a href="${API_URL}/auth/discord" style="display: inline-block; background: var(--gold); color: #000; font-weight: bold; padding: 10px 20px; text-decoration: none; border-radius: 6px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);">
+                    <a href="${DASH_API}/auth/discord" style="display: inline-block; background: var(--gold); color: #000; font-weight: bold; padding: 10px 20px; text-decoration: none; border-radius: 6px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);">
                         <i class="fa-brands fa-discord"></i> Conectar con Discord
                     </a>
                 </div>
@@ -357,7 +376,7 @@
             const fetchFn = window.authFetch || fetch;
             let res;
             try {
-                res = await fetchFn(`${API_URL}${path}`, options);
+                res = await fetchFn(`${DASH_API}${path}`, options);
             } catch (netErr) {
                 throw new Error("No se pudo conectar con el servidor. Verifica tu conexión a internet.");
             }
@@ -377,24 +396,36 @@
                 document.getElementById('stat-users').innerText = stats.totalUsers ?? 0;
                 document.getElementById('stat-threads').innerText = stats.threadsToday ?? 0;
                 document.getElementById('stat-posts').innerText = stats.totalPosts ?? 0;
+            } catch (errStats) {
+                console.warn("No se pudieron cargar contadores:", errStats);
+                document.getElementById('stat-users').innerText = '0';
+                document.getElementById('stat-threads').innerText = '0';
+                document.getElementById('stat-posts').innerText = '0';
+            }
 
+            const list = document.getElementById('recent-activity-list');
+            try {
                 const logs = await apiCall('/staff/logs');
-                const list = document.getElementById('recent-activity-list');
                 const safeLogs = Array.isArray(logs) ? logs : [];
-                list.innerHTML = safeLogs.slice(0, 5).map(l => {
-                    const safeStaff = window.escapeHTML(l.staff_name || 'Staff');
-                    const safeAction = window.escapeHTML(l.action || 'acción');
-                    const safeTarget = window.escapeHTML(l.target_type || 'elemento');
-                    const safeId = encodeURIComponent(l.target_id || 0);
-                    return `
-                        <div class="log-entry">
-                            <span class="log-staff">${safeStaff}</span> ejecutó <b>${safeAction}</b> en ${safeTarget} #${safeId}
-                        </div>
-                    `;
-                }).join('') || '<p style="color:#888; text-align:center; padding:15px;">Sin actividad reciente.</p>';
+                if (safeLogs.length === 0) {
+                    if (list) list.innerHTML = '<p style="color:#888; text-align:center; padding:15px;">Sin actividad reciente en auditoría.</p>';
+                } else {
+                    if (list) {
+                        list.innerHTML = safeLogs.slice(0, 5).map(l => {
+                            const safeStaff = window.escapeHTML(l.staff_name || 'Staff');
+                            const safeAction = window.escapeHTML(l.action || 'acción');
+                            const safeTarget = window.escapeHTML(l.target_type || 'elemento');
+                            const safeId = encodeURIComponent(l.target_id || 0);
+                            return `
+                                <div class="log-entry">
+                                    <span class="log-staff">${safeStaff}</span> ejecutó <b>${safeAction}</b> en ${safeTarget} #${safeId}
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                }
             } catch (e) {
-                console.error("Error cargando stats:", e);
-                const list = document.getElementById('recent-activity-list');
+                console.error("Error cargando stats/logs:", e);
                 if (list) {
                     if (e.message === 'AUTH_REQUIRED') {
                         renderAuthWarning(list);
@@ -544,8 +575,14 @@
             } catch (e) { alert(e.message); }
         }
 
+        // Export functions to global scope for HTML inline onclick
+        window.showSection = showSection;
+        window.toggleBan = toggleBan;
+        window.changeRole = changeRole;
+        window.deleteThread = deleteThread;
+
         // Initialize with event listeners
-        document.addEventListener('DOMContentLoaded', () => {
+        function initDashboard() {
             document.querySelectorAll('.staff-nav button').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -554,7 +591,13 @@
                 });
             });
             loadStats();
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDashboard);
+        } else {
+            initDashboard();
+        }
     </script>
 </body>
 
