@@ -235,16 +235,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const topNews = threads.slice(0, 3);
             const imageMap = {
-                'OFICIAL': 'assets/images/news-launch.png',
-                'EVENTO': 'assets/images/news-labyrinth.png',
-                'RAIDS': 'assets/images/news-skills.png',
-                'UPDATE': 'assets/images/news-launch.png',
-                'REGLAS': 'assets/images/news-skills.png'
+                'OFICIAL': 'assets/images/news-launch.jpg',
+                'EVENTO': 'assets/images/news-labyrinth.jpg',
+                'RAIDS': 'assets/images/news-skills.jpg',
+                'UPDATE': 'assets/images/news-forge.jpg',
+                'REGLAS': 'assets/images/news-arena.jpg'
             };
             const defaultImages = [
-                'assets/images/news-launch.png',
-                'assets/images/news-labyrinth.png',
-                'assets/images/news-skills.png'
+                'assets/images/news-launch.jpg',
+                'assets/images/news-labyrinth.jpg',
+                'assets/images/news-skills.jpg',
+                'assets/images/news-forge.jpg',
+                'assets/images/news-arena.jpg'
             ];
 
             const escapeFn = window.escapeHTML || ((s) => s ? String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '');
